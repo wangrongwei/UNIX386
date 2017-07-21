@@ -1,82 +1,49 @@
-TOOLPATH = ../z_tools/
-INCPATH  = ../z_tools/haribote/
+##################################################
+# Makefile
+##################################################
 
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -Os -Wall -quiet
-GAS2NASK = $(TOOLPATH)gas2nask.exe -a
-OBJ2BIM  = $(TOOLPATH)obj2bim.exe
-BIM2HRB  = $(TOOLPATH)bim2hrb.exe
-RULEFILE = $(TOOLPATH)haribote/haribote.rul
-EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
+BOOT:=bootfirst.asm
+LDR:=bootsecond.asm
+BOOT_BIN:=$(subst .asm,.bin,$(BOOT))
+LDR_BIN:=$(subst .asm,.bin,$(LDR))
 
 
-default :
-	$(MAKE) img
+#TOOLPREFIX := /usr/lib/gcc/x86_64-linux-gnu/5.4.0
+
+#CC = $(TOOLPREFIX)gcc
+#AS = $(TOOLPREFIX)gas
+#LD = $(TOOLPREFIX)ld
 
 
-bootfirst.bin : bootfirst.nas Makefile
-	$(NASK) bootfirst.nas bootfirst.bin bootfirst.lst
+IMG:=deeppink.img
 
-bootsecond.bin : bootsecond.nas Makefile
-	$(NASK) bootsecond.nas bootsecond.bin bootsecond.lst
+#.PHONY : everything
 
-bootpack.gas : bootpack.c Makefile
-	$(CC1) -o bootpack.gas bootpack.c
+deeppink.img : $(BOOT_BIN) bootsecond.o bootpack.o 
+	#ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o kliba.o
+	ld -s -Ttext 0xc200 -m elf_i386 -o bootsecond.bin bootsecond.o bootpack.o
+	dd if=/dev/zero of=$(IMG) bs=512 count=10000
+	dd if=$(BOOT_BIN) of=$(IMG) conv=notrunc
+	dd if=$(LDR_BIN) of=$(IMG) seek=1 conv=notrunc
 
-bootpack.nas : bootpack.gas Makefile
-	$(GAS2NASK) bootpack.gas bootpack.nas
+$(BOOT_BIN) : $(BOOT)
+	nasm $< -o $@
 
-bootpack.bin : bootpack.nas Makefile
-	$(NASK) bootpack.nas bootpack.bin bootpack.lst
-	
-#naskfunc.obj : naskfunc.nas Makefile
-#	$(NASK) naskfunc.nas naskfunc.obj naskfunc.lst
+bootsecond.o : bootsecond.asm 
+	nasm -f elf32 bootsecond.asm -o bootsecond.o
 
-#bootpack.bim : bootpack.obj naskfunc.obj Makefile
-#	$(OBJ2BIM) @$(RULEFILE) out:bootpack.bim stack:3136k map:bootpack.map \
-#		bootpack.obj naskfunc.obj
-# 3MB+64KB=3136KB
-
-#bootpack.hrb : bootpack.bim Makefile
-#	$(BIM2HRB) bootpack.bim bootpack.hrb 0
-	
-wrwos.sys : bootsecond.bin bootpack.bin Makefile
-	copy /B bootsecond.bin+bootpack.bin wrwos.sys
-	
-wrwos.img : bootfirst.bin wrwos.sys Makefile
-	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
-		wbinimg src:bootfirst.bin len:512 from:0 to:0 \
-		copy from:wrwos.sys to:@: \
-		imgout:wrwos.img
-
-
-img :
-	$(MAKE) wrwos.img
-
-run :
-	$(MAKE) img
-	$(COPY) wrwos.img ..\z_tools\qemu\fdimage0.bin
-	$(MAKE) -C ../z_tools/qemu
-
-install :
-	$(MAKE) img
-	$(IMGTOL) w a: wrwos.img
+bootpack.o : bootpack.c
+	#-f elf nasm -f -elf $(subst .asm,.o,$(LDR))-o  $<
+	#nasm -f elf32 bootsecond.asm -o bootsecond.o
+	#nasm -f elf -o naskfunc.o naskfunc.asm
+	gcc -m32 -c -fno-builtin -o bootpack.o bootpack.c
 
 clean :
-	-$(DEL) *.bin
-	-$(DEL) *.lst
-	-$(DEL) *.gas
-	-$(DEL) *.obj
-	-$(DEL) bootpack.nas
-	-$(DEL) bootpack.map
-	-$(DEL) bootpack.bim
-	-$(DEL) bootpack.hrb
-	-$(DEL) wrwos.sys
+	rm -f $(BOOT_BIN) $(LDR_BIN)
 
-src_only :
-	$(MAKE) clean
-	-$(DEL) wrwos.img
+
+
+
+
+
+
