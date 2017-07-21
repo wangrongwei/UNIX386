@@ -38,6 +38,10 @@ bootpack.o : bootpack.c
 	#nasm -f elf -o naskfunc.o naskfunc.asm
 	gcc -m32 -c -fno-builtin -o bootpack.o bootpack.c
 
+.PHONY:qemu
+qemu:
+	@echo '启动虚拟机...'
+	qemu-system-i386 -fda deeppink.img -boot a
 clean :
 	rm -f $(BOOT_BIN) $(LDR_BIN)
 
