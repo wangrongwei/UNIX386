@@ -24,7 +24,7 @@ deeppink.img : $(BOOT_BIN) bootsecond.o bootpack.o
 	ld -s -Ttext 0xc200 -m elf_i386 -o bootsecond.bin bootsecond.o bootpack.o
 	dd if=/dev/zero of=$(IMG) bs=512 count=10000
 	dd if=$(BOOT_BIN) of=$(IMG) conv=notrunc
-	dd if=$(LDR_BIN) of=$(IMG) seek=1 conv=notrunc
+	dd if=$(LDR_BIN) of=$(IMG) seek=32 conv=notrunc
 
 $(BOOT_BIN) : $(BOOT)
 	nasm $< -o $@
