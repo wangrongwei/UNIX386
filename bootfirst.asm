@@ -8,7 +8,7 @@
 ;在某种意义上理解，我们的程序只需要在磁盘的开始512字节就行
 ;然后硬件上自动去读这512，然后执行这段程序
 
-;1-> 读取磁盘后边扇区的数据 
+;1-> 读取磁盘后边扇区的数据
 ;2-> 在bootsecond.nas中添加LCD支持
 ;3-> 初始化PIC
 ;4-> 打开A20，进入保护模式
@@ -20,29 +20,29 @@ CYLS	EQU	 10				 ;读10个柱面
 		DB		0x90
 		DB		"lollipop"  ; 必须是8个字符,按照FAT12格式，少于8个在 
 		DW		512				  ; 下边使用DB 0xXX填充 
-		DB		1				
-		DW		1				
-		DB		2				
-		DW		224			
-		DW		2880			
-		DB		0xf0			
-		DW		9				
-		DW		18				
-		DW		2			
-		DD		0				
-		DD		2880			
-		DB		0,0,0x29		
-		DD		0xffffffff		
-		DB		"HARIBOTEOS "	
-		DB		"FAT12   "		
-		RESB	18					
+		DB		1
+		DW		1
+		DB		2
+		DW		224
+		DW		2880
+		DB		0xf0
+		DW		9
+		DW		18
+		DW		2
+		DD		0
+		DD		2880
+		DB		0,0,0x29
+		DD		0xffffffff
+		DB		"HARIBOTEOS "
+		DB		"FAT12   "
+		RESB	18
 
 ;初始化段SS=0 DS=0 ES=0 SP指向程序加载的地址
 ;因为程序加载的地址是0x7c00，所以我们的段地址必须是0，
 ;不然地址就不是0x7c00了
 
 entry:
-		MOV		AX,0		
+		MOV		AX,0
 		MOV		SS,AX
 		MOV		SP,0x7c00
 		MOV		DS,AX
@@ -51,25 +51,25 @@ entry:
 		MOV		SI,msg
 putloop:
 		MOV		AL,[SI]
-		ADD		SI,1			
+		ADD		SI,1
 		CMP		AL,0
 		JE		Read_Sector
-		MOV		AH,0x0e			
-		MOV		BX,0x0f			
+		MOV		AH,0x0e
+		MOV		BX,0x0f
 		INT		0x10		;执行BIOS中断0x10
 		JMP		putloop
-		
-Read_Sector:			
+
+Read_Sector:
 		MOV		SI,msg_1	;打开成功要显示字符
 Read:
 		MOV		AL,[SI]
-		ADD		SI,1			
+		ADD		SI,1
 		CMP		AL,0
 		JE		Read_Ok
-		MOV		AH,0x0e			
-		MOV		BX,0x0f			
+		MOV		AH,0x0e
+		MOV		BX,0x0f
 		INT		0x10		;执行BIOS中断0x10
-		JMP		Read;	
+		JMP		Read;
 ;下面开始读磁盘程序数据
 ;代码借鉴《30天...》川和秀实
 ;ES:BX	代表缓冲器地址
@@ -81,7 +81,7 @@ Read_Ok:
 		MOV		DH,0		;磁头0
 		MOV		CL,2		;扇区2
 readloop:
-		MOV		SI,0	
+		MOV		SI,0
 retry:
 		MOV		AH,0x02		;AH=0x02:读扇区
 		MOV		AL,1		;读扇区数 
@@ -114,40 +114,40 @@ next:
 ;10*2*18*512=
 		MOV		[0x0ff0],CH	;IPLがどこまで読んだのかをメモ
 
-;打印成功读取状态			
+;打印成功读取状态
 		MOV		SI,msg_2	;打开成功要显示字符
 print_loop:
 		MOV		AL,[SI]
-		ADD		SI,1			
+		ADD		SI,1
 		CMP		AL,0
 		JE		last
-		MOV		AH,0x0e			
-		MOV		BX,0x0f			
+		MOV		AH,0x0e
+		MOV		BX,0x0f
 		INT		0x10		;执行BIOS中断0x10
 		JMP		print_loop;
 
 last:
-		JMP		0xc200
-		
-error:		 
+		JMP		0x8200
+
+error:
 		MOV		SI,msg_error;	打开成功要显示字符
 error_loop:
 		MOV		AL,[SI]
-		ADD		SI,1			
+		ADD		SI,1
 		CMP		AL,0
 		JE		fin_error
-		MOV		AH,0x0e			
-		MOV		BX,0x0f			
+		MOV		AH,0x0e
+		MOV		BX,0x0f
 		INT		0x10
-		JMP		error_loop	
-		
-;表示最后读取扇区不成功，最后执行到这里			
+		JMP		error_loop
+
+;表示最后读取扇区不成功，最后执行到这里
 fin_error:
-		HLT						
-		JMP		fin_error		
+		HLT
+		JMP		fin_error
 
 msg:
-		DB		0x0a,	0x0a	;换行	
+		DB		0x0a,	0x0a	;换行
 		DB		"hello,world"
 		DB		0x0a				;换行
 		DB		0
@@ -166,10 +166,10 @@ msg_error:
 		DB		0x0a				;换行
 		DB		0
 
-		;times	0x7dfe-$	db	0	
+		;times	0x7dfe-$	db	0
 		times	510-($-$$)	db	0
 		DW		0xaa55
-		
+
 ;		DB		0xf0,	0xff,	0xff,	0x00,	0x00,	0x00,	0x00,	0x00
 ;		RESB	4600
 ;		DB		0xf0,	0xff,	0xff,	0x00,	0x00,	0x00,	0x00,	0x00
