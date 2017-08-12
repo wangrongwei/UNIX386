@@ -1,9 +1,9 @@
-;	wrwos
+;	Deeppinkos
 ;	TAB=4	SP=0x7c00		0x8000=拷贝到启动区
-;----------------------------------------------------------------------------------------------
-;|中断向量表|	|;代码存储位置 |......	|512|						
-;|	   		 |	|	     				|	......|   |
-;----------------------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
+;|中断向量表|	|;代码存储位置 |......	|512|
+;|	    |	|	       |......  |   |
+;-------------------------------------------------------------------------------
 ;						0x8200=后边的程序
 ;在某种意义上理解，我们的程序只需要在磁盘的开始512字节就行
 ;然后硬件上自动去读这512，然后执行这段程序
@@ -19,6 +19,10 @@ CYLS		EQU	10	;读10个柱面
 BOOT_ADDR	EQU	0x7C00
 KERNEL_ADDR	EQU	0xC0000000
 
+LCDMODE		EQU	0x0ff2  ;
+SCREENX		EQU	0x0ff4  ;	x
+SCREENY		EQU	0x0ff6  ;	y
+LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
 
 	ORG	BOOT_ADDR	;必须是这个地址
 
@@ -100,26 +104,52 @@ next:
 ;10*2*18*512=
 	MOV	[0x0ff0],CH	;IPLがどこまで読んだのかをメモ
 
-;打印成功读取状态
+;
+;  打印成功读取状态
+;	换显示坐标	
+		
+	MOV	AH,0x02
+	MOV	BX,0x0f
+	MOV	DX,0x0e16
+	INT	0x10
+
 	MOV	SI,msg_2	;打开成功要显示字符
 print_loop:
 	MOV	AL,[SI]
 	ADD	SI,1
 	CMP	AL,0
-	JE	last
+	JE	goto_PM
 	MOV	AH,0x0e
 	MOV	BX,0x0f
 	INT	0x10		;执行BIOS中断0x10
+	
 	JMP	print_loop;
 ;
 ;The third stage
 ;	goto PM mode
 ;
+goto_PM:
+	MOV	AL,0x13
+	MOV	AH,0x00
+	INT	0x10
 
+	MOV	BYTE [LCDMODE],8
+	MOV	WORD [SCREENX],320
+	MOV	WORD [SCREENY],200
+	MOV	DWORD [LCDRAM],0x000a0000
+	
 	MOV	AL,0XFF
 	OUT	0x21,AL
 	NOP
 	OUT	0xa1,AL
+
+	MOV	BYTE [0xa0000],2
+	MOV	BYTE [0xa0001],2
+	MOV	BYTE [0xa0002],2
+	MOV	BYTE [0xa0003],2
+	;MOV	AH,0x0e
+	;MOV	AL,'!'
+	;INT	0x10
 
 	CLI
 ;
@@ -133,14 +163,7 @@ print_loop:
 	OUT	0x60,AL
 	CALL	waitkbd_8042 ;打开A20
 
-waitkbd_8042:
-	IN	AL,0x64
-	AND	AL,0x02    ;输入缓冲区是否满了？
-	JNZ	waitkbd_8042 ;Yes---跳转
-	RET
-
 [bits 32]
-
 	LGDT	[GDTR0]
 	MOV	EAX,CR0
 	AND	EAX,0x7fffffff
@@ -156,12 +179,19 @@ PM_MODE:
 	MOV	GS,AX
 	MOV	SS,AX
 	
-	JMP	KERNEL_ADDR
+	MOV	BYTE [GS:0xb8000],'1'	
+	JMP	$
+	;KERNEL_ADDR
 
+;
+;	显示需要的相关字符串
+;
 
-
-last:
-	JMP	0x8200
+waitkbd_8042:
+	IN	AL,0x64
+	AND	AL,0x02    ;输入缓冲区是否满了？
+	JNZ	waitkbd_8042 ;Yes---跳转
+	RET
 
 error:
 	MOV	SI,msg_error;	打开成功要显示字符
@@ -182,16 +212,16 @@ fin_error:
 
 msg:
 	DB	0x0a,	0x0a	;换行
-	DB	"hello,world"
+	DB	"Welcome to DeeppinkOS:"
 	DB	0x0a				;换行
 	DB	0
 msg_1:
 	DB	0x0a,	0x0a	;换行
-	DB	"Read more Sector..."
+	DB	"Read Sectors..."
 	DB	0x0a				;换行
 	DB	0
 msg_2:
-	DB	"Read Sectors successfully!!"
+	DB	"Read Completely!!"
 	DB	0x0a				;换行
 	DB	0
 
