@@ -160,14 +160,11 @@ goto_PM:
 	CALL	waitkbd_8042 ;打开A20
 
 
-	;MOV	AH,0x0e
-	;MOV	AL,'?'
-	;INT	0x10
+	MOV	AH,0x0e
+	MOV	AL,'O'
+	INT	0x10
 
-	JMP	$
-	;JMP	0x8200
-	;KERNEL_ADDR
-
+        JMP     0x8200
 ;
 ;	显示需要的相关字符串
 ;

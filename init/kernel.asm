@@ -18,9 +18,10 @@
 ; 5-> 设置CR0的PE和PG
 ; 6-> 更新D、E、F、G、S，其中数代表的是第几个GDT
 
-section .text
 GLOBAL  _start
 GLOBAL	myprintf
+EXTERN  kernel_start
+
 BOTPAK	EQU		0x00280000
 DSKCAC	EQU		0x00100000
 DSKCAC0	EQU		0x00008000
@@ -35,12 +36,13 @@ LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
 
 
 [bits 32]
+section .text
 _start:
-	;MOV	AH,0x0e
-	;MOV	AL,'1'
-	;INT	0x10
+	MOV	AH,0x0e
+	MOV	AL,'S'
+	INT	0x10
 
-;[bits 32]
+        CLI
 	LGDT	[GDTR0]
 	MOV	EAX,CR0
 	AND	EAX,0x7fffffff
@@ -55,31 +57,50 @@ PM_MODE:
 	MOV	FS,AX
 	MOV	GS,AX
 	MOV	SS,AX
-	
-	MOV	BYTE [GS:dword 0xb8002],'1'	
 
-	JMP	$
-	;KERNEL_ADDR
-	
-	ALIGNB	16
+        MOV     AX,3*8
+        MOV     GS,AX
+
+        MOV     AX,2*8
+        MOV     CS,AX
+
+        ;MOV     AH,0x0F
+        ;MOV     AL,'K'
+        ;MOV	BYTE [GS:((80*3+3)*2)],'K'
+
+
+	CLI
+        MOV     ESP,STACK_TOP
+        MOV     EBP,0
+        AND     ESP,0FFFFFFF0H
+        ;MOV     [glb_mboot_ptr],EBX
+        CALL    kernel_start
+
+stop:
+        hlt
+        JMP     stop
+
 ;
 ;进入保护模式后，不再按照CS*16+IP取指令执行，需要按照向全局描述符
 ;	具体可参考《linux内核设计的艺术》
 ;
 GDT0:
 	RESB	8
-	DW	0xffff,0x0000,0x9200,0x00cf ;---段基地址 0x00cf取00，0x9200取00，0x0000取全部===0x00000000
-	DW	0xffff,0x0000,0x9a28,0x0047 ;---段基地址 0x0047取00，0x9a28取28，0x0000取全部===0x00280000
-	DW	0
-
+	DW	0xffff,0x0000,0x9200,0x00cf
+        ;---数据段基地址 0x00cf取00，0x9200取00，0x0000取全部===0x00000000
+	DW	0xffff,0x0000,0x9a00,0x0047
+        ;---代码段基地址 0x0047取00，0x9a28取28，0x0000取全部===0x00280000
+        DW      0xffff,0x8000,0xf20b,0x000f
+        DW	0
+GDT0_LEN EQU $-GDT0
 GDTR0:
-	DW	23
+	DW	GDT0_LEN
 	DD	GDT0
 section .bss
 stack:
 	resb	32768
-glb_mboot_ptr:
-	resb	4
+;glb_mboot_ptr:
+;	resb	4
 
 STACK_TOP equ $-stack-1
 
