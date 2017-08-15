@@ -143,10 +143,6 @@ goto_PM:
 	NOP
 	OUT	0xa1,AL
 
-	MOV	BYTE [0xa0000],2
-	MOV	BYTE [0xa0001],2
-	MOV	BYTE [0xa0002],2
-	MOV	BYTE [0xa0003],2
 	;MOV	AH,0x0e
 	;MOV	AL,'!'
 	;INT	0x10
@@ -163,24 +159,13 @@ goto_PM:
 	OUT	0x60,AL
 	CALL	waitkbd_8042 ;打开A20
 
-[bits 32]
-	LGDT	[GDTR0]
-	MOV	EAX,CR0
-	AND	EAX,0x7fffffff
-	OR	EAX,0x00000001
-	MOV	CR0,EAX       ;打开段级保护，不开分页机制
 
-	JMP	0x8:PM_MODE
-PM_MODE:
-	MOV	AX,8
-	MOV	DS,AX
-	MOV	ES,AX
-	MOV	FS,AX
-	MOV	GS,AX
-	MOV	SS,AX
-	
-	MOV	BYTE [GS:0xb8000],'1'	
+	;MOV	AH,0x0e
+	;MOV	AL,'?'
+	;INT	0x10
+
 	JMP	$
+	;JMP	0x8200
 	;KERNEL_ADDR
 
 ;
@@ -194,7 +179,7 @@ waitkbd_8042:
 	RET
 
 error:
-	MOV	SI,msg_error;	打开成功要显示字符
+	MOV	SI,msg_error;	打开失败要显示字符
 error_loop:
 	MOV	AL,[SI]
 	ADD	SI,1
@@ -229,23 +214,6 @@ msg_error:
 	DB	"Load	error"
 	DB	0x0a				;换行
 	DB	0
-
-
-GDT0:
-	RESB	8                                       
-	;---段基地址 0x00cf取00，0x9200取00，0x0000取全部====0x00000000
-	DW	0xffff,0x0000,0x9200,0x00cf		
-	;---段基地址 0x0047取00，0x9a28取28，0x0000取全部====0x00280000
-	DW	0xffff,0x0000,0x9a28,0x0047	
-	DW	0
-GDT0_LEN EQU $-GDT0
-
-GDTR0:
-	DW	GDT0_LEN-1
-	DD	GDT0
-
-	ALIGNB	16
-
 
 	times	510-($-$$) db 0
 	DW	0xaa55

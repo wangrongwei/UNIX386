@@ -1,0 +1,31 @@
+
+kernel.bin：     文件格式 elf32-i386
+
+
+Disassembly of section .text:
+
+00008260 <_start>:
+    8260:	bc 00 00 01 c0       	mov    $0xc0010000,%esp
+    8265:	89 e5                	mov    %esp,%ebp
+    8267:	be 82 82 00 00       	mov    $0x8282,%esi
+
+0000826c <display>:
+    826c:	8a 06                	mov    (%esi),%al
+    826e:	83 c6 01             	add    $0x1,%esi
+    8271:	3c 00                	cmp    $0x0,%al
+    8273:	74 0b                	je     8280 <display_ok>
+    8275:	b4 0e                	mov    $0xe,%ah
+    8277:	bb 0f 00 00 00       	mov    $0xf,%ebx
+    827c:	cd 10                	int    $0x10
+    827e:	eb ec                	jmp    826c <display>
+
+00008280 <display_ok>:
+    8280:	eb fe                	jmp    8280 <display_ok>
+
+00008282 <display_str>:
+    8282:	0a 0a                	or     (%edx),%cl
+    8284:	68 65 6c 6c 6f       	push   $0x6f6c6c65
+    8289:	2c 77                	sub    $0x77,%al
+    828b:	6f                   	outsl  %ds:(%esi),(%dx)
+    828c:	72 6c                	jb     82fa <display_str+0x78>
+    828e:	64 0a 00             	or     %fs:(%eax),%al

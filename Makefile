@@ -1,29 +1,31 @@
 ##################################################
-# Makefile
+#		 Makefile
 ##################################################
-
-BOOT:=boot.asm
-LDR:=kernel.asm
+BOOT:=boot/boot.asm
+LDR:=init/kernel.asm
 BOOT_BIN:=$(subst .asm,.bin,$(BOOT))
 LDR_BIN:=$(subst .asm,.bin,$(LDR))
 
+C_SOURCES = $(shell find ./init -name "*.c")
+C_OBJECTS = $(patsubst %.c,%.o,$(C_SOURCES))
 
-#TOOLPREFIX := /usr/lib/gcc/x86_64-linux-gnu/5.4.0
+S_SOURCES = $(shell find ./init -name "*.asm")
+S_OBJECTS = $(patsubst %.asm,%.o,$(S_SOURCES))
 
-#CC = $(TOOLPREFIX)gcc
-#AS = $(TOOLPREFIX)gas
-#LD = $(TOOLPREFIX)ld
 
+CC = gcc
+ASM = nasm
+LD = ld
+
+C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -fno-stack-\
+	    protector -I include
+LD_FLAGS  = -T scripts/kernel.ld -m elf_i386 -nostdlib 
+ASM_FLAGS = -f elf -g -F stabs
 
 IMG:=deeppink.img
 
-#.PHONY : everything
 
-deeppink.img : $(BOOT_BIN) kernel.bin
-	#bootsecond.o bootpack.o
-	#ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o kliba.o
-	#ld -m elf_i386 -Ttext-seg=0xC0100000 kernel.o start.o -s -o kernel.bin
-	#ld -m elf_i386 -Ttext-seg=0x8200 kernel.o -s -o kernel.bin
+deeppink.img : $(BOOT_BIN) $(S_OBJECTS) $(C_OBJECTS) link
 	dd if=/dev/zero of=$(IMG) bs=512 count=2880
 	dd if=$(BOOT_BIN) of=$(IMG) conv=notrunc
 	dd if=$(LDR_BIN) of=$(IMG) seek=1 conv=notrunc
@@ -31,23 +33,28 @@ deeppink.img : $(BOOT_BIN) kernel.bin
 $(BOOT_BIN) : $(BOOT)
 	nasm $< -o $@
 
-kernel.bin : $(LDR)
-	nasm kernel.asm -o kernel.bin
-	#nasm -felf $< -o $@
-start.o : start.c
-	#-f elf nasm -f -elf $(subst .asm,.o,$(LDR))-o  $<
-	#nasm -f elf32 bootsecond.asm -o bootsecond.o
-	#nasm -f elf -o naskfunc.o naskfunc.asm
-	gcc -m32 -c -fno-builtin -fno-stack-protector -o start.o start.c
+#kernel.bin : $(LDR)
+#	nasm kernel.asm -o kernel.bin
+$(C_OBJECTS):$(C_SOURCES)
+	$(CC) $(C_FLAGS) $< -o $@
+$(S_OBJECTS):$(S_SOURCES)
+	@echo $(S_SOURCES)
+	$(ASM) $(ASM_FLAGS) $< -o $@ 
+link:
+	@echo $(S_SOURCES)
+	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o init/kernel.bin
 
 .PHONY:qemu
 qemu:
 	@echo '启动虚拟机...'
 	qemu-system-i386  -boot order=a -fda deeppink.img 
+.PHONY:clean
 clean :
-	rm -f $(BOOT_BIN) $(LDR_BIN)
+	rm -f $(BOOT_BIN) $(LDR_BIN) $(S_OBJECTS) $(C_OBJECTS)
 
-
+.PHONY:debug
+debug:
+	qemu-system-i386 -s -S -boot order=a -fda deeppink.img 
 
 
 
