@@ -32,13 +32,13 @@ SECTIONS
 	.text :
 	{
 		*(.text)
-		. = ALIGN(32);
+		. = ALIGN(4096);
 	}
 	.data :
 	{
 		*(.data)
 		*(.rodata)
-		. = ALIGN(4);
+		. = ALIGN(4096);
 	}
 	.bss :
 	{

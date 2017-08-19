@@ -19,9 +19,9 @@ LD = ld
 
 C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -fno-stack-protector -I include
 
-#LD_FLAGS  = -Ttext=0x8200 -m elf_i386 -nostdlib
-LD_FLAGS  = -T scripts/kernel.ld -m elf_i386 -nostdlib
-ASM_FLAGS = -f elf -g -F stabs
+LD_FLAGS  = -Ttext-seg=0x8000 -m elf_i386
+#LD_FLAGS  = -T scripts/kernel.ld -m elf_i386
+ASM_FLAGS = -felf -g -F stabs
 
 IMG:=deeppink.img
 
@@ -58,6 +58,13 @@ debug:
 	qemu-system-i386 -s -S deeppink.img 
 
 	#qemu-system-i386 -s -S -boot order=a -fda deeppink.img 
+.PHONY:bochs
+bochs:
+	bochs
+.PHONY:dis
+dis:
+	ndisasm ./boot/boot.bin > ./boot/boot.txt
+	objdump -d ./init/kernel.bin > ./init/kernel.txt
 
 
 

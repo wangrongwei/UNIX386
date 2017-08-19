@@ -14,7 +14,7 @@
 ;4-> 打开A20，进入保护模式
 
 
-
+[bits 16]
 CYLS		EQU	10	;读10个柱面
 BOOT_ADDR	EQU	0x7C00
 KERNEL_ADDR	EQU	0xC0000000
@@ -25,11 +25,10 @@ SCREENY		EQU	0x0ff6  ;	y
 LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
 
 	ORG	BOOT_ADDR	;必须是这个地址
-
 ;初始化段SS=0 DS=0 ES=0 SP指向程序加载的地址
 ;因为程序加载的地址是0x7c00，所以我们的段地址必须是0，
 ;不然地址就不是0x7c00了
-	MOV	AX,0
+	MOV	AX,CS
 	MOV	SS,AX
 	MOV	SP,BOOT_ADDR
 	MOV	DS,AX
@@ -64,7 +63,7 @@ Read:
 ;代码借鉴《30天...》川和秀实
 ;ES:BX	代表缓冲器地址
 Read_Ok:
-	MOV	AX,0x0820	;原则上来说把启动区也要拷贝过来，就改成0x0800
+	MOV	AX,0x0800	;原则上来说把启动区也要拷贝过来，就改成0x0800
 	MOV	ES,AX
 	MOV	BX,0x00
 	MOV	CH,0		;柱面0
@@ -160,11 +159,42 @@ goto_PM:
 	CALL	waitkbd_8042 ;打开A20
 
 
-	;MOV	AH,0x0e
-	;MOV	AL,'O'
-	;INT	0x10
+	MOV	AH,0x0e
+	MOV	AL,'O'
+	INT	0x10
 
-        JMP     0x8200
+	MOV	AH,0x0e
+	MOV	AL,'S'
+	INT	0x10
+
+        ;jmp     $
+        CLI
+	LGDT	[GDTR0]
+
+        IN      AL,92h
+        OR      AL,0x02
+	OUT     92h,AL
+
+        MOV	EAX,CR0
+	AND	EAX,0x7fffffff
+	OR	AL,1
+	MOV	CR0,EAX       ;打开段级保护，不开分页机制
+
+        JMP	dword 0x08:PM_MODE
+[bits 32]
+PM_MODE:
+	MOV	EAX,0x00000010
+	MOV	DS,AX
+	MOV	ES,AX
+	MOV	FS,AX
+	MOV	GS,AX
+	MOV	SS,AX
+
+        ;MOV     EAX,0x00000018
+        ;MOV     GS,EAX
+        
+        MOV     EAX,0x8080
+        JMP     EAX;dword 0x08:0x8200
 ;
 ;	显示需要的相关字符串
 ;
@@ -174,6 +204,28 @@ waitkbd_8042:
 	AND	AL,0x02    ;输入缓冲区是否满了？
 	JNZ	waitkbd_8042 ;Yes---跳转
 	RET
+
+;
+;进入保护模式后，不再按照CS*16+IP取指令执行，需要按照向全局描述符
+;	具体可参考《linux内核设计的艺术》
+;
+
+GDT0:
+	DW      0x0000,0x0000,0x0000,0x0000
+        ;---代码段基地址 0x0047取00，0x9a28取28，0x0000取全部===0x00280000
+	DW	0xffff,0x0000,0x9a00,0x00cf
+        ;---数据段基地址 0x00cf取00，0x9200取00，0x0000取全部===0x00000000
+	DW	0xffff,0x0000,0x9200,0x00cf
+        DW      0xffff,0x8000,0xf20b,0x000f
+        ;为tss准备的
+	DW      0x0000,0x0000,0x0000,0x0000
+        ;为idt准备的
+	DW      0x0000,0x0000,0x0000,0x0000
+        ;DW      0xffff,0x8000,0xf20b,0x000f
+GDT0_LEN EQU $-GDT0
+GDTR0:
+	DW	GDT0_LEN-1
+	DD	GDT0
 
 error:
 	MOV	SI,msg_error;	打开失败要显示字符

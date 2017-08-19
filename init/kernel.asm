@@ -17,7 +17,7 @@
 ; 4-> 打开A20，进入保护模式
 ; 5-> 设置CR0的PE和PG
 ; 6-> 更新D、E、F、G、S，其中数代表的是第几个GDT
-
+[bits 32]
 GLOBAL  _start
 GLOBAL	myprintf
 EXTERN  kernel_start
@@ -34,85 +34,28 @@ SCREENX		EQU	0x0ff4  ;	x
 SCREENY		EQU	0x0ff6  ;	y
 LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
 
-ALIGN 32
-[bits 32]
-section .text
+
 _start:
-	;MOV	AH,0x0e
-	;MOV	AL,'S'
-	;INT	0x10
-
-        CLI
-	LGDT	[GDTR0]
-
-        IN      AL,92h
-        OR      AL,0x02
-	OUT     92h,AL
-
-        MOV	EAX,CR0
-	AND	EAX,0x7fffffff
-	OR	AL,1
-	MOV	CR0,EAX       ;打开段级保护，不开分页机制
-
-	JMP	dword 0x08:PM_MODE
-PM_MODE:
-	MOV	AX,2*8
-	MOV	DS,AX
-	MOV	ES,AX
-	MOV	FS,AX
-	;MOV	GS,AX
-	MOV	SS,AX
-
-        MOV     AX,3*8
-        MOV     GS,AX
-
-        ;MOV     AX,2*8
-        ;MOV     CS,AX
-
-        MOV     ESP,STACK_TOP
-        MOV     EBP,0
-        AND     ESP,0FFFFFFF0H
-        ;MOV     [glb_mboot_ptr],EBX
-
-        MOV     AH,0x0F
-        MOV     AL,'E'
-        MOV     [0xb8000],AX
         ;INT     0x10
+	MOV     ESP,0x00007000
+        MOV     EBP,ESP
+        ;AND     ESP,0FFFFFFF0H
+        ;MOV     AH,0x0f
+        ;MOV     AL,'V'
+        ;MOV     BYTE [0xb8008],'V'
+        MOV     EAX,kernel_start
+        JMP     EAX
+        ;SUB     EAX,0x8080
+        ;CALL    EAX
 
-        CALL    kernel_start
-        ;JMP     $
-stop:
-        JMP     stop
-
-;
-;进入保护模式后，不再按照CS*16+IP取指令执行，需要按照向全局描述符
-;	具体可参考《linux内核设计的艺术》
-;
-
-GDT0:
-	DW      0x0000,0x0000,0x0000,0x0000
-        ;---代码段基地址 0x0047取00，0x9a28取28，0x0000取全部===0x00280000
-	DW	0xffff,0x0000,0x9a00,0x00cf
-        ;---数据段基地址 0x00cf取00，0x9200取00，0x0000取全部===0x00000000
-	DW	0xffff,0x0000,0x9200,0x00cf
-        DW      0xffff,0x8000,0xf20b,0x000f
-        ;为tss准备的
-	DW      0x0000,0x0000,0x0000,0x0000
-        ;为idt准备的
-	DW      0x0000,0x0000,0x0000,0x0000
-        ;DW      0xffff,0x8000,0xf20b,0x000f
-GDT0_LEN EQU $-GDT0
-GDTR0:
-	DW	GDT0_LEN
-	DD	GDT0
-;section .bss
-stack:
-	;resb	32768
-        times   32768 db 0
+;stop:
+;        JMP     stop
+;stack:
+ ;       times   32768 db 0
 ;glb_mboot_ptr:
 ;	resb	4
 
-STACK_TOP equ $
+;STACK_TOP equ $-stack-1
 
 
 
