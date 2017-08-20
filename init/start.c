@@ -14,6 +14,7 @@ void kernel_start()
 	unsigned char *input = (unsigned char *)0xb8000;
 	unsigned char color = (0 << 4) | (15 & red);
 
+
 	*input++ = 'H';
 	*input++ = color;
 
