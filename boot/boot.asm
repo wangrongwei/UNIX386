@@ -159,13 +159,13 @@ goto_PM:
 	CALL	waitkbd_8042 ;´ò¿ªA20
 
 
-	MOV	AH,0x0e
-	MOV	AL,'O'
-	INT	0x10
+	;MOV	AH,0x0e
+	;MOV	AL,'O'
+	;INT	0x10
 
-	MOV	AH,0x0e
-	MOV	AL,'S'
-	INT	0x10
+	;MOV	AH,0x0e
+	;MOV	AL,'S'
+	;INT	0x10
 
         ;jmp     $
         CLI
