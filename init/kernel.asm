@@ -17,6 +17,7 @@
 ; 4-> 打开A20，进入保护模式
 ; 5-> 设置CR0的PE和PG
 ; 6-> 更新D、E、F、G、S，其中数代表的是第几个GDT
+
 [bits 32]
 GLOBAL  _start
 GLOBAL	myprintf

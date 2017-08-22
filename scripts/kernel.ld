@@ -3,8 +3,8 @@
  *
  *           作者是 JamesM 先生，感谢他的慷慨和付出
  *
- *          Original file taken from Bran's Kernel Development 
- *          tutorials: http://www.osdever.net/bkerndev/index.php. 
+ *          Original file taken from Bran's Kernel Development
+ *          tutorials: http://www.osdever.net/bkerndev/index.php.
  *
  * 首先，我们声明了内核程序的入口地址是符号 "start"
  * 这个脚本告诉 ld 程序 如何构造我们的内核映像文件。
@@ -13,49 +13,34 @@
  * Linux GCC 增加了额外的数据段 .rodata，这是一个只读的已初始化数据段，放置常量什么的。
  * 简单起见，我们把和 .data 段放在一起好了。
  *
- * This script tells LD how to set up our kernel image. 
- * Firstly it tells LD that the start location of our binary should be the symbol 'start'. 
- * It then tells LD that the .text section (that's where all your code goes) should be first,
- * and should start at 0x100000 (1MB). 
- * The .data (initialised static data) and the .bss (uninitialised static data) should be next, 
- * and each should be page-aligned (ALIGN(4096)).
- * Linux GCC also adds in an extra data section: .rodata. 
- * This is for read-only initialised data, such as constants. 
- * For simplicity we simply bundle this in with the .data section.
+ * Alexander.Wang修改<2017/08/23>
+ *      由于kernel.bin是一个elf文件，所以这里的0x9000地址指明的是_start的加载地址
+ * 但是在生成的kernel.bin文件里前面还有这个elf文件的属性，尽管把这个.bin文件拷贝到
+ * 0x8000，但是可执行段是从0x9000开始
+ *
  */
 
 ENTRY(_start)
 SECTIONS
 {
-	. = 0x8200;
+	. = 0x9000;
 
 	.text :
 	{
 		*(.text)
-		. = ALIGN(4096);
+		. = ALIGN(4);
 	}
 	.data :
 	{
 		*(.data)
-		*(.rodata)
-		. = ALIGN(4096);
+                *(.rodata)
+		. = ALIGN(4);
 	}
 	.bss :
 	{
 		*(.bss)
-		. = ALIGN(4096);
+		. = ALIGN(4);
 	}
-	.stab :
-	{
-		*(.stab)
-		. = ALIGN(4096);
-	}
-	.stabstr :
-	{
-		*(.stabstr)
-	 	. = ALIGN(4096);
-	}
-	
-	/DISCARD/ : { *(.comment) *(.eh_frame) }
+
 }
 

@@ -193,7 +193,7 @@ PM_MODE:
         ;MOV     EAX,0x00000018
         ;MOV     GS,EAX
         
-        MOV     EAX,0x8080
+        MOV     EAX,0x9000
         JMP     EAX;dword 0x08:0x8200
 ;
 ;	显示需要的相关字符串

@@ -17,10 +17,11 @@ CC = gcc
 ASM = nasm
 LD = ld
 
-C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -fno-stack-protector -I include
+C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin \
+-fno-stack-protector -I include
 
-LD_FLAGS  = -Ttext-seg=0x8000 -m elf_i386
-#LD_FLAGS  = -T scripts/kernel.ld -m elf_i386
+#LD_FLAGS  = -Ttext-seg=0x8000 -m elf_i386
+LD_FLAGS  = -T scripts/kernel.ld -m elf_i386
 ASM_FLAGS = -felf -g -F stabs
 
 IMG:=deeppink.img
@@ -36,11 +37,13 @@ $(BOOT_BIN) : $(BOOT)
 
 #kernel.bin : $(LDR)
 #	nasm kernel.asm -o kernel.bin
-$(C_OBJECTS):$(C_SOURCES)
+#$(C_OBJECT):$(C_SOURCES)
+.c.o:
+	echo $(C_SOURCES)
 	$(CC) $(C_FLAGS) $< -o $@
 $(S_OBJECTS):$(S_SOURCES)
-	@echo $(S_SOURCES)
-	$(ASM) $(ASM_FLAGS) $< -o $@ 
+	echo $(S_SOURCES)
+	$(ASM) $(ASM_FLAGS) $< -o $@
 link:
 	@echo $(S_SOURCES)
 	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o init/kernel.bin

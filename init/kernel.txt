@@ -1,0 +1,149 @@
+
+./init/kernel.bin：     文件格式 elf32-i386
+
+
+Disassembly of section .text:
+
+00009000 <_start>:
+    9000:	bc 00 70 00 00       	mov    $0x7000,%esp
+    9005:	89 e5                	mov    %esp,%ebp
+    9007:	b8 70 90 00 00       	mov    $0x9070,%eax
+    900c:	ff e0                	jmp    *%eax
+
+0000900e <console_clear>:
+    900e:	55                   	push   %ebp
+    900f:	89 e5                	mov    %esp,%ebp
+    9011:	83 ec 10             	sub    $0x10,%esp
+    9014:	c6 45 fb 07          	movb   $0x7,-0x5(%ebp)
+    9018:	0f b6 45 fb          	movzbl -0x5(%ebp),%eax
+    901c:	c1 e0 08             	shl    $0x8,%eax
+    901f:	83 c8 20             	or     $0x20,%eax
+    9022:	66 89 45 f8          	mov    %ax,-0x8(%ebp)
+    9026:	c7 45 fc 00 00 00 00 	movl   $0x0,-0x4(%ebp)
+    902d:	eb 15                	jmp    9044 <console_clear+0x36>
+    902f:	8b 15 4c 92 00 00    	mov    0x924c,%edx
+    9035:	8b 45 fc             	mov    -0x4(%ebp),%eax
+    9038:	01 d0                	add    %edx,%eax
+    903a:	0f b7 55 f8          	movzwl -0x8(%ebp),%edx
+    903e:	88 10                	mov    %dl,(%eax)
+    9040:	83 45 fc 01          	addl   $0x1,-0x4(%ebp)
+    9044:	81 7d fc cf 07 00 00 	cmpl   $0x7cf,-0x4(%ebp)
+    904b:	7e e2                	jle    902f <console_clear+0x21>
+    904d:	90                   	nop
+    904e:	c9                   	leave  
+    904f:	c3                   	ret    
+
+00009050 <console_puts>:
+    9050:	55                   	push   %ebp
+    9051:	89 e5                	mov    %esp,%ebp
+    9053:	83 ec 18             	sub    $0x18,%esp
+    9056:	8b 55 0c             	mov    0xc(%ebp),%edx
+    9059:	8b 45 10             	mov    0x10(%ebp),%eax
+    905c:	88 55 ec             	mov    %dl,-0x14(%ebp)
+    905f:	88 45 e8             	mov    %al,-0x18(%ebp)
+    9062:	c7 45 fc 00 00 00 00 	movl   $0x0,-0x4(%ebp)
+    9069:	83 45 fc 01          	addl   $0x1,-0x4(%ebp)
+    906d:	90                   	nop
+    906e:	c9                   	leave  
+    906f:	c3                   	ret    
+
+00009070 <kernel_start>:
+    9070:	55                   	push   %ebp
+    9071:	89 e5                	mov    %esp,%ebp
+    9073:	83 ec 18             	sub    $0x18,%esp
+    9076:	c7 45 f4 00 80 0b 00 	movl   $0xb8000,-0xc(%ebp)
+    907d:	c6 45 f3 07          	movb   $0x7,-0xd(%ebp)
+    9081:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    9084:	8d 50 01             	lea    0x1(%eax),%edx
+    9087:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    908a:	c6 00 48             	movb   $0x48,(%eax)
+    908d:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    9090:	8d 50 01             	lea    0x1(%eax),%edx
+    9093:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    9096:	0f b6 55 f3          	movzbl -0xd(%ebp),%edx
+    909a:	88 10                	mov    %dl,(%eax)
+    909c:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    909f:	8d 50 01             	lea    0x1(%eax),%edx
+    90a2:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    90a5:	c6 00 65             	movb   $0x65,(%eax)
+    90a8:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    90ab:	8d 50 01             	lea    0x1(%eax),%edx
+    90ae:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    90b1:	0f b6 55 f3          	movzbl -0xd(%ebp),%edx
+    90b5:	88 10                	mov    %dl,(%eax)
+    90b7:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    90ba:	8d 50 01             	lea    0x1(%eax),%edx
+    90bd:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    90c0:	c6 00 6c             	movb   $0x6c,(%eax)
+    90c3:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    90c6:	8d 50 01             	lea    0x1(%eax),%edx
+    90c9:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    90cc:	0f b6 55 f3          	movzbl -0xd(%ebp),%edx
+    90d0:	88 10                	mov    %dl,(%eax)
+    90d2:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    90d5:	8d 50 01             	lea    0x1(%eax),%edx
+    90d8:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    90db:	c6 00 6c             	movb   $0x6c,(%eax)
+    90de:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    90e1:	8d 50 01             	lea    0x1(%eax),%edx
+    90e4:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    90e7:	0f b6 55 f3          	movzbl -0xd(%ebp),%edx
+    90eb:	88 10                	mov    %dl,(%eax)
+    90ed:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    90f0:	8d 50 01             	lea    0x1(%eax),%edx
+    90f3:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    90f6:	c6 00 6f             	movb   $0x6f,(%eax)
+    90f9:	8b 45 f4             	mov    -0xc(%ebp),%eax
+    90fc:	8d 50 01             	lea    0x1(%eax),%edx
+    90ff:	89 55 f4             	mov    %edx,-0xc(%ebp)
+    9102:	0f b6 55 f3          	movzbl -0xd(%ebp),%edx
+    9106:	88 10                	mov    %dl,(%eax)
+    9108:	e8 01 ff ff ff       	call   900e <console_clear>
+    910d:	eb fe                	jmp    910d <kernel_start+0x9d>
+
+0000910f <outb>:
+    910f:	55                   	push   %ebp
+    9110:	89 e5                	mov    %esp,%ebp
+    9112:	83 ec 08             	sub    $0x8,%esp
+    9115:	8b 55 08             	mov    0x8(%ebp),%edx
+    9118:	8b 45 0c             	mov    0xc(%ebp),%eax
+    911b:	66 89 55 fc          	mov    %dx,-0x4(%ebp)
+    911f:	66 89 45 f8          	mov    %ax,-0x8(%ebp)
+    9123:	0f b7 55 fc          	movzwl -0x4(%ebp),%edx
+    9127:	0f b7 45 f8          	movzwl -0x8(%ebp),%eax
+    912b:	ee                   	out    %al,(%dx)
+    912c:	90                   	nop
+    912d:	c9                   	leave  
+    912e:	c3                   	ret    
+
+0000912f <inb>:
+    912f:	55                   	push   %ebp
+    9130:	89 e5                	mov    %esp,%ebp
+    9132:	83 ec 14             	sub    $0x14,%esp
+    9135:	8b 45 08             	mov    0x8(%ebp),%eax
+    9138:	66 89 45 ec          	mov    %ax,-0x14(%ebp)
+    913c:	c6 45 ff 00          	movb   $0x0,-0x1(%ebp)
+    9140:	0f b7 45 ec          	movzwl -0x14(%ebp),%eax
+    9144:	89 c2                	mov    %eax,%edx
+    9146:	ec                   	in     (%dx),%al
+    9147:	88 45 ff             	mov    %al,-0x1(%ebp)
+    914a:	0f b6 45 ff          	movzbl -0x1(%ebp),%eax
+    914e:	c9                   	leave  
+    914f:	c3                   	ret    
+
+00009150 <inw>:
+    9150:	55                   	push   %ebp
+    9151:	89 e5                	mov    %esp,%ebp
+    9153:	83 ec 14             	sub    $0x14,%esp
+    9156:	8b 45 08             	mov    0x8(%ebp),%eax
+    9159:	66 89 45 ec          	mov    %ax,-0x14(%ebp)
+    915d:	66 c7 45 fe 00 00    	movw   $0x0,-0x2(%ebp)
+    9163:	0f b7 45 ec          	movzwl -0x14(%ebp),%eax
+    9167:	89 c2                	mov    %eax,%edx
+    9169:	66 ed                	in     (%dx),%ax
+    916b:	66 89 45 fe          	mov    %ax,-0x2(%ebp)
+    916f:	0f b7 45 fe          	movzwl -0x2(%ebp),%eax
+    9173:	c9                   	leave  
+    9174:	c3                   	ret    
+    9175:	66 90                	xchg   %ax,%ax
+    9177:	90                   	nop
