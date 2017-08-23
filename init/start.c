@@ -1,10 +1,10 @@
 /*
  * 从汇编跳转到C语言的第一个.c文件
  *	author: Alexander.Wang<wangrongwei.kernel@gmail.com>
- *	time: 2017/05/06
+ *	time: 2017/05/13
  */
 #include <console.h>
-
+#include <string.h>
 
 void outb(unsigned short port,unsigned short value);
 
@@ -18,7 +18,7 @@ void kernel_start()
 {
 	unsigned char *input = (unsigned char *)0xb8000;
 	unsigned char color = (0 << 4) | (15 & white);
-	unsigned char *string = "DeeppinkOS";
+	unsigned char *string = "Hello,welcome to \nDeeppinkOS";
 
 	*input++ = 'H';
 	*input++ = color;
@@ -35,7 +35,7 @@ void kernel_start()
 	*input++ = 'o';
 	*input++ = color;
 	console_clear();
-	console_puts(string,0,red);
+	console_puts(string,0,green);
 
 	while(1);
 	//return 0;

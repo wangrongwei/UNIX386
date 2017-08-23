@@ -16,8 +16,7 @@ enum color{
  * 定义两个与屏幕有关的函数-清屏和显示一个字符串
  */
 void console_clear();
-
 void console_puts(unsigned char *string,unsigned char color_b,unsigned char color_z);
-
+void console_movecursor(int x,int y);
 
 #endif

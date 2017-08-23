@@ -20,6 +20,7 @@ void console_clear()
 	for(i=0;i<80*25;i++){
 		video_memory[i] = blank;
 	}
+	console_movecursor(0,0);
 
 }
 
@@ -31,14 +32,40 @@ void console_clear()
  */
 void console_puts(unsigned char *string,unsigned char color_b,unsigned char color_c)
 {
-	int i=0;
+	int i=0,cursor_x=0,cursor_y=0;
 	unsigned char attribute = (color_b << 4)|(15 & color_c);
 	//unsigned short character = attribute<<8;
+
 	while(string[i] != '\0'){
-		video_memory[i] = string[i] | (attribute << 8);
+		//检查是否有换行符
+		if(string[i] == '\n'){
+			cursor_y++;	//纵坐标+1
+			cursor_x = 0;	//光标移到最开始
+			i++;		//不显示换行符
+		}
+		video_memory[cursor_y*80+cursor_x] = string[i] | (attribute << 8);
 		i++;
+		cursor_x++;
+		// 到一行显示完，开始从下一行开始显示
+		if(cursor_x >= 79)
+			cursor_y++;
+		console_movecursor(cursor_x,cursor_y);
 	}
 
 }
+
+void console_movecursor(int x,int y)
+{
+	//组合要移动的光标位置
+	unsigned short cursor_addr = y*80+x;
+	//指明下面是设置光标的行
+	outb(0x3d4,14);
+	outb(0x3d5,cursor_addr>>8);
+	//指明下面是设置光标的列
+	outb(0x3d4,15);
+	outb(0x3d5,cursor_addr);
+
+}
+
 
 
