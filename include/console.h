@@ -1,5 +1,5 @@
-#ifndef CONSOLE_H
-#define CONSOLE_H
+#ifndef __CONSOLE_H__
+#define __CONSOLE_H__
 
 enum color{
 	black = 0,
@@ -20,3 +20,6 @@ void console_puts(unsigned char *string,unsigned char color_b,unsigned char colo
 void console_movecursor(int x,int y);
 
 #endif
+
+
+

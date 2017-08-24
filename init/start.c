@@ -5,6 +5,7 @@
  */
 #include <console.h>
 #include <string.h>
+#include <descriptor.h>
 
 void outb(unsigned short port,unsigned short value);
 
@@ -16,26 +17,16 @@ unsigned short inw(unsigned short port);
  */
 void kernel_start()
 {
-	unsigned char *input = (unsigned char *)0xb8000;
-	unsigned char color = (0 << 4) | (15 & white);
+	//unsigned char *input = (unsigned char *)0xb8000;
+	//unsigned char color = (0 << 4) | (15 & white);
 	unsigned char *string = "Hello,welcome to \nDeeppinkOS";
 
-	*input++ = 'H';
-	*input++ = color;
+	//*input++ = 'H';
+	//*input++ = color;
 
-	*input++ = 'e';
-	*input++ = color;
-
-	*input++ = 'l';
-	*input++ = color;
-
-	*input++ = 'l';
-	*input++ = color;
-
-	*input++ = 'o';
-	*input++ = color;
 	console_clear();
-	console_puts(string,0,green);
+	//console_puts(string,0,green);
+	printk(string);
 
 	while(1);
 	//return 0;
@@ -67,5 +58,16 @@ inline unsigned short inw(unsigned short port)
 	return retval;
 }
 
+void init_gdt()
+{
+
+
+}
+
+void init_idt()
+{
+
+
+}
 
 

@@ -101,7 +101,7 @@ next:
 	CMP	CH,CYLS
 	JB	readloop	;CH < CYLS跳转
 ;10*2*18*512=
-	MOV	[0x0ff0],CH	;IPLがどこまで読んだのかをメモ
+	MOV	[0x0ff0],CH
 
 ;
 ;  打印成功读取状态

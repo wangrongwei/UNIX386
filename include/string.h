@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef STRING_H_
-#define STRING_H_
+#ifndef __STRING_H__
+#define __STRING_H__
 
 
 static inline void memcpy(unsigned char *dest, const unsigned char *src, unsigned int len)
