@@ -74,5 +74,8 @@ FAT12文件的很重要，不能随意更改其中的文件名字（只是更改
    完善Deeppink的显示字符串函数(console_puts)，添加对字符串里换行等的支持，添加
 光标移动函数(console_movecursor)
 
-
+2017/08/24
+   添加kernel/printk.c文件
+2017/08/25
+   添加descriptor.h文件，使用c语言重新初始化gdt和idt表 
 

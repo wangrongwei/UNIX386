@@ -21,6 +21,7 @@
 [bits 32]
 GLOBAL  _start
 GLOBAL	myprintf
+GLOBAL  load_gdtr
 EXTERN  kernel_start
 
 BOTPAK	EQU		0x00280000
@@ -48,6 +49,21 @@ _start:
         JMP     EAX
         ;SUB     EAX,0x8080
         ;CALL    EAX
+; 加载gdtr地址需要，后面函数调用
+load_gdtr:
+        MOV     EAX,[ESP+4]
+        LGDT    [EAX]
+        MOV     AX,0x10
+        MOV     DS,AX
+        MOV     ES,AX
+        MOV     FS,AX
+        MOV     GS,AX
+        MOV     SS,AX
+
+        JMP     0x08:.flush
+.flush:
+        ret
+
 
 ;stop:
 ;        JMP     stop

@@ -86,5 +86,8 @@ static inline int strlen(const char *src)
 	return (eos - src - 1);
 }
 
+//#define sizeof(char *type) ((type+1)-type)
+
+
 #endif//STRING_H_
 
