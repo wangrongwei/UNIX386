@@ -19,7 +19,7 @@ void kernel_start()
 {
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
-	unsigned char *string = "Hello,welcome to \nDeeppinkOS";
+	unsigned char *string = "Hello,welcome to DeeppinkOS";
 
 	//*input++ = 'H';
 	//*input++ = color;
@@ -59,16 +59,7 @@ inline unsigned short inw(unsigned short port)
 	return retval;
 }
 
-void init_gdt()
-{
 
 
-}
-
-void init_idt()
-{
-
-
-}
 
 

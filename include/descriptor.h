@@ -5,6 +5,9 @@
  * 文件描述：全局描述符和中断描述符相关结构体定义
  *
  */
+#include "debug.h"
+#include "console.h"
+#include "vargs.h"
 
 #define GDT_LEN 5
 
@@ -13,7 +16,7 @@ void init_gdt();
 void init_idt();
 
 // 填充gdt表
-static void set_gdt(int num,unsigned short base,unsigned short limit,\
+static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	     unsigned char access,unsigned char G_DB_L_AVL);
 
 typedef struct gdt_struct_t{
@@ -22,13 +25,13 @@ typedef struct gdt_struct_t{
 	unsigned char  base1;	     //基地址23--16
 	unsigned char  access;       //P_DVL(2位)_S_Type
 	unsigned char  limit1:4;     //长度限制19--16
-	unsigned char  G_DB_L_AVL:4  //
-	unsigned char  base2;        //基地址31--24
+	unsigned char  G_DB_L_AVL:4; //
+	unsigned char  base2         //基地址31--24
 }__attribute__((packed)) gdt_struct_t;
 
 struct gdtr_t{
 	unsigned short length; //这个大小代表了gdt表的大小
-	unsigned int   base;   //gdt表的基地址
+	unsigned int   base    //gdt表的基地址
 }__attribute__((packed)) gdtr_t;
 
 typedef struct idt_struct_t{
@@ -37,13 +40,13 @@ typedef struct idt_struct_t{
 	unsigned char  zero;    //全是0
 	unsigned char  :5;	//空5位
 	unsigned char  P_DPL:3;	//相关标志
-	unsigned short base1;	//中断函数基地址31--16
+	unsigned short base1	//中断函数基地址31--16
 
 }__attribute__((packed)) idt_struct_t;
 
 struct idtr_t{
 	unsigned short length; //这个大小代表了idt表的大小
-	unsigned int   base;   //gdt表的基地址
+	unsigned int   base   //gdt表的基地址
 }__attribute__((packed)) idtr_t;
 
 gdt_struct_t gdt_list[GDT_LEN];
@@ -70,8 +73,9 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
  */
 void init_gdt()
 {
+	printk("\nNew,update gdt!!!");
 	// sizeof是编译器内部的宏定义,不需要定义
-	GDTR.limit = sizeof(gdt_struct_t)*GDT_LEN - 1;
+	GDTR.length = sizeof(gdt_struct_t)*GDT_LEN - 1;
 	GDTR.base = (unsigned int)&gdt_list;
 
 	// 开始设置gdt表中的内容

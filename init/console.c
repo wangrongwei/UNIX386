@@ -38,11 +38,22 @@ void console_puts(unsigned char *string,unsigned char color_b,unsigned char colo
 
 	while(string[i] != '\0'){
 		//检查是否有换行符
-		if(string[i] == '\n'){
-			cursor_y++;	//纵坐标+1
-			cursor_x = 0;	//光标移到最开始
-			i++;		//不显示换行符
-		}
+		do
+		{
+			if(string[i] == '\n'){
+				cursor_y++;   // 纵坐标+1
+				cursor_x = 0; // 光标移到最开始
+				i++;	      // 不显示换行符
+			}
+			if(string[i] == '\0')
+				break;
+
+		}while(string[i] == '\n');
+		//if(string[i] == '\n'){
+		//	cursor_y++;	//纵坐标+1
+		//	cursor_x = 0;	//光标移到最开始
+		//	i++;		//不显示换行符
+		//}
 		video_memory[cursor_y*80+cursor_x] = string[i] | (attribute << 8);
 		i++;
 		cursor_x++;
