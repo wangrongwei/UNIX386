@@ -190,7 +190,7 @@ PM_MODE:
 	MOV	GS,AX
 	MOV	SS,AX
 
-        ;MOV     EAX,0x00000018
+        ;MOV     EAX,0x0000018
         ;MOV     GS,EAX
         
         MOV     EAX,0x9000

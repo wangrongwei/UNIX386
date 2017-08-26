@@ -28,6 +28,7 @@ void kernel_start()
 	//console_puts(string,0,green);
 	printk(string);
 	init_gdt();
+	init_idt();
 
 	while(1);
 	//return 0;
