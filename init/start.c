@@ -7,7 +7,7 @@
 #include <string.h>
 #include <descriptor.h>
 #include <interrupt.h>
-
+#include <timer.h>
 
 void outb(unsigned short port,unsigned short value);
 
@@ -32,9 +32,10 @@ void kernel_start()
 	init_gdt();
 	init_idt();
 
-	asm volatile("int $0x3");
-	asm volatile("int $0x4");
+	//asm volatile("int $0x3");
+	//asm volatile("int $0x4");
 
+	init_timer(200);
 	while(1);
 	//return 0;
 }

@@ -12,7 +12,9 @@
 ;2-> 在bootsecond.nas中添加LCD支持
 ;3-> 初始化PIC
 ;4-> 打开A20，进入保护模式
-
+;5-> 跳转到_start
+;6-> 设置堆栈，跳转到kernel_start函数
+;7-> 
 
 [bits 16]
 CYLS		EQU	10	;读10个柱面
@@ -192,7 +194,7 @@ PM_MODE:
 
         ;MOV     EAX,0x0000018
         ;MOV     GS,EAX
-        
+
         MOV     EAX,0x9000
         JMP     EAX;dword 0x08:0x8200
 ;

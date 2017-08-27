@@ -94,12 +94,12 @@ FAT12文件的很重要，不能随意更改其中的文件名字（只是更改
 
 
 -------->2017.05.24
-       向64h端口写入的字节，被认为是对8042芯片发布的命令（Command）： 写入的字节将会被存放Input Register中； 同时会引起Status Register的Bit-3自动被设置为1，表示现在放在Input Register中的数据是一个Command，而不是一个Data；
-       在向64h端口写某些命令之前必须确保键盘是被禁止的，因为这些被写入的命令的返回结果将会放Output Register中，而键盘如果不被禁止，则也会将数据放入到Output Register中，会引起相互之间的数据覆盖；
-       在向64h端口写数据之前必须确保Input Register是空的（通过判断Status Register的Bit-1是否为0）。60h端口（读操作），对60h端口进行读操作，将会读取Output Register的内容。Output Register的内容可能是：来自8048的数据。这些数据包括Scan Code，对8048发送的命令的确认字节（ACK)及回复数据。 通过64h端口对8042发布的命令的返回结果。在向60h端口读取数据之前必须确保Output Register中有数据（通过判断Status Register的Bit-0是否为1）。
-       60h端口（写操作）向60h端口写入的字节，有两种可能： 
-      1．如果之前通过64h端口向8042芯片发布的命令需要进一步的数据，则此时写入的字节就被认为是数据； 
-      2．否则，此字节被认为是发送给8048的命令。 在向60h端口写数据之前，必须确保Input Register是空的（通过判断Status Register的Bit-1是否为0）。
+向64h端口写入的字节，被认为是对8042芯片发布的命令（Command）： 写入的字节将会被存放Input Register中； 同时会引起Status Register的Bit-3自动被设置为1，表示现在放在Input Register中的数据是一个Command，而不是一个Data；
+在向64h端口写某些命令之前必须确保键盘是被禁止的，因为这些被写入的命令的返回结果将会放Output Register中，而键盘如果不被禁止，则也会将数据放入到Output Register中，会引起相互之间的数据覆盖；
+在向64h端口写数据之前必须确保Input Register是空的（通过判断Status Register的Bit-1是否为0）。60h端口（读操作），对60h端口进行读操作，将会读取Output Register的内容。Output Register的内容可能是：来自8048的数据。这些数据包括Scan Code，对8048发送的命令的确认字节（ACK)及回复数据。 通过64h端口对8042发布的命令的返回结果。在向60h端口读取数据之前必须确保Output Register中有数据（通过判断Status Register的Bit-0是否为1）。
+60h端口（写操作）向60h端口写入的字节，有两种可能： 
+1．如果之前通过64h端口向8042芯片发布的命令需要进一步的数据，则此时写入的字节就被认为是数据； 
+2．否则，此字节被认为是发送给8048的命令。 在向60h端口写数据之前，必须确保Input Register是空的（通过判断Status Register的Bit-1是否为0）。
 
 -------->2017.06.21
 向一个空软盘保存文件的时候,
@@ -111,20 +111,46 @@ FAT12文件的很重要，不能随意更改其中的文件名字（只是更改
       使用一般的编译器编译操作系统，不再依赖原来作者自己的编译器
 >>使用linux系统，在ubuntu下选择和组合一套工具编译运行这个操作系统
 
-2017/08/22
+-------->2017/08/22
    当前对系统只将堆栈指针指向0x7c00，此处在C代码里边定义一个全局变量，似乎没有存储
 这个全局变量的空间，如果设置成局部变量，达到了预想的效果，猜测可能是没有在链接脚本
 指定全局变量空间
    debug:此处的问题不是链接脚本的问题，是生成的kernel.bin文件是一个elf文件，文件最
 开始是elf的头，所以是跳转的地址不对
 
-2017/08/23
+-------->2017/08/23
    完善Deeppink的显示字符串函数(console_puts)，添加对字符串里换行等的支持，添加
 光标移动函数(console_movecursor)
 
-2017/08/24
+-------->2017/08/24
    添加kernel/printk.c文件
-2017/08/25
+-------->2017/08/25
    添加descriptor.h文件，使用c语言重新初始化gdt和idt表
    问题：在使用bochs调试时，sreg命令显示的valid=1 or 31是什么意思
+-------->2017/08/26
+   问题：console_puts函数有一个bug，使用printk函数时总是不能按下原来的光标坐标
+往下显示。
+-------->2017/08/27
+   console_puts函数的bug是在do{}while里边使用break，以为这个break可以跳出外边的
+while循环，看来只是跳出了do-while循环
+   另外添加console_readcursor函数（读取光标坐标），在console_puts函数开始，先读取
+坐标，然后往下显示
+-------->2017/08/28
+添加时钟中断，出现bug如下：
+链接生成kernel.bin文件
+ld -T scripts/kernel.ld -m elf_i386 ./init/kernel.o ./init/console.o ./init/start.o ./kernel/prink.o ./drivers/timer.o -o init/kernel.bin
+./drivers/timer.o：在函数‘isr_handler’中：
+/home/lollipop/DeeppinkOS/include/interrupt.h:85: `isr_handler'被多次定义
+./init/start.o:/home/lollipop/DeeppinkOS/include/interrupt.h:85：第一次在此定义
+./drivers/timer.o：在函数‘irq_handler’中：
+/home/lollipop/DeeppinkOS/include/interrupt.h:135: `irq_handler'被多次定义
+./init/start.o:/home/lollipop/DeeppinkOS/include/interrupt.h:135：第一次在此定义
+./drivers/timer.o：在函数‘register_interrupt_handler’中：
+/home/lollipop/DeeppinkOS/include/interrupt.h:151: `register_interrupt_handler'被多次定义
+./init/start.o:/home/lollipop/DeeppinkOS/include/interrupt.h:151：第一次在此定义
+Makefile:50: recipe for target 'link' failed
+make: *** [link] Error 1
+
+
+
 

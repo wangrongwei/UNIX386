@@ -120,6 +120,37 @@ void init_gdt()
 void init_idt()
 {
 	printk("New,load idt!!!\n");
+	// 重新映射 IRQ 表
+	// 两片级联的 Intel 8259A 芯片
+	// 主片端口 0x20 0x21
+	// 从片端口 0xA0 0xA1
+	
+	// 初始化主片、从片
+	// 0001 0001
+	outb(0x20, 0x11);
+	outb(0xA0, 0x11);
+
+	// 设置主片 IRQ 从 0x20(32) 号中断开始
+	outb(0x21, 0x20);
+
+	// 设置从片 IRQ 从 0x28(40) 号中断开始
+	outb(0xA1, 0x28);
+	
+	// 设置主片 IR2 引脚连接从片
+	outb(0x21, 0x04);
+
+	// 告诉从片输出引脚和主片 IR2 号相连
+	outb(0xA1, 0x02);
+	
+	// 设置主片和从片按照 8086 的方式工作
+	outb(0x21, 0x01);
+	outb(0xA1, 0x01);
+	
+	// 设置主从片允许中断
+	outb(0x21, 0x0);
+	outb(0xA1, 0x0);
+
+
 	IDTR.length = sizeof(idt_struct_t)*256 - 1;
 	IDTR.base = (unsigned int)&idt_list;
 
@@ -159,6 +190,23 @@ void init_idt()
 	set_idt(29,(unsigned int)isr29,0x08,0x8e);
 	set_idt(30,(unsigned int)isr30,0x08,0x8e);
 	set_idt(31,(unsigned int)isr31,0x08,0x8e);
+
+	set_idt(32,(unsigned int)irq0, 0x08,0x8E);
+	set_idt(33,(unsigned int)irq1, 0x08,0x8E);
+	set_idt(34,(unsigned int)irq2, 0x08,0x8E);
+	set_idt(35,(unsigned int)irq3, 0x08,0x8E);
+	set_idt(36,(unsigned int)irq4, 0x08,0x8E);
+	set_idt(37,(unsigned int)irq5, 0x08,0x8E);
+	set_idt(38,(unsigned int)irq6, 0x08,0x8E);
+	set_idt(39,(unsigned int)irq7, 0x08,0x8E);
+	set_idt(40,(unsigned int)irq8, 0x08,0x8E);
+	set_idt(41,(unsigned int)irq9, 0x08,0x8E);
+	set_idt(42,(unsigned int)irq10, 0x08,0x8E);
+	set_idt(43,(unsigned int)irq11, 0x08,0x8E);
+	set_idt(44,(unsigned int)irq12, 0x08,0x8E);
+	set_idt(45,(unsigned int)irq13, 0x08,0x8E);
+	set_idt(46,(unsigned int)irq14, 0x08,0x8E);
+	set_idt(47,(unsigned int)irq15, 0x08,0x8E);
 
 	// 用于实现系统调用
 	set_idt(255,(unsigned int)isr255,0x08,0x8e);
