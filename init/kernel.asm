@@ -22,6 +22,7 @@
 GLOBAL  _start
 GLOBAL	myprintf
 GLOBAL  load_gdtr
+GLOBAL  load_idtr
 EXTERN  kernel_start
 
 BOTPAK	EQU		0x00280000

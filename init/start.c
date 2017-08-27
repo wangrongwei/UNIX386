@@ -6,6 +6,8 @@
 #include <console.h>
 #include <string.h>
 #include <descriptor.h>
+#include <interrupt.h>
+
 
 void outb(unsigned short port,unsigned short value);
 
@@ -19,7 +21,7 @@ void kernel_start()
 {
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
-	unsigned char *string = "Hello,welcome to DeeppinkOS";
+	unsigned char *string = "Hello,welcome to DeeppinkOS\n";
 
 	//*input++ = 'H';
 	//*input++ = color;
@@ -29,6 +31,9 @@ void kernel_start()
 	printk(string);
 	init_gdt();
 	init_idt();
+
+	asm volatile("int $0x3");
+	asm volatile("int $0x4");
 
 	while(1);
 	//return 0;
