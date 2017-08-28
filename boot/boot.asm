@@ -75,17 +75,17 @@ readloop:
 	MOV	SI,0
 retry:
 	MOV	AH,0x02		;AH=0x02:读扇区
-	MOV	AL,1		;读扇区数 
+	MOV	AL,1		;读扇区数
 	MOV	BX,0
 	MOV	DL,0x00		;代表读的软盘
 	INT	0x13		;产生读中断
 	JNC	next		;跳转，代表这个扇区读成功
-	ADD	SI,1		;SIに1を足す
-	CMP	SI,5		;SIと5を比較
-	JAE	error		;SI >=	5だったらerrorへ
+	ADD	SI,1		;SI+1(执行这代表读取失败)
+	CMP	SI,5		;SI与5比较(再尝试读取5次)
+	JAE	error		;SI >=	5，则跳转到error
 	MOV	AH,0x00
-	MOV	DL,0x00		;Aドライブ
-	INT	0x13		;ドライブのリセット
+	MOV	DL,0x00
+	INT	0x13		;开始读取软盘程序
 	JMP	retry
 next:
 	MOV	AX,ES		;缓冲地址往后0x200
@@ -107,8 +107,8 @@ next:
 
 ;
 ;  打印成功读取状态
-;	换显示坐标	
-		
+;	换显示坐标
+
 	MOV	AH,0x02
 	MOV	BX,0x0f
 	MOV	DX,0x0e16
@@ -123,7 +123,7 @@ print_loop:
 	MOV	AH,0x0e
 	MOV	BX,0x0f
 	INT	0x10		;执行BIOS中断0x10
-	
+
 	JMP	print_loop;
 ;
 ;The third stage
@@ -138,7 +138,7 @@ goto_PM:
 	;MOV	WORD [SCREENX],320
 	;MOV	WORD [SCREENY],200
 	;MOV	DWORD [LCDRAM],0x000a0000
-	
+
 	MOV	AL,0XFF
 	OUT	0x21,AL
 	NOP

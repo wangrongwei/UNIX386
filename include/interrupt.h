@@ -41,6 +41,9 @@ interrupt_handler_t interrupt_handlers[256];
 
 
 
+// 32～255 用户自定义异常
+void isr255();
+
 // 声明中断处理函数 0-19 属于 CPU 的异常中断
 // ISR:中断服务程序(interrupt service routine)
 void isr0(); 		// 0 #DE 除 0 异常 
@@ -78,18 +81,6 @@ void isr29();
 void isr30();
 void isr31();
 
-// 32～255 用户自定义异常
-void isr255();
-
-void isr_handler(pt_regs *regs)
-{
-	if(interrupt_handlers[regs->int_no]){
-		interrupt_handlers[regs->int_no](regs);
-	}
-	else{
-		printk("unhandle interrupt_handler:%d\n",regs->int_no);
-	}
-}
 
 // IRQ 处理函数
 void irq_handler(pt_regs *regs);
@@ -131,30 +122,9 @@ void irq13(); 		// 协处理器使用
 void irq14(); 		// IDE0 传输控制使用
 void irq15(); 		// IDE1 传输控制使用
 
-void irq_handler(pt_regs *regs)
-{
-	// 从32号开始，为用户自定义中断
-	// 单片只能处理八级中断
-	// 因此大于40是由从片处理
-	if(regs->int_no > 40){
-		// 发送重设信号给从片
-		outb(0xa0,0x20);
-	}
-	// 发送重设信号给主片
-	outb(0x20,0x20);
-	if(interrupt_handlers[regs->int_no]){
-		interrupt_handlers[regs->int_no](regs);
-	}
-}
 
-void register_interrupt_handler(unsigned char n,interrupt_handler_t h)
-{
-	interrupt_handlers[n] = h;
-	//h->int_no = n;
-}
-
-#endif
 
 
 
+#endif
 

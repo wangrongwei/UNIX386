@@ -24,7 +24,7 @@ ENTRY(_start)
 SECTIONS
 {
 	. = 0x9000;
-
+        PROVIDE(kernel_s = .);
 	.text :
 	{
 		*(.text)
@@ -41,6 +41,7 @@ SECTIONS
 		*(.bss)
 		. = ALIGN(4);
 	}
+        PROVIDE(kernel_e = .);
 
 }
 

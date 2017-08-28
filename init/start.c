@@ -9,6 +9,8 @@
 #include <interrupt.h>
 #include <timer.h>
 
+extern unsigned char kernel_s[];
+extern unsigned char kernel_e[];
 void outb(unsigned short port,unsigned short value);
 
 unsigned char inb(unsigned short port);
@@ -36,6 +38,11 @@ void kernel_start()
 	//asm volatile("int $0x4");
 
 	init_timer(200);
+	//asm volatile("sti"); // 打开中断
+	printk("kernel start addr = 0x%08X\n",kernel_s);
+	printk("kernel end addr = 0x%08X\n",kernel_e);
+	printk("kernel size = %dKB\n",(kernel_e-kernel_s+1023)/1024);
+
 	while(1);
 	//return 0;
 }

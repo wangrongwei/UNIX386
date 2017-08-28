@@ -28,6 +28,8 @@
 #DeeppinkOS文件结构(每个文件下按照创建先后列出)
 boot----------------------
     |-------boot.asm
+drivers-------------------
+    |-------timer.c
 include-------------------
     |-------console.h
     |-------string.h
@@ -150,7 +152,10 @@ ld -T scripts/kernel.ld -m elf_i386 ./init/kernel.o ./init/console.o ./init/star
 ./init/start.o:/home/lollipop/DeeppinkOS/include/interrupt.h:151：第一次在此定义
 Makefile:50: recipe for target 'link' failed
 make: *** [link] Error 1
-
+解决办法：
+    源文件的头文件太多，相互关系包括可能有重复，因此将interrupt.h分成两部分
+----->interrupt.h和interrupt.c，这样只在头文件里边定义原型，在interrupt.c里边
+定义函数内容
 
 
 
