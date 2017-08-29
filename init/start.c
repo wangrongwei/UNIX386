@@ -8,6 +8,7 @@
 #include <descriptor.h>
 #include <interrupt.h>
 #include <timer.h>
+#include <pmm.h>
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
@@ -24,7 +25,7 @@ void kernel_start()
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
 	unsigned char *string = "Hello,welcome to DeeppinkOS\n";
-
+	unsigned int page_addr1=0,page_addr2=0;
 	//*input++ = 'H';
 	//*input++ = color;
 
@@ -43,6 +44,13 @@ void kernel_start()
 	printk("kernel end addr = 0x%08X\n",kernel_e);
 	printk("kernel size = %dKB\n",(kernel_e-kernel_s+1023)/1024);
 
+	init_pmm();
+	page_addr1 = pmm_alloc_page();
+	printk("alloc page1 = 0x%08X\n",page_addr1);
+	page_addr2 = pmm_alloc_page();
+	printk("alloc page2 = 0x%08X\n",page_addr2);
+	pmm_free_page(page_addr2);
+	pmm_free_page(page_addr1);
 	while(1);
 	//return 0;
 }
