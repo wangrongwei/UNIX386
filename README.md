@@ -30,29 +30,37 @@ boot----------------------
     |-------boot.asm
 drivers-------------------
     |-------timer.c
+    |-------keyboard.c
 include-------------------
     |-------console.h
     |-------string.h
     |-------vargs.h
     |-------debug.h
     |-------descriptor.h
+    |-------interrupt.h
+    |-------timer.h
+    |-------pmm.h
+    |-------keyboard.h
+    |-------keymap.h
 init----------------------
     |-------kernel.asm
     |-------start.c
     |-------console.c
+    |-------interrupt.c
+    |-------pmm.c
 kernel--------------------
     |-------prink.c
 scripts-------------------
     |-------kernel.ld
 bochsout.txt--------------bochs调试输出（基本没用）
-bochsrc-------------------bochs调试配置文件
-Makefile------------------
+bochsrc-------------------bochs调试配置文件(使用指令：make bochs即可)
+Makefile------------------make--->make qemu/make bochs
 deeppink.img--------------最终生成的镜像文件
 README.md-----------------帮助文档（遇到的相关bug和设计步骤）
 
 ##############################################################
 ##############################################################
-#       开发过程中遇到的相关bug和流程
+#                      内核调试笔记
 ##############################################################
 ##############################################################
 
@@ -71,7 +79,8 @@ make.exe[2]: Leaving directory `C:/kernel developer/tolset/helloos0'
 make.exe[1]: *** [img] Error 2
 make.exe[1]: Leaving directory `C:/kernel developer/tolset/helloos0'
 ..\z_tools\make.exe: *** [default] Error 2
-    这个错误是没有将bootfirst后边填充数据的代码去掉，由于添加了其他代码，空间已经不过用了
+    这个错误是没有将bootfirst后边填充数据的代码去掉，由于添加了其他代码，空间已经
+不过用了
 
 -------->2017.05.14
 C:\kernel developer\tolset\helloos0>make
@@ -96,12 +105,21 @@ FAT12文件的很重要，不能随意更改其中的文件名字（只是更改
 
 
 -------->2017.05.24
-向64h端口写入的字节，被认为是对8042芯片发布的命令（Command）： 写入的字节将会被存放Input Register中； 同时会引起Status Register的Bit-3自动被设置为1，表示现在放在Input Register中的数据是一个Command，而不是一个Data；
-在向64h端口写某些命令之前必须确保键盘是被禁止的，因为这些被写入的命令的返回结果将会放Output Register中，而键盘如果不被禁止，则也会将数据放入到Output Register中，会引起相互之间的数据覆盖；
-在向64h端口写数据之前必须确保Input Register是空的（通过判断Status Register的Bit-1是否为0）。60h端口（读操作），对60h端口进行读操作，将会读取Output Register的内容。Output Register的内容可能是：来自8048的数据。这些数据包括Scan Code，对8048发送的命令的确认字节（ACK)及回复数据。 通过64h端口对8042发布的命令的返回结果。在向60h端口读取数据之前必须确保Output Register中有数据（通过判断Status Register的Bit-0是否为1）。
-60h端口（写操作）向60h端口写入的字节，有两种可能： 
-1．如果之前通过64h端口向8042芯片发布的命令需要进一步的数据，则此时写入的字节就被认为是数据； 
-2．否则，此字节被认为是发送给8048的命令。 在向60h端口写数据之前，必须确保Input Register是空的（通过判断Status Register的Bit-1是否为0）。
+向64h端口写入的字节，被认为是对8042芯片发布的命令（Command）： 写入的字节将会被存
+放Input Register中； 同时会引起Status Register的Bit-3自动被设置为1，表示现在放在
+Input Register中的数据是一个Command，而不是一个Data；在向64h端口写某些命令之前必
+须确保键盘是被禁止的，因为这些被写入的命令的返回结果将会放Output Register中，而键
+盘如果不被禁止，则也会将数据放入到Output Register中，会引起相互之间的数据覆盖；
+在向64h端口写数据之前必须确保Input Register是空的（通过判断Status Register的Bit-1
+是否为0）。60h端口（读操作），对60h端口进行读操作，将会读取Output Register的内容。
+Output Register的内容可能是：来自8048的数据。这些数据包括Scan Code，对8048发送的
+命令的确认字节（ACK)及回复数据。 通过64h端口对8042发布的命令的返回结果。在向60h端口
+读取数据之前必须确保Output Register中有数据（通过判断Status Register的Bit-0是否为1）。
+60h端口（写操作）向60h端口写入的字节，有两种可能：
+1．如果之前通过64h端口向8042芯片发布的命令需要进一步的数据，则此时写入的字节就被
+   认为是数据；
+2．否则，此字节被认为是发送给8048的命令。 在向60h端口写数据之前，必须确保
+   Input Register是空的（通过判断Status Register的Bit-1是否为0）。
 
 -------->2017.06.21
 向一个空软盘保存文件的时候,
@@ -162,5 +180,9 @@ make: *** [link] Error 1
 内存管理部分的分页功能打开，但是发现有点复杂，以后在完善内存管理功能
     按键部分目前不完善，只是做了简单的中断处理，和显示数字、小写字母等，对于一
 些包括ctrl、shift等按键不支持，按键部分先这样，以后有需求再更改
+
+-------->2017年 08月 31日 星期四 21:17:50 CST
+    目前，发现整个DeeppinkOS的内存映射特别混乱，包括gdt表地址、ldt表地址和堆栈，
+有太多地方需要规范了，先不再往后打开分页机制和进程管理
 
 

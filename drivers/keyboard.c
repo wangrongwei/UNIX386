@@ -43,7 +43,6 @@ void keyboard_handler(pt_regs *regs)
 
 void keyboard_read()
 {
-	//unsigned char keycode[5]="00000";
 	unsigned char scancode;
 	asm volatile("cli");
 	if(kb_in.count > 0){
