@@ -147,7 +147,6 @@ goto_PM:
 	;MOV	AH,0x0e
 	;MOV	AL,'!'
 	;INT	0x10
-
 	CLI
 ;
 ; OPEN A20
