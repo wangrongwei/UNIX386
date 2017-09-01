@@ -3,9 +3,9 @@
  */
 #include <pmm.h>
 
-#define PMM_MAX_SIZE 0x20000000 // 512MB
-#define PMM_START_ADDR 0x100000 // 就从这开始分配每一页
-#define PMM_END_ADDR 0x07ffe000
+#define PMM_MAX_SIZE 0x100000000 // 512MB
+#define PMM_START_ADDR 0x0      // 就从这开始分配每一页
+#define PMM_END_ADDR 0xfffff000 // 4G大小
 #define PAGE_SIZE 0x1000	// 每一页大小为4KB
 
 #define PAGE_MAX_COUNT (PMM_MAX_SIZE / PAGE_SIZE)
@@ -19,7 +19,7 @@ void init_pmm()
 {
 	unsigned int page_addr = PMM_START_ADDR;
 
-	// 到0x07ffd000,不在往下分配
+	// 到0xffffe000,不在往下分配
 	while(page_addr <= (PMM_END_ADDR - PAGE_SIZE))
 	{
 		pmm_free_page(page_addr);
