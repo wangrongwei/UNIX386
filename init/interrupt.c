@@ -4,7 +4,13 @@
  */
 #include <interrupt.h>
 
-
+/*
+ * 中断服务程序
+ * 函数说明：识别到底是发生了说明中断（通过regs->int_no），然后
+ *	     执行相应的中断服务程序。
+ * interrupt_handlers[n]是一个数组函数，n代表了具体的中断服务程
+ * 序，函数参数为regs。
+ */
 void isr_handler(pt_regs *regs)
 {
 	if(interrupt_handlers[regs->int_no]){
@@ -30,7 +36,9 @@ void irq_handler(pt_regs *regs)
 		interrupt_handlers[regs->int_no](regs);
 	}
 }
-
+/*
+ * 函数说明：向中断数组函数加入具体的中断服务程序（相当于注册）
+ */
 void register_interrupt_handler(unsigned char n,interrupt_handler_t h)
 {
 	interrupt_handlers[n] = h;

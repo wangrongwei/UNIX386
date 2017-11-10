@@ -32,18 +32,22 @@ void kernel_start()
 	console_clear();
 	//console_puts(string,0,green);
 	printk(string);
+
 	init_gdt();
 	init_idt();
 
 	//asm volatile("int $0x3");
+
 	//asm volatile("int $0x4");
 
 	//init_timer(200);
+
+	/* 这段代码有bug */
 	init_keyboard();
 	asm volatile("sti"); // 打开中断
 	printk("kernel start addr = 0x%08X\n",kernel_s);
 	printk("kernel end addr = 0x%08X\n",kernel_e);
-	printk("kernel size = %dKB\n",(kernel_e-kernel_s+1023)/1024);
+	printk("kernel size = %dKB\n",(kernel_e-kernel_s + 1023) / 1024);
 
 	init_pmm();
 	page_addr1 = pmm_alloc_page();
@@ -52,10 +56,12 @@ void kernel_start()
 	printk("alloc page2 = 0x%08X\n",page_addr2);
 	pmm_free_page(page_addr2);
 	pmm_free_page(page_addr1);
+#if 1
 	while(1){
 		keyboard_read();
 	}
 	//return 0;
+#endif
 }
 /*
  * 从端口输出一个字节

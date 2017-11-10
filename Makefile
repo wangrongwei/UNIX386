@@ -29,7 +29,7 @@ IMG:=deeppink.img
 
 
 deeppink.img : $(BOOT_BIN) $(S_OBJECTS) $(C_OBJECTS) link
-	dd if=/dev/zero of=$(IMG) bs=512 count=28800
+	dd if=/dev/zero of=$(IMG) bs=512 count=2880
 	dd if=$(BOOT_BIN) of=$(IMG) conv=notrunc
 	dd if=$(KERNEL_BIN) of=$(IMG) seek=1 conv=notrunc
 

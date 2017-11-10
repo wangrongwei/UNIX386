@@ -5,13 +5,17 @@
 #include <timer.h>
 #include <debug.h>
 #include <interrupt.h>
-
+/*
+ * 时钟测试函数
+ */
 void timer_callback(pt_regs *regs)
 {
 	static unsigned int tick = 0;
 	printk("tick:%d\n",tick++);
 }
-
+/*
+ * 时钟初始化驱动
+ */
 void init_timer(unsigned int frequency)
 {
 	unsigned char low=0,high=0;
