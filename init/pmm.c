@@ -1,16 +1,19 @@
 /*
  * 物理内存的管理
+ * 此程序有问题，主要是还没有
  */
 #include <pmm.h>
+#include <debug.h>
 
 #define PMM_MAX_SIZE 0x100000000 // 512MB
 #define PMM_START_ADDR 0x0      // 就从这开始分配每一页
 #define PMM_END_ADDR 0xfffff000 // 4G大小
 #define PAGE_SIZE 0x1000	// 每一页大小为4KB
 
+/* 总共有多少页 */
 #define PAGE_MAX_COUNT (PMM_MAX_SIZE / PAGE_SIZE)
 
-
+/* 这个数组存储的就是每一页的开始地址 */
 static unsigned int pmm_stack[PAGE_MAX_COUNT+1];
 static unsigned int pmm_stack_top;
 unsigned int phy_page_count=0;
@@ -18,16 +21,27 @@ unsigned int phy_page_count=0;
 void init_pmm()
 {
 	unsigned int page_addr = PMM_START_ADDR;
-
+	pmm_stack_top = 0;
 	// 到0xffffe000,不在往下分配
-	while(page_addr <= (PMM_END_ADDR - PAGE_SIZE))
-	{
-		pmm_free_page(page_addr);
-		phy_page_count++;
-		page_addr +=PAGE_SIZE;
-
+	while(page_addr <= (0x007ffe000 - PAGE_SIZE)){
+		if(page_addr <= 0x9e000){
+			pmm_free_page(page_addr);
+			phy_page_count++;
+			//printk("page_addr = 0x%08X\t",page_addr);
+			//printk("phy_page_count = %d\n",phy_page_count);
+			page_addr += PAGE_SIZE;
+			if(page_addr == 0x9f000){
+				page_addr = 0x100000;
+			}
+		}
+		else{
+			pmm_free_page(page_addr);
+			phy_page_count++;
+			//printk("page_addr = 0x%08X\t",page_addr);
+			//printk("phy_page_count = %d\n",phy_page_count);
+			page_addr += PAGE_SIZE;
+		}
 	}
-
 
 }
 
@@ -36,8 +50,8 @@ void init_pmm()
  */
 void pmm_free_page(unsigned int p)
 {
-	pmm_stack[++pmm_stack_top] = p;
-
+	pmm_stack[pmm_stack_top] = p;
+	pmm_stack_top++;
 }
 /*
  * 分配一个页
