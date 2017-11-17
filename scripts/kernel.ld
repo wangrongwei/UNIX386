@@ -28,28 +28,28 @@ SECTIONS
 	.text :
 	{
 		*(.text)
-		. = ALIGN(4096);
+		. = ALIGN(4);
 	}
 	.data :
 	{
 		*(.data)
                 *(.rodata)
-		. = ALIGN(4096);
+		. = ALIGN(4);
 	}
 	.bss :
 	{
 		*(.bss)
-		. = ALIGN(4096);
+		. = ALIGN(4);
 	}
         .stab :
         {
                 *(.stab)
-                . = ALIGN(4096);
+                . = ALIGN(4);
         }
         .stabstr :
         {
                 *(.stabstr)
-                . = ALIGN(4096);
+                . = ALIGN(4);
         }
         PROVIDE(kernel_e = .);
 

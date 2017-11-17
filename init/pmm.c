@@ -18,11 +18,15 @@ static unsigned int pmm_stack[PAGE_MAX_COUNT+1];
 static unsigned int pmm_stack_top;
 unsigned int phy_page_count=0;
 
+/*
+ * 系统的物理内存从0x0---0x9fc00,0x100000---0x7ffe000是RAM区
+ * 可使用
+ */
 void init_pmm()
 {
 	unsigned int page_addr = PMM_START_ADDR;
 	pmm_stack_top = 0;
-	// 到0xffffe000,不在往下分配
+	// 到0x7ffd000,不在往下分配
 	while(page_addr <= (0x007ffe000 - PAGE_SIZE)){
 		if(page_addr <= 0x9e000){
 			pmm_free_page(page_addr);
@@ -50,8 +54,8 @@ void init_pmm()
  */
 void pmm_free_page(unsigned int p)
 {
-	pmm_stack[pmm_stack_top] = p;
-	pmm_stack_top++;
+	pmm_stack[pmm_stack_top++] = p;
+	printk("pmm_stack_top = 0x%08X\n",&pmm_stack_top);
 }
 /*
  * 分配一个页
@@ -59,7 +63,8 @@ void pmm_free_page(unsigned int p)
 unsigned int pmm_alloc_page()
 {
 	unsigned int page;
-	page = pmm_stack[pmm_stack_top--];
+	page = pmm_stack[--pmm_stack_top];
+	//printk("pmm_stack = 0x%08X\n",pmm_stack);
 	return page;
 }
 

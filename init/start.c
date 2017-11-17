@@ -53,11 +53,10 @@ void kernel_start()
 	//while(1){
 	//	keyboard_read();
 	//}
-#if 1
 	printk("kernel start addr = 0x%08X\n",kernel_s);
 	printk("kernel end   addr = 0x%08X\n",kernel_e);
 	printk("kernel size = %dKB\n",(kernel_e-kernel_s + 1023) / 1024);
-
+#if 1
 	init_pmm();
 	page_addr1 = pmm_alloc_page();
 	printk("alloc page1 = 0x%08X\n",page_addr1);
@@ -69,9 +68,8 @@ void kernel_start()
 	while(1){
 		keyboard_read();
 	}
-	//return 0;
-#endif
 
+#endif
 }
 /*
  * 从端口输出一个字节
