@@ -55,7 +55,7 @@ void init_pmm()
 void pmm_free_page(unsigned int p)
 {
 	pmm_stack[pmm_stack_top++] = p;
-	printk("pmm_stack_top = 0x%08X\n",&pmm_stack_top);
+	//printk("pmm_stack_top = 0x%08X\n",&pmm_stack_top);
 }
 /*
  * 分配一个页

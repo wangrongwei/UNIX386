@@ -49,7 +49,7 @@ void kernel_start()
 
 	/* 这段代码有bug */
 	init_keyboard();
-	asm volatile("sti"); // 打开中断
+	//asm volatile("sti"); // 打开中断
 	//while(1){
 	//	keyboard_read();
 	//}
