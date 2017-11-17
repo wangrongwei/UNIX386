@@ -8,7 +8,7 @@
 #filename of ROM images 
 #=======================================================================
 
-romimage:file=$BXSHARE/BIOS-bochs-latest 
+romimage:file=/usr/local/share/bochs/BIOS-bochs-latest 
 
  
 
@@ -17,7 +17,7 @@ romimage:file=$BXSHARE/BIOS-bochs-latest
 #You now need to load a VGA ROM BIOS into C0000.
 #=======================================================================
 
-vgaromimage:file=$BXSHARE/VGABIOS-lgpl-latest
+vgaromimage:file=/usr/local/share/bochs/VGABIOS-lgpl-latest
 
  
 
@@ -57,7 +57,7 @@ mouse: enabled=0
 #enable key mapping, using US layout as default.
 #=======================================================================
 
-keyboard:keymap=/usr/share/bochs/keymaps/x11-pc-us.map
+keyboard:keymap=/usr/local/share/bochs/keymaps/x11-pc-us.map
 
 
 #=======================================================================

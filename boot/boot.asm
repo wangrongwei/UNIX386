@@ -59,34 +59,16 @@ Read:
 	MOV	AL,[SI]
 	ADD	SI,1
 	CMP	AL,0
-	JE	copy_start
+	JE	Read_Ok
 	MOV	AH,0x0e
 	MOV	BX,0x0f
 	INT	0x10		;执行BIOS中断0x10
-	JMP	Read;
+	JMP	Read
 ;下面开始读磁盘程序数据
 ;代码借鉴《30天...》川和秀实
 ;ES:BX	代表缓冲器地址
-;Read_Ok:
-copy_start:
-        MOV     AX,0x07c0
-        MOV     DS,AX
-        MOV     AX,0x9000
-        MOV     ES,AX
-
-        MOV     CX,256  ;表示复制512Byte
-        SUB     SI,SI
-        SUB     DI,DI
-        REP
-        MOVW
-        JMP     (copy_end-0x7c00):INITSEG
-copy_end:
-        MOV     AX,CS
-        MOV     DS,AX
-        MOV     ES,AX
-        MOV     SS,AX
-        MOV     SP,0xFF00
-        MOV	AX,0x0050	;原则上来说把启动区也要拷贝过来，就改成0x0800
+Read_Ok:
+        MOV	AX,0x0800	;原则上来说把启动区也要拷贝过来，就改成0x0800
 	MOV	ES,AX
 	MOV	BX,0x00
 	MOV	CH,0		;柱面0
@@ -129,12 +111,31 @@ next:
 ;
 ;  打印成功读取状态
 ;	换显示坐标
+copy_start:
+        CLD
+        MOV     AX,0x07c0       ;源地址
+        MOV     DS,AX
+        MOV     AX,0x9000       ;目的地址
+        MOV     ES,AX
+
+        MOV     CX,256  ;表示复制512Byte
+        SUB     SI,SI           ;DS:SI--->ES:DI
+        SUB     DI,DI
+        REP     MOVSW   ;在linux-0.1.1中使用rep movw的intel的格式
+        JMP     INITSEG:(copy_end-0x7c00)
+copy_end:
+        MOV     AX,CS
+        MOV     DS,AX
+        MOV     ES,AX
+        MOV     SS,AX
+        MOV     SP,0xFC00
+
 	MOV	AH,0x02
 	MOV	BX,0x0f
 	MOV	DX,0x0e16
 	INT	0x10
 
-	MOV	SI,msg_2	;打开成功要显示字符
+	MOV	SI,(msg_2-0x7c00);打开成功要显示字符
 print_loop:
 	MOV	AL,[SI]
 	ADD	SI,1
@@ -164,9 +165,6 @@ goto_PM:
 	NOP
 	OUT	0xa1,AL
 
-	;MOV	AH,0x0e
-	;MOV	AL,'!'
-	;INT	0x10
 	CLI
 ;
 ; OPEN A20
@@ -201,21 +199,24 @@ goto_PM:
 	OR	AL,1
 	MOV	CR0,EAX       ;打开段级保护，不开分页机制
 
-        JMP	dword 0x08:PM_MODE
-[bits 32]
-PM_MODE:
-	MOV	EAX,0x00000010
-	MOV	DS,AX
-	MOV	ES,AX
-	MOV	FS,AX
-	MOV	GS,AX
-	MOV	SS,AX
+        JMP	dword 0x08:0  ;跳转到0x0地址（第二部分移到到0x0地址）
+;
+; 这一部分移到kernel.asm里边
+;
+;[bits 32]
+;PM_MODE:
+;	MOV	EAX,0x00000010
+;	MOV	DS,AX
+;	MOV	ES,AX
+;	MOV	FS,AX
+;	MOV	GS,AX
+;	MOV	SS,AX
 
         ;MOV     EAX,0x0000018
         ;MOV     GS,EAX
 
-        MOV     EAX,0x8000
-        JMP     EAX;dword 0x08:0x8200
+;       MOV     EAX,0x8000
+;       JMP     EAX;dword 0x08:0x8200
 ;
 ;	显示需要的相关字符串
 ;

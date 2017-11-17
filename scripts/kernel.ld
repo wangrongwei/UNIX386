@@ -19,13 +19,23 @@
  * 0x8000，但是可执行段是从0x9000开始
  * Alexander.Wang修改<2017/11/17>
  * (已更改，使用objcopy删掉了包括elf头在内的信息，可直接从0x8000执行)
+        .stab :
+        {
+                *(.stab)
+                . = ALIGN(4);
+        }
+        .stabstr :
+        {
+                *(.stabstr)
+                . = ALIGN(4);
+        }
  *
  */
 
 ENTRY(_start)
 SECTIONS
 {
-	. = 0x8000;
+	. = 0x0000;
         PROVIDE(kernel_s = .);
 	.text :
 	{
@@ -43,16 +53,6 @@ SECTIONS
 		*(.bss)
 		. = ALIGN(4);
 	}
-        .stab :
-        {
-                *(.stab)
-                . = ALIGN(4);
-        }
-        .stabstr :
-        {
-                *(.stabstr)
-                . = ALIGN(4);
-        }
         PROVIDE(kernel_e = .);
 
 }

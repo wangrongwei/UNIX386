@@ -39,6 +39,17 @@ LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
 
 
 _start:
+	MOV	EAX,0x00000010
+	MOV	DS,AX
+	MOV	ES,AX
+	MOV	FS,AX
+	MOV	GS,AX
+	MOV	SS,AX
+
+        ;MOV     EAX,0x0000018
+        ;MOV     GS,EAX
+
+        MOV     EAX,0x8000
         ;INT     0x10
 	MOV     ESP,0x00007000
         MOV     EBP,ESP

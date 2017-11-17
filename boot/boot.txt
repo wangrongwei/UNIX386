@@ -3,7 +3,7 @@
 00000004  BC007C            mov sp,0x7c00
 00000007  8ED8              mov ds,ax
 00000009  8EC0              mov es,ax
-0000000B  BE7D7D            mov si,0x7d7d
+0000000B  BE7F7D            mov si,0x7d7f
 0000000E  8A04              mov al,[si]
 00000010  83C601            add si,byte +0x1
 00000013  3C00              cmp al,0x0
@@ -12,7 +12,7 @@
 00000019  BB0F00            mov bx,0xf
 0000001C  CD10              int 0x10
 0000001E  EBEE              jmp short 0xe
-00000020  BE977D            mov si,0x7d97
+00000020  BE997D            mov si,0x7d99
 00000023  8A04              mov al,[si]
 00000025  83C601            add si,byte +0x1
 00000028  3C00              cmp al,0x0
@@ -21,172 +21,173 @@
 0000002E  BB0F00            mov bx,0xf
 00000031  CD10              int 0x10
 00000033  EBEE              jmp short 0x23
-00000035  B8C007            mov ax,0x7c0
-00000038  8ED8              mov ds,ax
-0000003A  B80090            mov ax,0x9000
-0000003D  8EC0              mov es,ax
-0000003F  B90001            mov cx,0x100
-00000042  29F6              sub si,si
-00000044  29FF              sub di,di
-00000046  F3EA00904C00      rep jmp word 0x4c:0x9000
-0000004C  8CC8              mov ax,cs
-0000004E  8ED8              mov ds,ax
-00000050  8EC0              mov es,ax
-00000052  8ED0              mov ss,ax
-00000054  BC00FF            mov sp,0xff00
-00000057  B85000            mov ax,0x50
-0000005A  8EC0              mov es,ax
-0000005C  BB0000            mov bx,0x0
-0000005F  B500              mov ch,0x0
-00000061  B600              mov dh,0x0
-00000063  B102              mov cl,0x2
-00000065  BE0000            mov si,0x0
-00000068  B402              mov ah,0x2
-0000006A  B001              mov al,0x1
-0000006C  BB0000            mov bx,0x0
-0000006F  B200              mov dl,0x0
-00000071  CD13              int 0x13
-00000073  7312              jnc 0x87
-00000075  83C601            add si,byte +0x1
-00000078  83FE05            cmp si,byte +0x5
-0000007B  0F83E200          jnc word 0x161
-0000007F  B400              mov ah,0x0
-00000081  B200              mov dl,0x0
-00000083  CD13              int 0x13
-00000085  EBE1              jmp short 0x68
-00000087  8CC0              mov ax,es
-00000089  83C020            add ax,byte +0x20
-0000008C  8EC0              mov es,ax
-0000008E  80C101            add cl,0x1
-00000091  80F912            cmp cl,0x12
-00000094  76CF              jna 0x65
-00000096  B101              mov cl,0x1
-00000098  80C601            add dh,0x1
-0000009B  80FE02            cmp dh,0x2
-0000009E  72C5              jc 0x65
-000000A0  B600              mov dh,0x0
-000000A2  80C501            add ch,0x1
-000000A5  80FD0A            cmp ch,0xa
-000000A8  72BB              jc 0x65
-000000AA  882EF00F          mov [0xff0],ch
-000000AE  B402              mov ah,0x2
-000000B0  BB0F00            mov bx,0xf
-000000B3  BA160E            mov dx,0xe16
-000000B6  CD10              int 0x10
-000000B8  BEAA7D            mov si,0x7daa
-000000BB  8A04              mov al,[si]
-000000BD  83C601            add si,byte +0x1
-000000C0  3C00              cmp al,0x0
-000000C2  7409              jz 0xcd
-000000C4  B40E              mov ah,0xe
-000000C6  BB0F00            mov bx,0xf
-000000C9  CD10              int 0x10
-000000CB  EBEE              jmp short 0xbb
-000000CD  B003              mov al,0x3
-000000CF  B400              mov ah,0x0
-000000D1  CD10              int 0x10
-000000D3  B0FF              mov al,0xff
-000000D5  E621              out 0x21,al
-000000D7  90                nop
-000000D8  E6A1              out 0xa1,al
-000000DA  FA                cli
-000000DB  E84600            call word 0x124
-000000DE  B0D1              mov al,0xd1
-000000E0  E664              out 0x64,al
-000000E2  E83F00            call word 0x124
-000000E5  B0DF              mov al,0xdf
-000000E7  E660              out 0x60,al
-000000E9  E83800            call word 0x124
-000000EC  FA                cli
-000000ED  0F01165B7D        lgdt [0x7d5b]
-000000F2  E492              in al,0x92
-000000F4  0C02              or al,0x2
-000000F6  E692              out 0x92,al
-000000F8  0F20C0            mov eax,cr0
-000000FB  6625FFFFFF7F      and eax,0x7fffffff
-00000101  0C01              or al,0x1
-00000103  0F22C0            mov cr0,eax
-00000106  66EA0E7D00000800  jmp dword 0x8:0x7d0e
-0000010E  B81000            mov ax,0x10
-00000111  0000              add [bx+si],al
-00000113  8ED8              mov ds,ax
-00000115  8EC0              mov es,ax
-00000117  8EE0              mov fs,ax
-00000119  8EE8              mov gs,ax
-0000011B  8ED0              mov ss,ax
-0000011D  B80080            mov ax,0x8000
-00000120  0000              add [bx+si],al
-00000122  FFE0              jmp ax
-00000124  E464              in al,0x64
-00000126  2402              and al,0x2
-00000128  75FA              jnz 0x124
-0000012A  C3                ret
-0000012B  0000              add [bx+si],al
+00000035  B80008            mov ax,0x800
+00000038  8EC0              mov es,ax
+0000003A  BB0000            mov bx,0x0
+0000003D  B500              mov ch,0x0
+0000003F  B600              mov dh,0x0
+00000041  B102              mov cl,0x2
+00000043  BE0000            mov si,0x0
+00000046  B402              mov ah,0x2
+00000048  B001              mov al,0x1
+0000004A  BB0000            mov bx,0x0
+0000004D  B200              mov dl,0x0
+0000004F  CD13              int 0x13
+00000051  7312              jnc 0x65
+00000053  83C601            add si,byte +0x1
+00000056  83FE05            cmp si,byte +0x5
+00000059  0F830601          jnc word 0x163
+0000005D  B400              mov ah,0x0
+0000005F  B200              mov dl,0x0
+00000061  CD13              int 0x13
+00000063  EBE1              jmp short 0x46
+00000065  8CC0              mov ax,es
+00000067  83C020            add ax,byte +0x20
+0000006A  8EC0              mov es,ax
+0000006C  80C101            add cl,0x1
+0000006F  80F912            cmp cl,0x12
+00000072  76CF              jna 0x43
+00000074  B101              mov cl,0x1
+00000076  80C601            add dh,0x1
+00000079  80FE02            cmp dh,0x2
+0000007C  72C5              jc 0x43
+0000007E  B600              mov dh,0x0
+00000080  80C501            add ch,0x1
+00000083  80FD0A            cmp ch,0xa
+00000086  72BB              jc 0x43
+00000088  882EF00F          mov [0xff0],ch
+0000008C  FC                cld
+0000008D  B8C007            mov ax,0x7c0
+00000090  8ED8              mov ds,ax
+00000092  B80090            mov ax,0x9000
+00000095  8EC0              mov es,ax
+00000097  B90001            mov cx,0x100
+0000009A  29F6              sub si,si
+0000009C  29FF              sub di,di
+0000009E  F3A5              rep movsw
+000000A0  EAA5000090        jmp word 0x9000:0xa5
+000000A5  8CC8              mov ax,cs
+000000A7  8ED8              mov ds,ax
+000000A9  8EC0              mov es,ax
+000000AB  8ED0              mov ss,ax
+000000AD  BC00FC            mov sp,0xfc00
+000000B0  B402              mov ah,0x2
+000000B2  BB0F00            mov bx,0xf
+000000B5  BA160E            mov dx,0xe16
+000000B8  CD10              int 0x10
+000000BA  BEAC01            mov si,0x1ac
+000000BD  8A04              mov al,[si]
+000000BF  83C601            add si,byte +0x1
+000000C2  3C00              cmp al,0x0
+000000C4  7409              jz 0xcf
+000000C6  B40E              mov ah,0xe
+000000C8  BB0F00            mov bx,0xf
+000000CB  CD10              int 0x10
+000000CD  EBEE              jmp short 0xbd
+000000CF  B003              mov al,0x3
+000000D1  B400              mov ah,0x0
+000000D3  CD10              int 0x10
+000000D5  B0FF              mov al,0xff
+000000D7  E621              out 0x21,al
+000000D9  90                nop
+000000DA  E6A1              out 0xa1,al
+000000DC  FA                cli
+000000DD  E84600            call word 0x126
+000000E0  B0D1              mov al,0xd1
+000000E2  E664              out 0x64,al
+000000E4  E83F00            call word 0x126
+000000E7  B0DF              mov al,0xdf
+000000E9  E660              out 0x60,al
+000000EB  E83800            call word 0x126
+000000EE  FA                cli
+000000EF  0F01165D7D        lgdt [0x7d5d]
+000000F4  E492              in al,0x92
+000000F6  0C02              or al,0x2
+000000F8  E692              out 0x92,al
+000000FA  0F20C0            mov eax,cr0
+000000FD  6625FFFFFF7F      and eax,0x7fffffff
+00000103  0C01              or al,0x1
+00000105  0F22C0            mov cr0,eax
+00000108  66EA100100000800  jmp dword 0x8:0x110
+00000110  B81000            mov ax,0x10
+00000113  0000              add [bx+si],al
+00000115  8ED8              mov ds,ax
+00000117  8EC0              mov es,ax
+00000119  8EE0              mov fs,ax
+0000011B  8EE8              mov gs,ax
+0000011D  8ED0              mov ss,ax
+0000011F  B80080            mov ax,0x8000
+00000122  0000              add [bx+si],al
+00000124  FFE0              jmp ax
+00000126  E464              in al,0x64
+00000128  2402              and al,0x2
+0000012A  75FA              jnz 0x126
+0000012C  C3                ret
 0000012D  0000              add [bx+si],al
 0000012F  0000              add [bx+si],al
 00000131  0000              add [bx+si],al
-00000133  FF                db 0xff
-00000134  FF00              inc word [bx+si]
-00000136  0000              add [bx+si],al
-00000138  9ACF00FFFF        call word 0xffff:0xcf
-0000013D  0000              add [bx+si],al
-0000013F  0092CF00          add [bp+si+0xcf],dl
-00000143  FF                db 0xff
-00000144  FF00              inc word [bx+si]
-00000146  800BF2            or byte [bp+di],0xf2
-00000149  0F0000            sldt [bx+si]
-0000014C  0000              add [bx+si],al
+00000133  0000              add [bx+si],al
+00000135  FF                db 0xff
+00000136  FF00              inc word [bx+si]
+00000138  0000              add [bx+si],al
+0000013A  9ACF00FFFF        call word 0xffff:0xcf
+0000013F  0000              add [bx+si],al
+00000141  0092CF00          add [bp+si+0xcf],dl
+00000145  FF                db 0xff
+00000146  FF00              inc word [bx+si]
+00000148  800BF2            or byte [bp+di],0xf2
+0000014B  0F0000            sldt [bx+si]
 0000014E  0000              add [bx+si],al
 00000150  0000              add [bx+si],al
 00000152  0000              add [bx+si],al
 00000154  0000              add [bx+si],al
 00000156  0000              add [bx+si],al
 00000158  0000              add [bx+si],al
-0000015A  002F              add [bx],ch
-0000015C  002B              add [bp+di],ch
-0000015E  7D00              jnl 0x160
-00000160  0066BE            add [bp-0x42],ah
-00000163  BD7D67            mov bp,0x677d
-00000166  8A04              mov al,[si]
-00000168  6683C601          add esi,byte +0x1
-0000016C  3C00              cmp al,0x0
-0000016E  740A              jz 0x17a
-00000170  B40E              mov ah,0xe
-00000172  66BB0F00CD10      mov ebx,0x10cd000f
-00000178  EBEB              jmp short 0x165
-0000017A  F4                hlt
-0000017B  EBFD              jmp short 0x17a
-0000017D  0A0A              or cl,[bp+si]
-0000017F  57                push di
-00000180  656C              gs insb
-00000182  636F6D            arpl [bx+0x6d],bp
-00000185  6520746F          and [gs:si+0x6f],dh
-00000189  204465            and [si+0x65],al
-0000018C  657070            gs jo 0x1ff
-0000018F  696E6B4F53        imul bp,[bp+0x6b],word 0x534f
-00000194  3A0A              cmp cl,[bp+si]
-00000196  000A              add [bp+si],cl
-00000198  0A5265            or dl,[bp+si+0x65]
-0000019B  61                popaw
-0000019C  64205365          and [fs:bp+di+0x65],dl
-000001A0  63746F            arpl [si+0x6f],si
-000001A3  7273              jc 0x218
-000001A5  2E2E2E0A00        or al,[cs:bx+si]
-000001AA  52                push dx
-000001AB  6561              gs popaw
-000001AD  6420436F          and [fs:bp+di+0x6f],al
-000001B1  6D                insw
-000001B2  706C              jo 0x220
-000001B4  657465            gs jz 0x21c
-000001B7  6C                insb
-000001B8  7921              jns 0x1db
-000001BA  210A              and [bp+si],cx
-000001BC  004C6F            add [si+0x6f],cl
-000001BF  61                popaw
-000001C0  64096572          or [fs:di+0x72],sp
-000001C4  726F              jc 0x235
-000001C6  720A              jc 0x1d2
-000001C8  0000              add [bx+si],al
+0000015A  0000              add [bx+si],al
+0000015C  002F              add [bx],ch
+0000015E  002D              add [di],ch
+00000160  7D00              jnl 0x162
+00000162  0066BE            add [bp-0x42],ah
+00000165  BF7D67            mov di,0x677d
+00000168  8A04              mov al,[si]
+0000016A  6683C601          add esi,byte +0x1
+0000016E  3C00              cmp al,0x0
+00000170  740A              jz 0x17c
+00000172  B40E              mov ah,0xe
+00000174  66BB0F00CD10      mov ebx,0x10cd000f
+0000017A  EBEB              jmp short 0x167
+0000017C  F4                hlt
+0000017D  EBFD              jmp short 0x17c
+0000017F  0A0A              or cl,[bp+si]
+00000181  57                push di
+00000182  656C              gs insb
+00000184  636F6D            arpl [bx+0x6d],bp
+00000187  6520746F          and [gs:si+0x6f],dh
+0000018B  204465            and [si+0x65],al
+0000018E  657070            gs jo 0x201
+00000191  696E6B4F53        imul bp,[bp+0x6b],word 0x534f
+00000196  3A0A              cmp cl,[bp+si]
+00000198  000A              add [bp+si],cl
+0000019A  0A5265            or dl,[bp+si+0x65]
+0000019D  61                popaw
+0000019E  64205365          and [fs:bp+di+0x65],dl
+000001A2  63746F            arpl [si+0x6f],si
+000001A5  7273              jc 0x21a
+000001A7  2E2E2E0A00        or al,[cs:bx+si]
+000001AC  52                push dx
+000001AD  6561              gs popaw
+000001AF  6420436F          and [fs:bp+di+0x6f],al
+000001B3  6D                insw
+000001B4  706C              jo 0x222
+000001B6  657465            gs jz 0x21e
+000001B9  6C                insb
+000001BA  7921              jns 0x1dd
+000001BC  210A              and [bp+si],cx
+000001BE  004C6F            add [si+0x6f],cl
+000001C1  61                popaw
+000001C2  64096572          or [fs:di+0x72],sp
+000001C6  726F              jc 0x237
+000001C8  720A              jc 0x1d4
 000001CA  0000              add [bx+si],al
 000001CC  0000              add [bx+si],al
 000001CE  0000              add [bx+si],al
