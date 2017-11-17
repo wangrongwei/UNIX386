@@ -116,7 +116,9 @@ void init_gdt()
 	load_gdtr((unsigned int)&GDTR);
 
 }
-
+/*
+ * 初始化8259A，设置中断向量表
+ */
 void init_idt()
 {
 	printk("New,load idt!!!\n");

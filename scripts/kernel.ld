@@ -41,6 +41,16 @@ SECTIONS
 		*(.bss)
 		. = ALIGN(4);
 	}
+        .stab :
+        {
+                *(.stab)
+                . = ALIGN(4);
+        }
+        .stabstr :
+        {
+                *(.stabstr)
+                . = ALIGN(4);
+        }
         PROVIDE(kernel_e = .);
 
 }

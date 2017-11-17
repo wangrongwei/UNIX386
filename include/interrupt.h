@@ -32,6 +32,8 @@ typedef struct pt_regs_t {
 typedef void (*interrupt_handler_t)(pt_regs *);
 
 // 注册一个中断处理函数
+// n:中断号
+// h:中断处理函数
 void register_interrupt_handler(unsigned char n, interrupt_handler_t h);
 
 // 调用中断处理函数
