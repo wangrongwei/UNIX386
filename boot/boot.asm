@@ -22,6 +22,7 @@
 CYLS		EQU	10	;读10个柱面
 BOOT_ADDR	EQU	0x7C00
 KERNEL_ADDR	EQU	0xC0000000
+INITSEG         EQU     0x9000
 
 LCDMODE		EQU	0x0ff2  ;
 SCREENX		EQU	0x0ff4  ;	x
@@ -58,7 +59,7 @@ Read:
 	MOV	AL,[SI]
 	ADD	SI,1
 	CMP	AL,0
-	JE	Read_Ok
+	JE	copy_start
 	MOV	AH,0x0e
 	MOV	BX,0x0f
 	INT	0x10		;执行BIOS中断0x10
@@ -66,8 +67,26 @@ Read:
 ;下面开始读磁盘程序数据
 ;代码借鉴《30天...》川和秀实
 ;ES:BX	代表缓冲器地址
-Read_Ok:
-	MOV	AX,0x0800	;原则上来说把启动区也要拷贝过来，就改成0x0800
+;Read_Ok:
+copy_start:
+        MOV     AX,0x07c0
+        MOV     DS,AX
+        MOV     AX,0x9000
+        MOV     ES,AX
+
+        MOV     CX,256  ;表示复制512Byte
+        SUB     SI,SI
+        SUB     DI,DI
+        REP
+        MOVW
+        JMP     (copy_end-0x7c00):INITSEG
+copy_end:
+        MOV     AX,CS
+        MOV     DS,AX
+        MOV     ES,AX
+        MOV     SS,AX
+        MOV     SP,0xFF00
+        MOV	AX,0x0050	;原则上来说把启动区也要拷贝过来，就改成0x0800
 	MOV	ES,AX
 	MOV	BX,0x00
 	MOV	CH,0		;柱面0
@@ -110,7 +129,6 @@ next:
 ;
 ;  打印成功读取状态
 ;	换显示坐标
-
 	MOV	AH,0x02
 	MOV	BX,0x0f
 	MOV	DX,0x0e16

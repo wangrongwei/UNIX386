@@ -72,7 +72,7 @@ bochs:
 .PHONY:dis
 dis:
 	ndisasm ./boot/boot.bin > ./boot/boot.txt
-	objdump -d ./init/kernel.bin > ./init/kernel.txt
+	objdump -d ./init/kernel.elf > ./init/kernel.txt
 
 
 

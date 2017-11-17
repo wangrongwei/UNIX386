@@ -31,7 +31,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7f877fa24010. after alignment, vector=0x7f877fa25000
+00000000000i[MEM0  ] allocated memory at 0x7fb9b0b17010. after alignment, vector=0x7fb9b0b18000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri Nov 10 22:02:43 2017 (time0=1510322563)
+00000000000i[CMOS  ] Setting initial clock to: Fri Nov 17 15:16:24 2017 (time0=1510902984)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -58,7 +58,7 @@
 00000000000i[MEM0  ] rom at 0xc0000/41472 ('/usr/local/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
 00000000000i[DMA   ] channel 2 used by Floppy Drive
-00000000000i[FLOPPY] fd0: '/home/lollipop/DeeppinkOS/deeppink.img' ro=0, h=2,t=80,spt=18
+00000000000e[FLOPPY] evaluate_media: file '/home/lollipop/DeeppinkOS/deeppink.img' of unknown size 4217264
 00000000000i[FLOPPY] Using boot sequence floppy, none, none
 00000000000i[FLOPPY] Floppy boot signature check is enabled
 00000000000i[PLUGIN] init_dev of 'acpi' plugin device by virtual method
@@ -150,7 +150,7 @@
 00000322261i[BIOS  ] ram_end=32MB
 00000362829i[BIOS  ] Found 1 cpu(s)
 00000376413i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
-00000603044i[XGUI  ] charmap update. Font is 9 x 16
+00000602872i[XGUI  ] charmap update. Font is 9 x 16
 00000704208i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
 00001032137i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
 00001032156i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
@@ -182,27 +182,27 @@
 00001528657i[BXVGA ] VBE known Display Interface b0c0
 00001528689i[BXVGA ] VBE known Display Interface b0c5
 00001531614i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00002839588i[XGUI  ] charmap update. Font is 9 x 16
-00014040187i[BIOS  ] Booting from 0000:7c00
-00030458020i[XGUI  ] charmap update. Font is 9 x 16
-00052563076i[      ] dbg: Quit
-00052563076i[CPU0  ] CPU is in protected mode (active)
-00052563076i[CPU0  ] CS.mode = 32 bit
-00052563076i[CPU0  ] SS.mode = 32 bit
-00052563076i[CPU0  ] EFER   = 0x00000000
-00052563076i[CPU0  ] | EAX=00000000  EBX=0000000f  ECX=00000700  EDX=00000019
-00052563076i[CPU0  ] | ESP=00006fd4  EBP=00006ffc  ESI=000e7d9b  EDI=0000ffac
-00052563076i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af PF cf
-00052563076i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00052563076i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00052563076i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00052563076i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00052563076i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00052563076i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00052563076i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00052563076i[CPU0  ] | EIP=00009e6c (00009e6c)
-00052563076i[CPU0  ] | CR0=0x60000011 CR2=0x00000000
-00052563076i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-00052563076i[CMOS  ] Last time is 1510322576 (Fri Nov 10 22:02:56 2017)
-00052563076i[XGUI  ] Exit
-00052563076i[SIM   ] quit_sim called with exit code 0
+00002063040i[XGUI  ] charmap update. Font is 9 x 16
+00013993904i[FLOPPY] attempt to read/write sector 1 with media not present
+00021976369i[FLOPPY] controller reset in software
+00022030240p[BIOS  ] >>PANIC<< No bootable device.
+00022030240i[CPU0  ] CPU is in real mode (active)
+00022030240i[CPU0  ] CS.mode = 16 bit
+00022030240i[CPU0  ] SS.mode = 16 bit
+00022030240i[CPU0  ] EFER   = 0x00000000
+00022030240i[CPU0  ] | EAX=0000040a  EBX=0000cd24  ECX=00090004  EDX=00000402
+00022030240i[CPU0  ] | ESP=0000ffa8  EBP=0000ffac  ESI=000e0000  EDI=0000ffac
+00022030240i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
+00022030240i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00022030240i[CPU0  ] |  CS:f000( 0004| 0|  0) 000f0000 0000ffff 0 0
+00022030240i[CPU0  ] |  DS:f000( 0005| 0|  0) 000f0000 0000ffff 0 0
+00022030240i[CPU0  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00022030240i[CPU0  ] |  ES:07c0( 0005| 0|  0) 00007c00 0000ffff 0 0
+00022030240i[CPU0  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00022030240i[CPU0  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00022030240i[CPU0  ] | EIP=0000054b (0000054a)
+00022030240i[CPU0  ] | CR0=0x60000010 CR2=0x00000000
+00022030240i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+00022030240i[CMOS  ] Last time is 1510902989 (Fri Nov 17 15:16:29 2017)
+00022030240i[XGUI  ] Exit
+00022030240i[SIM   ] quit_sim called with exit code 1
