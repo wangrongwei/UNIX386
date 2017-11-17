@@ -31,7 +31,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7fe31f4c0010. after alignment, vector=0x7fe31f4c1000
+00000000000i[MEM0  ] allocated memory at 0x7f6353265010. after alignment, vector=0x7f6353266000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri Nov 17 15:18:36 2017 (time0=1510903116)
+00000000000i[CMOS  ] Setting initial clock to: Fri Nov 17 15:32:18 2017 (time0=1510903938)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -150,7 +150,7 @@
 00000322261i[BIOS  ] ram_end=32MB
 00000362829i[BIOS  ] Found 1 cpu(s)
 00000376413i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
-00000602648i[XGUI  ] charmap update. Font is 9 x 16
+00000601480i[XGUI  ] charmap update. Font is 9 x 16
 00000704208i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
 00001032137i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
 00001032156i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
@@ -182,7 +182,7 @@
 00001528657i[BXVGA ] VBE known Display Interface b0c0
 00001528689i[BXVGA ] VBE known Display Interface b0c5
 00001531614i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00002063164i[XGUI  ] charmap update. Font is 9 x 16
+00001903484i[XGUI  ] charmap update. Font is 9 x 16
 00013993904i[FLOPPY] attempt to read/write sector 1 with media not present
 00021976369i[FLOPPY] controller reset in software
 00022030240p[BIOS  ] >>PANIC<< No bootable device.
@@ -203,6 +203,6 @@
 00022030240i[CPU0  ] | EIP=0000054b (0000054a)
 00022030240i[CPU0  ] | CR0=0x60000010 CR2=0x00000000
 00022030240i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-00022030240i[CMOS  ] Last time is 1510903121 (Fri Nov 17 15:18:41 2017)
+00022030240i[CMOS  ] Last time is 1510903943 (Fri Nov 17 15:32:23 2017)
 00022030240i[XGUI  ] Exit
 00022030240i[SIM   ] quit_sim called with exit code 1
