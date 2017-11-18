@@ -19,6 +19,9 @@
  * 0x8000，但是可执行段是从0x9000开始
  * Alexander.Wang修改<2017/11/17>
  * (已更改，使用objcopy删掉了包括elf头在内的信息，可直接从0x8000执行)
+ *
+ * Alexander.Wang修改<2017/11/18>
+ *      删掉.stab和.stabstr部分（这部分特别大）
         .stab :
         {
                 *(.stab)

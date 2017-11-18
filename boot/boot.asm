@@ -68,7 +68,7 @@ Read:
 ;代码借鉴《30天...》川和秀实
 ;ES:BX	代表缓冲器地址
 Read_Ok:
-        MOV	AX,0x0800	;原则上来说把启动区也要拷贝过来，就改成0x0800
+        MOV	AX,0x0800	;读取剩下的内核到0x800
 	MOV	ES,AX
 	MOV	BX,0x00
 	MOV	CH,0		;柱面0
@@ -109,8 +109,8 @@ next:
 	MOV	[0x0ff0],CH
 
 ;
-;  打印成功读取状态
-;	换显示坐标
+;  开始复制boot到0x90000地址
+;
 copy_start:
         CLD
         MOV     AX,0x07c0       ;源地址
@@ -118,7 +118,7 @@ copy_start:
         MOV     AX,0x9000       ;目的地址
         MOV     ES,AX
 
-        MOV     CX,256  ;表示复制512Byte
+        MOV     CX,256          ;表示复制的字节X/2
         SUB     SI,SI           ;DS:SI--->ES:DI
         SUB     DI,DI
         REP     MOVSW   ;在linux-0.1.1中使用rep movw的intel的格式
@@ -129,7 +129,10 @@ copy_end:
         MOV     ES,AX
         MOV     SS,AX
         MOV     SP,0xFC00
-
+        
+;
+;  打印成功读取状态
+;	换显示坐标
 	MOV	AH,0x02
 	MOV	BX,0x0f
 	MOV	DX,0x0e16
@@ -167,6 +170,24 @@ goto_PM:
 
 	CLI
 ;
+;  开始移动第二部分内核到0x0地址
+;       后边没有中断
+move_start:
+        CLI
+        MOV     AX,0x0800       ;源地址
+        MOV     DS,AX
+        MOV     AX,0x0000       ;目的地址
+        MOV     ES,AX
+
+        MOV     CX,0x6000       ;表示复制的字节X/2
+        SUB     SI,SI           ;DS:SI--->ES:DI
+        SUB     DI,DI
+        REP     MOVSW   ;在linux-0.1.1中使用rep movw的intel的格式
+move_end:
+        MOV     AX,CS   ;还原改变的两个段
+        MOV     ES,AX
+        MOV     DS,AX
+;
 ; OPEN A20
 ;
 	CALL	waitkbd_8042
@@ -188,7 +209,7 @@ goto_PM:
 
         ;jmp     $
         CLI
-	LGDT	[GDTR0]
+	LGDT	[GDTR0-0x7c00]
 
         IN      AL,92h
         OR      AL,0x02
@@ -197,9 +218,9 @@ goto_PM:
         MOV	EAX,CR0
 	AND	EAX,0x7fffffff
 	OR	AL,1
-	MOV	CR0,EAX       ;打开段级保护，不开分页机制
+	MOV	CR0,EAX                 ;打开段级保护，不开分页机制
 
-        JMP	dword 0x08:0  ;跳转到0x0地址（第二部分移到到0x0地址）
+        JMP	dword 0x08:0            ;跳转到0x0地址（第二部分移到到0x0地址）
 ;
 ; 这一部分移到kernel.asm里边
 ;
@@ -215,8 +236,8 @@ goto_PM:
         ;MOV     EAX,0x0000018
         ;MOV     GS,EAX
 
-;       MOV     EAX,0x8000
-;       JMP     EAX;dword 0x08:0x8200
+        ;MOV     EAX,0x0
+;       JMP     0x10:0  ;dword 0x08:0x8200
 ;
 ;	显示需要的相关字符串
 ;
@@ -247,7 +268,7 @@ GDT0:
 GDT0_LEN EQU $-GDT0
 GDTR0:
 	DW	GDT0_LEN-1
-	DD	GDT0
+	DW      GDT0-0x7c00,0x9
 
 error:
 	MOV	SI,msg_error;	打开失败要显示字符
