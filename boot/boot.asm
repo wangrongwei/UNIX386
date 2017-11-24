@@ -129,7 +129,7 @@ copy_end:
         MOV     ES,AX
         MOV     SS,AX
         MOV     SP,0xFC00
-        
+
 ;
 ;  打印成功读取状态
 ;	换显示坐标
@@ -176,7 +176,7 @@ move_start:
         CLI
         MOV     AX,0x0800       ;源地址
         MOV     DS,AX
-        MOV     AX,0x0000       ;目的地址
+        MOV     AX,0x0500       ;目的地址
         MOV     ES,AX
 
         MOV     CX,0x6000       ;表示复制的字节X/2
@@ -220,7 +220,7 @@ move_end:
 	OR	AL,1
 	MOV	CR0,EAX                 ;打开段级保护，不开分页机制
 
-        JMP	dword 0x08:0            ;跳转到0x0地址（第二部分移到到0x0地址）
+        JMP	dword 0x08:0x5000            ;跳转到0x0地址（第二部分移到到0x0地址）
 ;
 ; 这一部分移到kernel.asm里边
 ;

@@ -95,7 +95,7 @@
 000000DD  FA                cli
 000000DE  B80008            mov ax,0x800
 000000E1  8ED8              mov ds,ax
-000000E3  B80000            mov ax,0x0
+000000E3  B80005            mov ax,0x500
 000000E6  8EC0              mov es,ax
 000000E8  B90060            mov cx,0x6000
 000000EB  29F6              sub si,si
@@ -120,7 +120,7 @@
 00000117  6625FFFFFF7F      and eax,0x7fffffff
 0000011D  0C01              or al,0x1
 0000011F  0F22C0            mov cr0,eax
-00000122  66EA000000000800  jmp dword 0x8:0x0
+00000122  66EA005000000800  jmp dword 0x8:0x5000
 0000012A  E464              in al,0x64
 0000012C  2402              and al,0x2
 0000012E  75FA              jnz 0x12a

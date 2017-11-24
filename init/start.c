@@ -32,11 +32,6 @@ void kernel_start()
 	console_clear();
 	//console_puts(string,0,green);
 	printk(string);
-	//memcpy((void *)0x100000,kernel_main,512);
-
-	/* 跳转到0x100000执行 */
-	//asm volatile("MOV EAX,0x100000 \
-	//	      JMP EAX");
 
 	init_gdt();
 	init_idt();
@@ -56,14 +51,15 @@ void kernel_start()
 	printk("kernel start addr = 0x%08X\n",kernel_s);
 	printk("kernel end   addr = 0x%08X\n",kernel_e);
 	printk("kernel size = %dKB\n",(kernel_e-kernel_s + 1023) / 1024);
+
 #if 1
 	init_pmm();
 	page_addr1 = pmm_alloc_page();
 	printk("alloc page1 = 0x%08X\n",page_addr1);
-	page_addr2 = pmm_alloc_page();
-	printk("alloc page2 = 0x%08X\n",page_addr2);
-	pmm_free_page(page_addr2);
-	pmm_free_page(page_addr1);
+	//page_addr2 = pmm_alloc_page();
+	//printk("alloc page2 = 0x%08X\n",page_addr2);
+	//pmm_free_page(page_addr2);
+	//pmm_free_page(page_addr1);
 
 	while(1){
 		keyboard_read();

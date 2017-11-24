@@ -38,7 +38,7 @@
 ENTRY(_start)
 SECTIONS
 {
-	. = 0x0000;
+	. = 0x5000;
         PROVIDE(kernel_s = .);
 	.text :
 	{

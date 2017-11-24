@@ -16,18 +16,18 @@
 ; 3-> 初始化PIC
 ; 4-> 打开A20，进入保护模式
 ; 5-> 设置CR0的PE和PG
-; 6-> 更新D、E、F、G、S，其中数代表的是第几个GDT
+; 6-> 跳转到0地址，即执行该程序
+; 7-> 更新D、E、F、G、S，其中数代表的是第几个GDT
+; 8-> 设置页保护机制
+; 9-> 跳转到kernel_start函数
 
 [bits 32]
-GLOBAL  _start
-GLOBAL	myprintf
-GLOBAL  load_gdtr
-GLOBAL  load_idtr
-EXTERN  kernel_start
-
-BOTPAK	EQU		0x00280000
-DSKCAC	EQU		0x00100000
-DSKCAC0	EQU		0x00008000
+global  _start
+global	myprintf
+global  load_gdtr
+global  load_idtr
+extern  kernel_start
+extern  _stack_top
 
 ;BOOT_INFO信息
 CYLS		EQU	0x0ff0
@@ -36,6 +36,13 @@ LCDMODE		EQU	0x0ff2  ;
 SCREENX		EQU	0x0ff4  ;	x
 SCREENY		EQU	0x0ff6  ;	y
 LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
+;页信息
+;只有16M，因此只需要4个页目录
+_page_dir       EQU     0x0000
+_page_tab0      EQU     0x1000
+_page_tab1      EQU     0x2000
+_page_tab2      EQU     0x3000
+_page_tab3      EQU     0x4000
 
 
 _start:
@@ -45,22 +52,51 @@ _start:
 	MOV	FS,AX
 	MOV	GS,AX
 	MOV	SS,AX
+; 设置页目录表和页目录
+        CALL    setup_paging
+; 开始打开分页机制
+        XOR     EAX,EAX
+        MOV     EAX,CR3 ;将_page_dir地址0x0000写给CR3
+        MOV     EAX,CR0
+        OR      EAX,0x80000000
+        MOV     CR0,EAX ;PG位置1
 
-        ;MOV     EAX,0x0000018
-        ;MOV     GS,EAX
-
-        MOV     EAX,0x8000
+        ;MOV     EAX,0x8000
         ;INT     0x10
-	MOV     ESP,0x00007000
+	MOV     ESP,_stack_top
         MOV     EBP,ESP
         ;AND     ESP,0FFFFFFF0H
         ;MOV     AH,0x0f
         ;MOV     AL,'V'
         ;MOV     BYTE [0xb8008],'V'
+; 跳转到C语言部分
         MOV     EAX,kernel_start
         JMP     EAX
         ;SUB     EAX,0x8080
         ;CALL    EAX
+;-----------------------------------------
+;-----------------------------------------
+;设置页目录表和页目录
+;-----------------------------------------
+setup_paging:
+        MOV     ECX,1024*5
+        XOR     EAX,EAX
+        XOR     EDI,EDI
+        CLD
+        REP     STOSD ;每次移动4个字节
+        MOV     dword [_page_dir],_page_tab0+7
+        MOV     dword [_page_dir+4],_page_tab1+7
+        MOV     dword [_page_dir+8],_page_tab2+7
+        MOV     dword [_page_dir+12],_page_tab3+7
+
+        MOV     EAX,0xFFF007 ;16M-4K位置
+        MOV     EDI,_page_tab3+4092;
+        STD;EDI往减的方向执行
+abcd:   STOSD
+        SUB     EAX,0x1000
+        JGE     abcd
+
+        RET
 ; 加载gdtr地址需要，后面函数调用
 load_gdtr:
         MOV     EAX,[ESP+4]
