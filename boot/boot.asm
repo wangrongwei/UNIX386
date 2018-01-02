@@ -5,8 +5,8 @@
 ;|	    |	|	       |......  |   |
 ;-------------------------------------------------------------------------------
 ;						0x8200=后边的程序
-;在某种意义上理解，我们的程序只需要在磁盘的开始512字节就行
-;然后硬件上自动去读这512，然后执行这段程序
+;在某种意义上理解，只需要将程序放在磁盘开始的512字节，
+;然后硬件会自动去读取磁盘上开始的512个字节，然后执行这段程序
 
 ;目前在boot.asm里边读取了180kb程序，超过这个数字，需要更改boot.asm程序
 
@@ -105,7 +105,7 @@ next:
 	ADD	CH,1		;---------最终改变读到柱面
 	CMP	CH,CYLS
 	JB	readloop	;CH < CYLS跳转
-;10*2*18*512=
+;10*2*18*512= 180k
 	MOV	[0x0ff0],CH
 
 ;
@@ -122,8 +122,10 @@ copy_start:
         SUB     SI,SI           ;DS:SI--->ES:DI
         SUB     DI,DI
         REP     MOVSW   ;在linux-0.1.1中使用rep movw的intel的格式
+        ;这里是相对跳转,保证程序跳转之后从相同的位置执行
         JMP     INITSEG:(copy_end-0x7c00)
 copy_end:
+        ;跳转到一个新的内存区域后，重新设置DS,ES,SS和SP指针
         MOV     AX,CS
         MOV     DS,AX
         MOV     ES,AX
@@ -170,7 +172,7 @@ goto_PM:
 
 	CLI
 ;
-;  开始移动第二部分内核到0x0地址
+;  开始移动第二部分内核(0x7c00+512后面的代码)到0x0地址
 ;       后边没有中断
 move_start:
         CLI
@@ -209,6 +211,8 @@ move_end:
 
         ;jmp     $
         CLI
+        ;由于最开始编译这个程序是按0x7c00为偏移地址的，
+        ;所以移动到0x0地址以后，需要重新计算GDTR0存储的地址
 	LGDT	[GDTR0-0x7c00]
 
         IN      AL,92h
@@ -219,8 +223,9 @@ move_end:
 	AND	EAX,0x7fffffff
 	OR	AL,1
 	MOV	CR0,EAX                 ;打开段级保护，不开分页机制
+;程序执行到这里结束，跳转到init/kernel.asm(即移动到0x0处的代码)执行
+        JMP	dword 0x08:0x5000       ;跳转到0x0地址（第二部分移到到0x0地址）
 
-        JMP	dword 0x08:0x5000            ;跳转到0x0地址（第二部分移到到0x0地址）
 ;
 ; 这一部分移到kernel.asm里边
 ;
@@ -290,21 +295,21 @@ fin_error:
 msg:
 	DB	0x0a,	0x0a	;换行
 	DB	"Welcome to DeeppinkOS:"
-	DB	0x0a				;换行
+	DB	0x0a		;换行
 	DB	0
 msg_1:
 	DB	0x0a,	0x0a	;换行
 	DB	"Read Sectors..."
-	DB	0x0a				;换行
+	DB	0x0a		;换行
 	DB	0
 msg_2:
 	DB	"Read Completely!!"
-	DB	0x0a				;换行
+	DB	0x0a		;换行
 	DB	0
 
 msg_error:
 	DB	"Load	error"
-	DB	0x0a				;换行
+	DB	0x0a		;换行
 	DB	0
 
 	times	510-($-$$) db 0
