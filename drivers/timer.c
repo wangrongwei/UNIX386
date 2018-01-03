@@ -18,6 +18,7 @@ void timer_callback(pt_regs *regs)
  */
 void init_timer(unsigned int frequency)
 {
+	printk("initial timer,set timer interrupt......\n");
 	unsigned char low=0,high=0;
 	unsigned int div=0;
 	register_interrupt_handler(IRQ0,timer_callback);

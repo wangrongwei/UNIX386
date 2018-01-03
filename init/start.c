@@ -22,6 +22,7 @@ unsigned short inw(unsigned short port);
  */
 void kernel_start()
 {
+	printk("enter the kernel_start function...\n");
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
 	unsigned char *string = "Hello,welcome to DeeppinkOS\n";
