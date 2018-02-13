@@ -182,7 +182,7 @@ move_start:
         MOV     AX,0x0500       ;目的地址
         MOV     ES,AX
 
-        MOV     CX,0x6000       ;表示复制的字节X/2
+        MOV     CX,0x7000       ;表示复制的字节X/2
         SUB     SI,SI           ;DS:SI--->ES:DI
         SUB     DI,DI
         REP     MOVSW   ;在linux-0.1.1中使用rep movw的intel的格式
