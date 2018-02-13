@@ -156,8 +156,9 @@ print_loop:
 ;	goto PM mode
 ;
 goto_PM:
-	MOV	AL,0x03
-	MOV	AH,0x00
+	MOV	AL,0x13 ;设置显示模式
+	MOV	AH,0x00 ;设置成00H无法显示字符
+	MOV     BX,0x07
 	INT	0x10
 
 	;MOV	BYTE [LCDMODE],8
@@ -165,7 +166,7 @@ goto_PM:
 	;MOV	WORD [SCREENY],200
 	;MOV	DWORD [LCDRAM],0x000a0000
 
-	MOV	AL,0XFF
+	MOV	AL,0xFF
 	OUT	0x21,AL
 	NOP
 	OUT	0xa1,AL

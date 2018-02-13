@@ -22,6 +22,7 @@ unsigned short inw(unsigned short port);
  */
 void kernel_start()
 {
+	int i;
 	printk("enter the kernel_start function...\n");
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
@@ -61,7 +62,9 @@ void kernel_start()
 	//printk("alloc page2 = 0x%08X\n",page_addr2);
 	//pmm_free_page(page_addr2);
 	//pmm_free_page(page_addr1);
-
+	for(i=0xa0000;i<=0xa0140;i++){
+		write_vram(i,14);
+	}
 	while(1){
 		keyboard_read();
 	}
@@ -95,7 +98,22 @@ inline unsigned short inw(unsigned short port)
 	return retval;
 }
 
+/*
+ * 向显存写数据
+ *
+void write_vram(int address,int data)
+{
+	asm volatile("MOV [%%ESP+4],%%ECX\n\t"
+		     "MOV [%%ESP+8],%%AL\n\t"
+		     "MOV %%AL,[%%ECX]\n\t"
+		     "RET"
+		     :
+		     :"c"
+		     :"ECX"
+		     );
 
+}
+*********************************************/
 
 
 

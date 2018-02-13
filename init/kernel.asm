@@ -26,6 +26,8 @@ global  _start
 global	myprintf
 global  load_gdtr
 global  load_idtr
+global  write_vram
+
 extern  kernel_start
 extern  _stack_top
 
@@ -118,6 +120,11 @@ load_idtr:
         MOV     EAX,[ESP+4]
         LIDT    [EAX]
         ret
+write_vram:
+	MOV ECX,[ESP+4]
+	MOV AL,[ESP+8]
+	MOV [ECX],AL
+	RET
 
 ; 定义两个构造中断处理函数的宏(有的中断有错误代码，有的没有)
 ; 用于没有错误代码的中断
