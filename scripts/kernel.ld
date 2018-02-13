@@ -22,16 +22,16 @@
  *
  * Alexander.Wang修改<2017/11/18>
  *      删掉.stab和.stabstr部分（这部分特别大）
-        .stab :
-        {
-                *(.stab)
-                . = ALIGN(4);
-        }
-        .stabstr :
-        {
-                *(.stabstr)
-                . = ALIGN(4);
-        }
+ *       .stab :
+ *       {
+ *               *(.stab)
+ *               . = ALIGN(4);
+ *       }
+ *       .stabstr :
+ *       {
+ *               *(.stabstr)
+ *               . = ALIGN(4);
+ *       }
  *
  */
 

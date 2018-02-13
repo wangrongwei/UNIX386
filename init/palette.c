@@ -1,10 +1,17 @@
 /*
  * 关于调色板的初始化程序
  */
+void init_palette(void);
+void set_palette(unsigned char *table_rgb);
 
+
+#if 1
 void init_palette(void)
 {
-	static unsigned char table_rgb[16 * 3] = {
+	/*
+	 * 不能定义成全局变量和静态变量
+	 */
+	unsigned char table_rgb[16 * 3] = {
 		0x00, 0x00, 0x00,	/*  0:黑 */
 		0xff, 0x00, 0x00,	/*  1:亮红 */
 		0x00, 0xff, 0x00,	/*  2:亮绿 */
@@ -22,11 +29,24 @@ void init_palette(void)
 		0x00, 0x84, 0x84,	/* 14:浅暗蓝 */
 		0x84, 0x84, 0x84	/* 15:暗灰 */
 	};
+	set_palette(table_rgb);
+	return ;
+}
+#endif
 
+void set_palette(unsigned char *table_rgb)
+{
+	int i;
+	asm volatile("cli");//先关闭中断
+	outb(0x03c8,0);
+	for(i=0;i<=15;i++){
+		outb(0x03c9,table_rgb[0] / 4);
+		outb(0x03c9,table_rgb[1] / 4);
+		outb(0x03c9,table_rgb[2] / 4);
+		table_rgb += 3;
+	}
 
 }
-
-
 
 
 
