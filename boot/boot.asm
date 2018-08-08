@@ -5,8 +5,8 @@
 ;|	    |	|	       |......  |   |
 ;-------------------------------------------------------------------------------
 ;						0x8200=后边的程序
-;在某种意义上理解，我们的程序只需要在磁盘的开始512字节就行
-;然后硬件上自动去读这512，然后执行这段程序
+;在某种意义上理解，只需要将程序放在磁盘开始的512字节，
+;然后硬件会自动去读取磁盘上开始的512个字节，然后执行这段程序
 
 ;目前在boot.asm里边读取了180kb程序，超过这个数字，需要更改boot.asm程序
 
@@ -22,6 +22,7 @@
 CYLS		EQU	10	;读10个柱面
 BOOT_ADDR	EQU	0x7C00
 KERNEL_ADDR	EQU	0xC0000000
+INITSEG         EQU     0x9000
 
 LCDMODE		EQU	0x0ff2  ;
 SCREENX		EQU	0x0ff4  ;	x
@@ -62,12 +63,12 @@ Read:
 	MOV	AH,0x0e
 	MOV	BX,0x0f
 	INT	0x10		;执行BIOS中断0x10
-	JMP	Read;
+	JMP	Read
 ;下面开始读磁盘程序数据
 ;代码借鉴《30天...》川和秀实
 ;ES:BX	代表缓冲器地址
 Read_Ok:
-	MOV	AX,0x0800	;原则上来说把启动区也要拷贝过来，就改成0x0800
+        MOV	AX,0x0800	;读取剩下的内核到0x800
 	MOV	ES,AX
 	MOV	BX,0x00
 	MOV	CH,0		;柱面0
@@ -104,19 +105,42 @@ next:
 	ADD	CH,1		;---------最终改变读到柱面
 	CMP	CH,CYLS
 	JB	readloop	;CH < CYLS跳转
-;10*2*18*512=
+;10*2*18*512= 180k
 	MOV	[0x0ff0],CH
+
+;
+;  开始复制boot到0x90000地址
+;
+copy_start:
+        CLD
+        MOV     AX,0x07c0       ;源地址
+        MOV     DS,AX
+        MOV     AX,0x9000       ;目的地址
+        MOV     ES,AX
+
+        MOV     CX,256          ;表示复制的字节X/2
+        SUB     SI,SI           ;DS:SI--->ES:DI
+        SUB     DI,DI
+        REP     MOVSW   ;在linux-0.1.1中使用rep movw的intel的格式
+        ;这里是相对跳转,保证程序跳转之后从相同的位置执行
+        JMP     INITSEG:(copy_end-0x7c00)
+copy_end:
+        ;跳转到一个新的内存区域后，重新设置DS,ES,SS和SP指针
+        MOV     AX,CS
+        MOV     DS,AX
+        MOV     ES,AX
+        MOV     SS,AX
+        MOV     SP,0xFC00
 
 ;
 ;  打印成功读取状态
 ;	换显示坐标
-
 	MOV	AH,0x02
 	MOV	BX,0x0f
 	MOV	DX,0x0e16
 	INT	0x10
 
-	MOV	SI,msg_2	;打开成功要显示字符
+	MOV	SI,(msg_2-0x7c00);打开成功要显示字符
 print_loop:
 	MOV	AL,[SI]
 	ADD	SI,1
@@ -132,8 +156,9 @@ print_loop:
 ;	goto PM mode
 ;
 goto_PM:
-	MOV	AL,0x03
-	MOV	AH,0x00
+	MOV	AL,0x13 ;设置显示模式
+	MOV	AH,0x00 ;设置成00H无法显示字符
+	MOV     BX,0x07
 	INT	0x10
 
 	;MOV	BYTE [LCDMODE],8
@@ -141,15 +166,30 @@ goto_PM:
 	;MOV	WORD [SCREENY],200
 	;MOV	DWORD [LCDRAM],0x000a0000
 
-	MOV	AL,0XFF
+	MOV	AL,0xFF
 	OUT	0x21,AL
 	NOP
 	OUT	0xa1,AL
 
-	;MOV	AH,0x0e
-	;MOV	AL,'!'
-	;INT	0x10
 	CLI
+;
+;  开始移动第二部分内核(0x7c00+512后面的代码)到0x0地址
+;       后边没有中断
+move_start:
+        CLI
+        MOV     AX,0x0800       ;源地址
+        MOV     DS,AX
+        MOV     AX,0x0500       ;目的地址
+        MOV     ES,AX
+
+        MOV     CX,0x7000       ;表示复制的字节X/2
+        SUB     SI,SI           ;DS:SI--->ES:DI
+        SUB     DI,DI
+        REP     MOVSW   ;在linux-0.1.1中使用rep movw的intel的格式
+move_end:
+        MOV     AX,CS   ;还原改变的两个段
+        MOV     ES,AX
+        MOV     DS,AX
 ;
 ; OPEN A20
 ;
@@ -172,7 +212,9 @@ goto_PM:
 
         ;jmp     $
         CLI
-	LGDT	[GDTR0]
+        ;由于最开始编译这个程序是按0x7c00为偏移地址的，
+        ;所以移动到0x0地址以后，需要重新计算GDTR0存储的地址
+	LGDT	[GDTR0-0x7c00]
 
         IN      AL,92h
         OR      AL,0x02
@@ -181,23 +223,27 @@ goto_PM:
         MOV	EAX,CR0
 	AND	EAX,0x7fffffff
 	OR	AL,1
-	MOV	CR0,EAX       ;打开段级保护，不开分页机制
+	MOV	CR0,EAX                 ;打开段级保护，不开分页机制
+;程序执行到这里结束，跳转到init/kernel.asm(即移动到0x0处的代码)执行
+        JMP	dword 0x08:0x5000       ;跳转到0x0地址（第二部分移到到0x0地址）
 
-        JMP	dword 0x08:PM_MODE
-[bits 32]
-PM_MODE:
-	MOV	EAX,0x00000010
-	MOV	DS,AX
-	MOV	ES,AX
-	MOV	FS,AX
-	MOV	GS,AX
-	MOV	SS,AX
+;
+; 这一部分移到kernel.asm里边
+;
+;[bits 32]
+;PM_MODE:
+;	MOV	EAX,0x00000010
+;	MOV	DS,AX
+;	MOV	ES,AX
+;	MOV	FS,AX
+;	MOV	GS,AX
+;	MOV	SS,AX
 
         ;MOV     EAX,0x0000018
         ;MOV     GS,EAX
 
-        MOV     EAX,0x9000
-        JMP     EAX;dword 0x08:0x8200
+        ;MOV     EAX,0x0
+;       JMP     0x10:0  ;dword 0x08:0x8200
 ;
 ;	显示需要的相关字符串
 ;
@@ -228,7 +274,7 @@ GDT0:
 GDT0_LEN EQU $-GDT0
 GDTR0:
 	DW	GDT0_LEN-1
-	DD	GDT0
+	DW      GDT0-0x7c00,0x9
 
 error:
 	MOV	SI,msg_error;	打开失败要显示字符
@@ -250,21 +296,21 @@ fin_error:
 msg:
 	DB	0x0a,	0x0a	;换行
 	DB	"Welcome to DeeppinkOS:"
-	DB	0x0a				;换行
+	DB	0x0a		;换行
 	DB	0
 msg_1:
 	DB	0x0a,	0x0a	;换行
 	DB	"Read Sectors..."
-	DB	0x0a				;换行
+	DB	0x0a		;换行
 	DB	0
 msg_2:
 	DB	"Read Completely!!"
-	DB	0x0a				;换行
+	DB	0x0a		;换行
 	DB	0
 
 msg_error:
 	DB	"Load	error"
-	DB	0x0a				;换行
+	DB	0x0a		;换行
 	DB	0
 
 	times	510-($-$$) db 0
