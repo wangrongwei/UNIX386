@@ -68,7 +68,7 @@ Read:
 ;代码借鉴《30天...》川和秀实
 ;ES:BX	代表缓冲器地址
 Read_Ok:
-        MOV	AX,0x0800	;读取剩下的内核到0x800
+        MOV	AX,0x0800	;读取剩下的内核到0x8000
 	MOV	ES,AX
 	MOV	BX,0x00
 	MOV	CH,0		;柱面0
@@ -103,7 +103,7 @@ next:
 	JB	readloop	;DH < 2 跳转
 	MOV	DH,0
 	ADD	CH,1		;---------最终改变读到柱面
-	CMP	CH,CYLS
+	CMP	CH,CYLS         ;读10个柱面
 	JB	readloop	;CH < CYLS跳转
 ;10*2*18*512= 180k
 	MOV	[0x0ff0],CH
@@ -121,7 +121,7 @@ copy_start:
         MOV     CX,256          ;表示复制的字节X/2
         SUB     SI,SI           ;DS:SI--->ES:DI
         SUB     DI,DI
-        REP     MOVSW   ;在linux-0.1.1中使用rep movw的intel的格式
+        REP     MOVSW		;在linux-0.1.1中使用rep movw的intel的格式
         ;这里是相对跳转,保证程序跳转之后从相同的位置执行
         JMP     INITSEG:(copy_end-0x7c00)
 copy_end:
@@ -133,8 +133,8 @@ copy_end:
         MOV     SP,0xFC00
 
 ;
-;  打印成功读取状态
-;	换显示坐标
+;打印成功读取状态
+;换显示坐标
 	MOV	AH,0x02
 	MOV	BX,0x0f
 	MOV	DX,0x0e16
@@ -156,9 +156,11 @@ print_loop:
 ;	goto PM mode
 ;
 goto_PM:
-	MOV	AL,0x13 ;设置显示模式
-	MOV	AH,0x00 ;设置成00H无法显示字符
-	MOV     BX,0x07
+	MOV	AL,0X03
+	MOV	AH,0X00
+	;MOV	AL,0x13 ;设置显示模式
+	;MOV	AH,0x00 ;设置成00H无法显示字符,
+	;MOV     BX,0x07
 	INT	0x10
 
 	;MOV	BYTE [LCDMODE],8
@@ -173,8 +175,8 @@ goto_PM:
 
 	CLI
 ;
-;  开始移动第二部分内核(0x7c00+512后面的代码)到0x0地址
-;       后边没有中断
+;开始移动第二部分内核(0x7c00+512后面的代码)到0x0地址
+;后边没有中断
 move_start:
         CLI
         MOV     AX,0x0800       ;源地址

@@ -26,18 +26,23 @@ void logo(void);
 void kernel_start()
 {
 	int i;
+	//字符串存在什么区间的
+	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
+	unsigned int page_addr1=0,page_addr2=0;
 	printk("enter the kernel_start function...\n");
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
-	unsigned char *string = "Hello,welcome to DeeppinkOS\n";
-	unsigned int page_addr1=0,page_addr2=0;
+	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
+	//unsigned int page_addr1=0,page_addr2=0;
 	//*input++ = 'H';
-	//*input++ = color;
+	//*input++ = color
 
-	console_clear();
+	//console_clear();
+
 	//console_puts(string,0,green);
-	printk(string);
+	//printk(string);
 
+#if 1
 	init_gdt();
 	init_idt();
 	init_palette();
@@ -56,6 +61,7 @@ void kernel_start()
 	printk("kernel start addr = 0x%08X\n",kernel_s);
 	printk("kernel end   addr = 0x%08X\n",kernel_e);
 	printk("kernel size = %dKB\n",(kernel_e-kernel_s + 1023) / 1024);
+#endif
 
 #if 1
 	init_pmm();

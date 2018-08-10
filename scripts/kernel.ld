@@ -20,8 +20,8 @@
  * Alexander.Wang修改<2017/11/17>
  * (已更改，使用objcopy删掉了包括elf头在内的信息，可直接从0x8000执行)
  *
- * Alexander.Wang修改<2017/11/18>
- *      删掉.stab和.stabstr部分（这部分特别大）
+ * Wang修改<2017/11/18>
+ *      删掉.stab节和.stabstr节（这部分特别大）
  *       .stab :
  *       {
  *               *(.stab)
