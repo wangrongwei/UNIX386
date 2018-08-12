@@ -3,10 +3,11 @@
  */
 #include <console.h>
 
-
+//#if 0
 static unsigned short *video_memory=(unsigned short*)0xb8000;
-
-
+//#elif
+//static unsigned short *video_memory=(unsigned short*)0xa0000;
+//#endif
 /*
  * 清屏函数
  * 给每一行写空格即可

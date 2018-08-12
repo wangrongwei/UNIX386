@@ -17,13 +17,28 @@
  *      由于kernel.bin是一个elf文件，所以这里的0x9000地址指明的是_start的加载地址
  * 但是在生成的kernel.bin文件里前面还有这个elf文件的属性，尽管把这个.bin文件拷贝到
  * 0x8000，但是可执行段是从0x9000开始
+ * Alexander.Wang修改<2017/11/17>
+ * (已更改，使用objcopy删掉了包括elf头在内的信息，可直接从0x8000执行)
+ *
+ * Wang修改<2017/11/18>
+ *      删掉.stab节和.stabstr节（这部分特别大）
+ *       .stab :
+ *       {
+ *               *(.stab)
+ *               . = ALIGN(4);
+ *       }
+ *       .stabstr :
+ *       {
+ *               *(.stabstr)
+ *               . = ALIGN(4);
+ *       }
  *
  */
 
 ENTRY(_start)
 SECTIONS
 {
-	. = 0x9000;
+	. = 0x5000;
         PROVIDE(kernel_s = .);
 	.text :
 	{
@@ -41,16 +56,6 @@ SECTIONS
 		*(.bss)
 		. = ALIGN(4);
 	}
-        .stab :
-        {
-                *(.stab)
-                . = ALIGN(4);
-        }
-        .stabstr :
-        {
-                *(.stabstr)
-                . = ALIGN(4);
-        }
         PROVIDE(kernel_e = .);
 
 }

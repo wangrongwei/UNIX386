@@ -4,8 +4,9 @@
 BOOT:=boot/boot.asm
 KERNEL:=init/kernel.asm
 BOOT_BIN:=$(subst .asm,.bin,$(BOOT))
-KERNEL_BIN:=$(subst .asm,.bin,$(KERNEL))
 
+KERNEL_ELF:=$(subst .asm,.elf,$(KERNEL))
+KERNEL_BIN:=$(subst .asm,.bin,$(KERNEL))
 # 寻找当前目录下.c文件
 C_SOURCES = $(shell find . -name "*.c")
 C_OBJECTS = $(patsubst %.c,%.o,$(C_SOURCES))
@@ -18,6 +19,7 @@ S_OBJECTS = $(patsubst %.asm,%.o,$(S_SOURCES))
 CC = gcc
 ASM = nasm
 LD = ld
+OBJCOPY = objcopy
 
 C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin \
 -fno-stack-protector -I include
@@ -48,7 +50,8 @@ $(S_OBJECTS):$(S_SOURCES)
 # 当前kernel.bin的大小不能超过621568byte
 link:
 	@echo 链接生成kernel.bin文件
-	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o $(KERNEL_BIN)
+	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o $(KERNEL_ELF)
+	$(OBJCOPY) -O binary -R .note -R .comment -S $(KERNEL_ELF) $(KERNEL_BIN)
 
 .PHONY:qemu
 qemu:
@@ -69,7 +72,7 @@ bochs:
 .PHONY:dis
 dis:
 	ndisasm ./boot/boot.bin > ./boot/boot.txt
-	objdump -d ./init/kernel.bin > ./init/kernel.txt
+	objdump -d ./init/kernel.elf > ./init/kernel.txt
 
 
 

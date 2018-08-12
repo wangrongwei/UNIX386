@@ -10,17 +10,17 @@
 
 romimage:file=$BXSHARE/BIOS-bochs-latest 
 
- 
 
+ 
 #=======================================================================
 #VGAROMIMAGE
 #You now need to load a VGA ROM BIOS into C0000.
 #=======================================================================
 
-vgaromimage:file=$BXSHARE/VGABIOS-lgpl-latest
+vgaromimage:file=/usr/share/bochs/VGABIOS-lgpl-latest
+
 
  
-
 #=======================================================================
 #what disk images will be used 
 #=======================================================================
