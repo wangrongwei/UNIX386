@@ -26,6 +26,7 @@ void init_keyboard()
 void keyboard_handler(pt_regs *regs)
 {
 	unsigned char scancode;
+	//增加一行注释
 	scancode = inb(0x60);
 	if(kb_in.count < KB_IN_BYTES){
 		*(kb_in.p_head) = scancode;
