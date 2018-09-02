@@ -70,3 +70,20 @@ README.md-----------------帮助文档（遇到的相关bug和设计步骤）  <
 - make debug
 
 &#160; &#160; &#160; &#160;make debug表示以调试模式运行，详情可查看Makefile文档。
+
+# 贡献者
+
+| 贡献者 | 贡献内容 |
+| ------ | -------- |
+| @wangrongwei |  |
+| @clee01 |  |
+| @Zhangshuai95 |  |
+| @Stephenhua |  |
+
+# TODO
+82258（DMA控制器）</br>
+8259A（中断控制器）：Zhangshuai95</br>
+8272（磁盘控制器） ：Stephenhua</br>
+82385（Cache控制器）</br>
+82062（硬盘控制器）：wangrongwei</br>
+8254（可编程定时/计数器）：clee01</br>
