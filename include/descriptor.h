@@ -35,12 +35,12 @@ typedef struct gdt_struct_t{
 	unsigned char  access;       //P_DVL(2位)_S_Type
 	unsigned char  limit1:4;     //长度限制19--16
 	unsigned char  G_DB_L_AVL:4; //
-	unsigned char  base2         //基地址31--24
+	unsigned char  base2;        //基地址31--24
 }__attribute__((packed)) gdt_struct_t;
 
 struct gdtr_t{
 	unsigned short length; //这个大小代表了gdt表的大小
-	unsigned int   base    //gdt表的基地址
+	unsigned int   base;   //gdt表的基地址
 }__attribute__((packed)) gdtr_t;
 
 /* 局部段描述符 */
@@ -51,7 +51,7 @@ typedef struct ldt_struct_t{
 	unsigned char  access;       //P_DVL(2位)_S_Type
 	unsigned char  limit1:4;     //长度限制19--16
 	unsigned char  G_DB_L_AVL:4; //
-	unsigned char  base2         //基地址31--24
+	unsigned char  base2;         //基地址31--24
 }__attribute__((packed)) ldt_struct_t;
 
 
@@ -60,7 +60,7 @@ typedef struct idt_struct_t{
 	unsigned short sel;     //选择段描述符
 	unsigned char  zero;    //全是0
 	unsigned char  flags;	//相关标志 P_DVL_'E'
-	unsigned short base1	//中断函数基地址31--16
+	unsigned short base1;	//中断函数基地址31--16
 
 }__attribute__((packed)) idt_struct_t;
 
