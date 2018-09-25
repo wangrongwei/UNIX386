@@ -1,6 +1,13 @@
-
+/*
+ * 与进程相关的结构体定义头文件，包括ldt/tss定义
+ *
+ * author:<wangrongwei>
+ *
+ */
 #ifndef __TASK_STRUCT_H__
 #define __TASK_STRUCT_H__
+
+#include "schedule.h"
 
 #include "descriptor.h"
 #include "page.h"
@@ -35,6 +42,7 @@ struct tss_struct{
 	long ecx;
 	long edx;
 	long ebx;
+	
 	long esp;
 	long ebp;
 	long esi;
@@ -89,6 +97,8 @@ union task_union {
 	char stack[PAGE_SIZE]; //PAGE_SIZE == 4096
 };
 
+
+
 /* 填充一个task0，是所有进程的父进程 */
 struct task_struct INIT_TASK={
 	.state = TASK_RUNNING;
@@ -129,46 +139,70 @@ struct task_struct INIT_TASK={
 	.tty = 0; /* 自设备号 */
 
 	/* 填充ldt */
-	{
-		/* 填充ldt[0] */
-		{
-			.limit0 = ;
-			.base0 = ;
-			.base1 = ;
-			.access = ;
-			.limit1 = ;
-			.GD_DB_L_AVL = ;
-			.base2 = ;
-		}
-		
-		/* 填充ldt[1] */
-		{
-			.limit0 = ;
-			.base0 = ;
-			.base1 = ;
-			.access = ;
-			.limit1 = ;
-			.GD_DB_L_AVL = ;
-			.base2 = ;
-		}
-		
-		/* 填充ldt[2] */
-		{
-			.limit0 = ;
-			.base0 = ;
-			.base1 = ;
-			.access = ;
-			.limit1 = ;
-			.GD_DB_L_AVL = ;
-			.base2 = ;
-		}
+	/* 填充ldt[0] */
+	ldt[0].limit0 = 0;
+	ldt[0].base0 = 0;
+	ldt[0].base1 = 0;
+	ldt[0].access = 0;
+	ldt[0].limit1 = 0;
+	ldt[0].GD_DB_L_AVL = 0;
+	ldt[0].base2 = 0;
 	
-	}
+	/* 填充ldt[1] */
+	ldt[1].limit0 = 0;
+	ldt[1].base0 = 0;
+	ldt[1].base1 = 0;
+	ldt[1].access = 0;
+	ldt[1].limit1 = 0;
+	ldt[1].GD_DB_L_AVL = 0;
+	ldt[1].base2 = ;
+	
+	/* 填充ldt[2] */
+	ldt[2].limit0 = 0;
+	ldt[2].base0 = 0;
+	ldt[2].base1 = 0;
+	ldt[2].access = 0;
+	ldt[2].limit1 = 0;
+	ldt[2].GD_DB_L_AVL = 0;
+	ldt[2].base2 = 0;
+	
 
 	/* 填充tss */
+	tss.backlink = 0;
+	tss.esp0 = PAGE_SIZE + (long)&init_task;
+	tss.ss0 = 0x10;
+	tss.esp1 = 0;
+	tss.ss1 = 0;
+	tss.esp2 = 0;
+	tss.ss2 = 0;
+
+	tss.cr3 = pg_dir;//进程与内核使用同一个页目录表
+	tss.eip = 0;
+	tss.flags = 0;
+
+	tss.eax = 0;
+	tss.ecx = 0;
+	tss.edx = 0;
+	tss.ebx = 0;
+	
+	tss.esp = 0;
+	tss.ebp = 0;
+	tss.esi = 0;
+	tss.edi = 0;
+	tss.es = 0x17;
+	tss.cs = 0x17;
+	tss.ss = 0x17;
+	tss.ds = 0x17;
+	tss.fs = 0x17;
+	tss.gs = 0x17;
+	tss.ldt = _LDT(0); //需要实现
+	tss.trap = 0x80000000;
+	tss.iobase = 0;//暂时先留着
+
 }
 
 static union task_union init_task={INIT_TASK,};
+
 
 
 #endif
