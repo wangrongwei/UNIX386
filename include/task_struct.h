@@ -203,7 +203,7 @@ struct task_struct INIT_TASK={
 
 static union task_union init_task={INIT_TASK,};
 
-;
+
 
 #endif
 
