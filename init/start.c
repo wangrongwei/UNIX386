@@ -12,7 +12,7 @@
 #include <font.h>
 
 
-#define HZ 100
+#define HZ 1000
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
