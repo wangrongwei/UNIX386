@@ -19,7 +19,7 @@ void timer_callback(pt_regs *regs)
 
 /*
  * 时钟初始化驱动
- * 	frequency:时钟频率
+ * 	frequency:时钟频率，越大，中断产生越频繁
  */
 void init_timer(unsigned int frequency)
 {
@@ -34,7 +34,7 @@ void init_timer(unsigned int frequency)
 	// 将frequency拆分成两部分写到0x40端口
 	div = 1193180 / frequency;
 	low = (unsigned char)div & 0xff;
-	high = (unsigned char)(div >> 8)&0xff;
+	high = (unsigned char)(div >> 8) & 0xff;
 	outb(0x40,low);
 	outb(0x40,high);
 }

@@ -12,7 +12,7 @@
 #include "descriptor.h"
 #include "page.h"
 
-
+#define NR_TASKS 128
 
 /*进程的五种状态 */
 #define TASK_RUNNING 0
