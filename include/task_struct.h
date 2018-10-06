@@ -199,7 +199,7 @@ struct task_struct INIT_TASK={
 	tss.trap = 0x80000000;
 	tss.iobase = 0;//暂时先留着
 
-}
+};
 
 static union task_union init_task={INIT_TASK,};
 
