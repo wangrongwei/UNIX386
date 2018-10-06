@@ -118,7 +118,7 @@ struct task_struct INIT_TASK={
 	
 	.pid = 0,/* pid:进程ID号 */
 	.father = 0,
-	.pgrp = 0;
+	.pgrp = 0,
 	.session = 0,
 	.leader = 0, 
 
@@ -201,6 +201,7 @@ struct task_struct INIT_TASK={
 
 };
 
+//TODO 此处有bug，如果这样写需要INIT_TASK是一个宏，反正不能是一个变量
 static union task_union init_task={INIT_TASK,};
 
 
