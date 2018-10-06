@@ -11,6 +11,9 @@
 #include <pmm.h>
 #include <font.h>
 
+
+#define HZ 100
+
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
 void outb(unsigned short port,unsigned short value);
@@ -54,6 +57,7 @@ void kernel_start()
 
 	/* 这段代码有bug */
 	init_keyboard();
+	init_timer(HZ);
 	//asm volatile("sti"); // 打开中断
 	//while(1){
 	//	keyboard_read();
@@ -77,7 +81,9 @@ void kernel_start()
 	logo();	//在屏幕显示logo
 	//write_vram(0xa0000,1);
 	while(1){
+		
 		keyboard_read();
+		
 	}
 
 #endif

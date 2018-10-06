@@ -5,6 +5,8 @@
 #include <timer.h>
 #include <debug.h>
 #include <interrupt.h>
+
+
 /*
  * 时钟测试函数
  */
@@ -13,6 +15,8 @@ void timer_callback(pt_regs *regs)
 	static unsigned int tick = 0;
 	printk("tick:%d\n",tick++);
 }
+
+
 /*
  * 时钟初始化驱动
  */
@@ -32,7 +36,6 @@ void init_timer(unsigned int frequency)
 	high = (unsigned char)(div >> 8)&0xff;
 	outb(0x40,low);
 	outb(0x40,high);
-
 }
 
 
