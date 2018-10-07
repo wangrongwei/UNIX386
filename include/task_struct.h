@@ -100,7 +100,7 @@ union task_union {
 
 
 /* 填充一个task0，是所有进程的父进程 */
-#define 0
+#ifdef 0
 struct task_struct INIT_TASK={
 	.state = TASK_RUNNING,
  	.counter = 0,
@@ -204,7 +204,7 @@ struct task_struct INIT_TASK={
 #endif
 
 #define INIT_TASK \
-{
+{\
 /* state */ TASK_RUNNING,\
 /* counter */ 0,\
 /* priority */ 0, \/* 优先级 */
@@ -245,7 +245,7 @@ struct task_struct INIT_TASK={
 
 	/* 填充ldt */
 	/* 填充ldt[0] */
-{
+{\
 /* ldt[0].limit0 */	 0,\
 /* ldt[0].base0 */	 0,\
 /* ldt[0].base1 */	 0,\
@@ -272,11 +272,11 @@ struct task_struct INIT_TASK={
 /* ldt[2].GD_DB_L_AVL */ 0,\
 /* ldt[2].base2 */	0,\
 
-}
+},\
 
 
 	/* 填充tss */
-{
+{\
 /* tss.backlink */	0,\
 /* tss.esp0 */	PAGE_SIZE + (long)&init_task,\
 /* tss.ss0 */	0x10,\
@@ -307,7 +307,7 @@ struct task_struct INIT_TASK={
 /* tss.ldt */	_LDT(0),\ //需要实现
 /* tss.trap */	0x80000000,\
 /* tss.iobase */ 0,\//暂时先留着
-}
+},\
 
 }
 
