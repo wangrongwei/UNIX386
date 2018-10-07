@@ -282,7 +282,7 @@ struct task_struct INIT_TASK={
 /* tss.esp2 */	0,\
 /* tss.ss2 */	0,\
 \
-//进程与内核使用同一个页目录表
+/* 进程与内核使用同一个页目录表 */ \
 /* tss.cr3 */	pg_dir,\
 /* tss.eip */	0,\
 /* tss.flags */	0,\
@@ -303,11 +303,11 @@ struct task_struct INIT_TASK={
 /* tss.fs */	0x17,\
 /* tss.gs */	0x17,\
 \
-//需要实现
+/* 需要实现 */ \
 /* tss.ldt */	_LDT(0),\
 /* tss.trap */	0x80000000,\
 \
-//暂时先留着
+/* 暂时先留着 */ \
 /* tss.iobase */ 0,\
 },\
 }
