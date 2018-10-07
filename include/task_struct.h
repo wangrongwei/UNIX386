@@ -242,8 +242,8 @@ struct task_struct INIT_TASK={
 \
 /* tty */ 0,\
 \
-	/* 填充ldt */
-	/* 填充ldt[0] */
+	/* 填充ldt */\
+	/* 填充ldt[0] */\
 {\
 /* ldt[0].limit0 */	 0,\
 /* ldt[0].base0 */	 0,\
@@ -253,7 +253,7 @@ struct task_struct INIT_TASK={
 /* ldt[0].GD_DB_L_AVL */ 0,\
 /* ldt[0].base2 */	0,\
 \
-	/* 填充ldt[1] */
+	/* 填充ldt[1] */\
 /* ldt[1].limit0 */	 0,\
 /* ldt[1].base0 */	 0,\
 /* ldt[1].base1 */	 0,\
@@ -262,7 +262,7 @@ struct task_struct INIT_TASK={
 /* ldt[1].GD_DB_L_AVL */ 0,\
 /* ldt[1].base2 */	0,\
 \	
-	/* 填充ldt[2] */
+	/* 填充ldt[2] */\
 /* ldt[2].limit0 */	 0,\
 /* ldt[2].base0 */	 0,\
 /* ldt[2].base1 */	 0,\
@@ -270,11 +270,9 @@ struct task_struct INIT_TASK={
 /* ldt[2].limit1 */	 0,\
 /* ldt[2].GD_DB_L_AVL */ 0,\
 /* ldt[2].base2 */	0,\
-
 },\
-
-
-	/* 填充tss */
+\
+	/* 填充tss */\
 {\
 /* tss.backlink */	0,\
 /* tss.esp0 */	PAGE_SIZE + (long)&init_task,\
@@ -283,7 +281,7 @@ struct task_struct INIT_TASK={
 /* tss.ss1 */	0,\
 /* tss.esp2 */	0,\
 /* tss.ss2 */	0,\
-
+\
 //进程与内核使用同一个页目录表
 /* tss.cr3 */	pg_dir,\
 /* tss.eip */	0,\
@@ -304,15 +302,14 @@ struct task_struct INIT_TASK={
 /* tss.ds */	0x17,\
 /* tss.fs */	0x17,\
 /* tss.gs */	0x17,\
-
+\
 //需要实现
 /* tss.ldt */	_LDT(0),\
 /* tss.trap */	0x80000000,\
-
+\
 //暂时先留着
 /* tss.iobase */ 0,\
 },\
-
 }
 
 
