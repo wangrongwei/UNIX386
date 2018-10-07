@@ -100,6 +100,7 @@ union task_union {
 
 
 /* 填充一个task0，是所有进程的父进程 */
+#define 0
 struct task_struct INIT_TASK={
 	.state = TASK_RUNNING,
  	.counter = 0,
@@ -200,6 +201,116 @@ struct task_struct INIT_TASK={
 	tss.iobase = 0,//暂时先留着
 
 };
+#endif
+
+#define INIT_TASK
+{
+/* state */ TASK_RUNNING,\
+/* counter */ 0,\
+/* priority */ 0, \/* 优先级 */
+/* signal */ 0,\
+
+
+/* blocked */ 0,\
+/* exit_code */ 0,\
+
+/* start_code */ 0,\
+/* end_code */ 0,\
+/* end_data */ 0,\
+/* brk */ 0,
+/* start_stack */ 0,\
+	
+/* pid */ 0,\/* pid:进程ID号 */
+/* father */ 0,\
+/* pgrp */ 0,\
+/* session */ 0,\
+/* leader */ 0, \
+
+/* uid */ 0,\
+/* euid */ 0,\
+/* suid */ 0,\
+/* gid */ 0,\
+/* egid */ 0,\
+/* sgid */ 0,\
+
+/* alarm */ 0,\
+/* utime */ 0,\
+/* stime */ 0,\
+/* cutime */ 0,\
+/* cstime */ 0,\
+/* start_time */ 0,\
+
+/* tty */ 0,\ /* 自设备号 */
+
+
+	/* 填充ldt */
+	/* 填充ldt[0] */
+{
+/* ldt[0].limit0 */	 0,\
+/* ldt[0].base0 */	 0,\
+/* ldt[0].base1 */	 0,\
+/* ldt[0].access */	 0,\
+/* ldt[0].limit1 */	 0,\
+/* ldt[0].GD_DB_L_AVL */ 0,\
+/* ldt[0].base2 */	0,\
+
+	/* 填充ldt[1] */
+/* ldt[1].limit0 */	 0,\
+/* ldt[1].base0 */	 0,\
+/* ldt[1].base1 */	 0,\
+/* ldt[1].access */	 0,\
+/* ldt[1].limit1 */	 0,\
+/* ldt[1].GD_DB_L_AVL */ 0,\
+/* ldt[1].base2 */	0,\
+	
+	/* 填充ldt[2] */
+/* ldt[2].limit0 */	 0,\
+/* ldt[2].base0 */	 0,\
+/* ldt[2].base1 */	 0,\
+/* ldt[2].access */	 0,\
+/* ldt[2].limit1 */	 0,\
+/* ldt[2].GD_DB_L_AVL */ 0,\
+/* ldt[2].base2 */	0,\
+
+}
+
+
+	/* 填充tss */
+{
+/* tss.backlink */	0,\
+/* tss.esp0 */	PAGE_SIZE + (long)&init_task,\
+/* tss.ss0 */	0x10,\
+/* tss.esp1 */	0,\
+/* tss.ss1 */	0,\
+/* tss.esp2 */	0,\
+/* tss.ss2 */	0,\
+
+/* tss.cr3 */	pg_dir,\//进程与内核使用同一个页目录表
+/* tss.eip */	0,\
+/* tss.flags */	0,\
+
+/* tss.eax */	0,\
+/* tss.ecx */	0,\
+/* tss.edx */	0,\
+/* tss.ebx */	0,\
+	
+/* tss.esp */	0,\
+/* tss.ebp */	0,\
+/* tss.esi */	0,\
+/* tss.edi */	0,\
+/* tss.es */	0x17,\
+/* tss.cs */	0x17,\
+/* tss.ss */	0x17,\
+/* tss.ds */	0x17,\
+/* tss.fs */	0x17,\
+/* tss.gs */	0x17,\
+/* tss.ldt */	_LDT(0),\ //需要实现
+/* tss.trap */	0x80000000,\
+/* tss.iobase */ 0,\//暂时先留着
+}
+
+}
+
 
 //TODO 此处有bug，如果这样写需要INIT_TASK是一个宏，反正不能是一个变量
 static union task_union init_task={INIT_TASK,};
