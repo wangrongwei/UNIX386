@@ -17,8 +17,8 @@
 extern load_gdtr(unsigned int *);
 extern load_idtr(unsigned int *);
 
-void init_gdt();
-void init_idt();
+static void init_gdt();
+static void init_idt();
 
 // 填充gdt表
 static void set_gdt(int num,unsigned int base,unsigned int limit,\
@@ -111,7 +111,7 @@ static void set_idt(int num,unsigned int base,unsigned short sel,\
  * 设置5个全局描述符（包括全0）
  * 使用load_gdtr函数加载到gdtr寄存器
  */
-void init_gdt()
+static void init_gdt()
 {
 	printk("New,update gdt!!!\n");
 	// sizeof是编译器内部的宏定义,不需要定义
@@ -132,7 +132,7 @@ void init_gdt()
 /*
  * 初始化8259A，设置中断向量表
  */
-void init_idt()
+static void init_idt()
 {
 	printk("New,load idt!!!\n");
 	// 重新映射 IRQ 表
