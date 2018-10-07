@@ -9,6 +9,7 @@
 #include "console.h"
 #include "vargs.h"
 #include "interrupt.h"
+#include "string.h"
 
 #define GDT_LEN 5
 #define IDT_LEN 256
