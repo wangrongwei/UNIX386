@@ -286,12 +286,12 @@ struct task_struct INIT_TASK={
 /* tss.cr3 */	pg_dir,\
 /* tss.eip */	0,\
 /* tss.flags */	0,\
-
+\
 /* tss.eax */	0,\
 /* tss.ecx */	0,\
 /* tss.edx */	0,\
 /* tss.ebx */	0,\
-	
+\
 /* tss.esp */	0,\
 /* tss.ebp */	0,\
 /* tss.esi */	0,\
