@@ -217,7 +217,7 @@ struct task_struct INIT_TASK={
 /* start_code */ 0,\
 /* end_code */ 0,\
 /* end_data */ 0,\
-/* brk */ 0,
+/* brk */ 0,\
 /* start_stack */ 0,\
 \
 /* pid */ 0,\
@@ -239,7 +239,7 @@ struct task_struct INIT_TASK={
 /* cutime */ 0,\
 /* cstime */ 0,\
 /* start_time */ 0,\
-
+\
 /* tty */ 0,\
 \
 	/* 填充ldt */
