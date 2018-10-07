@@ -203,6 +203,7 @@ struct task_struct INIT_TASK={
 };
 #endif
 
+/* 使用宏对INIT_TASK进行初始化 */
 #define INIT_TASK \
 {\
 /* state */ TASK_RUNNING,\
