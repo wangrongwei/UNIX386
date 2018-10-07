@@ -100,7 +100,7 @@ union task_union {
 
 
 /* 填充一个task0，是所有进程的父进程 */
-#ifdef 0
+#if 0
 struct task_struct INIT_TASK={
 	.state = TASK_RUNNING,
  	.counter = 0,
