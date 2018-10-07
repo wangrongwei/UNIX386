@@ -208,7 +208,7 @@ struct task_struct INIT_TASK={
 {\
 /* state */ TASK_RUNNING,\
 /* counter */ 0,\
-/* priority */ 0, \/* 优先级 */
+/* priority */ 0,\
 /* signal */ 0,\
 
 
@@ -221,7 +221,7 @@ struct task_struct INIT_TASK={
 /* brk */ 0,
 /* start_stack */ 0,\
 	
-/* pid */ 0,\/* pid:进程ID号 */
+/* pid */ 0,\
 /* father */ 0,\
 /* pgrp */ 0,\
 /* session */ 0,\
@@ -241,7 +241,7 @@ struct task_struct INIT_TASK={
 /* cstime */ 0,\
 /* start_time */ 0,\
 
-/* tty */ 0,\ /* 自设备号 */
+/* tty */ 0,\
 
 
 	/* 填充ldt */
@@ -286,7 +286,8 @@ struct task_struct INIT_TASK={
 /* tss.esp2 */	0,\
 /* tss.ss2 */	0,\
 
-/* tss.cr3 */	pg_dir,\//进程与内核使用同一个页目录表
+//进程与内核使用同一个页目录表
+/* tss.cr3 */	pg_dir,\
 /* tss.eip */	0,\
 /* tss.flags */	0,\
 
@@ -305,9 +306,13 @@ struct task_struct INIT_TASK={
 /* tss.ds */	0x17,\
 /* tss.fs */	0x17,\
 /* tss.gs */	0x17,\
-/* tss.ldt */	_LDT(0),\ //需要实现
+
+//需要实现
+/* tss.ldt */	_LDT(0),\
 /* tss.trap */	0x80000000,\
-/* tss.iobase */ 0,\//暂时先留着
+
+//暂时先留着
+/* tss.iobase */ 0,\
 },\
 
 }
