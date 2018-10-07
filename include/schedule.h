@@ -17,7 +17,7 @@
 #define _LDT(n) (n)
 
 /* 在kernel.asm文件中，与_page_dir是相同的含义 */
-#define pg_dir 0
+#define pg_dir (0)
 
 #endif
 
