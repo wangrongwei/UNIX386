@@ -203,7 +203,7 @@ struct task_struct INIT_TASK={
 };
 #endif
 
-#define INIT_TASK
+#define INIT_TASK \
 {
 /* state */ TASK_RUNNING,\
 /* counter */ 0,\
