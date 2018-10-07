@@ -210,30 +210,29 @@ struct task_struct INIT_TASK={
 /* counter */ 0,\
 /* priority */ 0,\
 /* signal */ 0,\
-
-
+\
 /* blocked */ 0,\
 /* exit_code */ 0,\
-
+\
 /* start_code */ 0,\
 /* end_code */ 0,\
 /* end_data */ 0,\
 /* brk */ 0,
 /* start_stack */ 0,\
-	
+\
 /* pid */ 0,\
 /* father */ 0,\
 /* pgrp */ 0,\
 /* session */ 0,\
 /* leader */ 0, \
-
+\
 /* uid */ 0,\
 /* euid */ 0,\
 /* suid */ 0,\
 /* gid */ 0,\
 /* egid */ 0,\
 /* sgid */ 0,\
-
+\
 /* alarm */ 0,\
 /* utime */ 0,\
 /* stime */ 0,\
@@ -242,8 +241,7 @@ struct task_struct INIT_TASK={
 /* start_time */ 0,\
 
 /* tty */ 0,\
-
-
+\
 	/* 填充ldt */
 	/* 填充ldt[0] */
 {\
@@ -254,7 +252,7 @@ struct task_struct INIT_TASK={
 /* ldt[0].limit1 */	 0,\
 /* ldt[0].GD_DB_L_AVL */ 0,\
 /* ldt[0].base2 */	0,\
-
+\
 	/* 填充ldt[1] */
 /* ldt[1].limit0 */	 0,\
 /* ldt[1].base0 */	 0,\
@@ -263,7 +261,7 @@ struct task_struct INIT_TASK={
 /* ldt[1].limit1 */	 0,\
 /* ldt[1].GD_DB_L_AVL */ 0,\
 /* ldt[1].base2 */	0,\
-	
+\	
 	/* 填充ldt[2] */
 /* ldt[2].limit0 */	 0,\
 /* ldt[2].base0 */	 0,\
