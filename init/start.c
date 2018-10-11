@@ -59,6 +59,7 @@ void kernel_start()
 
 #if 1
 	init_gdt();
+	/* 初始化中断/异常/系统调用，填充中断描述符 */
 	init_idt();
 	init_palette();
 	//asm volatile("int $0x3");
