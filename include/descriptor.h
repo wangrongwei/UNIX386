@@ -11,7 +11,7 @@
 #include "interrupt.h"
 #include "string.h"
 
-#define GDT_LEN 5
+#define GDT_LEN 256
 #define IDT_LEN 256
 
 extern load_gdtr(unsigned int *);
@@ -130,6 +130,7 @@ static void set_idt(int num,unsigned int base,unsigned short sel,\
  */
 static void init_gdt()
 {
+	int i=0;
 	printk("New,update gdt!!!\n");
 	// sizeof是编译器内部的宏,不需要定义
 	GDTR.length = sizeof(gdt_struct_t)*GDT_LEN - 1;
@@ -141,6 +142,13 @@ static void init_gdt()
 	set_gdt(2,0,0xfffff,0x92,0x0c); //数据段
 	set_gdt(3,0,0xfffff,0xfa,0x0c); //用户代码段
 	set_gdt(4,0,0xfffff,0xf2,0x0c); //用户数据段
+
+	/*
+	 * 后续的段描符初始化为0（与进程相关的代码）
+	 */
+	for(i=5;i<256;i++){
+		set_gdt(i,0,0,0,0);
+	}
 
 	// 加载gdt地址到gdtr寄存器
 	load_gdtr((unsigned int)&GDTR);
