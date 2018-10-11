@@ -78,7 +78,12 @@ struct idtr_t IDTR;
 
 
 /*
- * 填充gdt列表
+ *	填充gdt列表
+ *	num: 在gdt的位置
+ *	base: 填充的段的基地址
+ *	limit: 该段的段限长
+ *	access: 
+ *	G_DB_L_AVL: 权限
  */
 static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	     unsigned char access,unsigned char G_DB_L_AVL)
@@ -94,7 +99,11 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 }
 
 /*
- * 填充idt表
+ *	填充idt表
+ *	num: 填充的中断项在idt中的位置
+ *	base: 
+ *	sel:
+ *	flags:
  */
 static void set_idt(int num,unsigned int base,unsigned short sel,\
 		    unsigned short flags)
@@ -114,7 +123,7 @@ static void set_idt(int num,unsigned int base,unsigned short sel,\
 static void init_gdt()
 {
 	printk("New,update gdt!!!\n");
-	// sizeof是编译器内部的宏定义,不需要定义
+	// sizeof是编译器内部的宏,不需要定义
 	GDTR.length = sizeof(gdt_struct_t)*GDT_LEN - 1;
 	GDTR.base = (unsigned int)&gdt_list;
 
@@ -172,6 +181,7 @@ static void init_idt()
 	bzero((unsigned char *)interrupt_handlers,sizeof(interrupt_handler_t)*256);
 	bzero((unsigned char *)idt_list,sizeof(idt_struct_t)*256);
 
+	//此处后续需要优化，将set_idt分成set_int_gate/set_system_gate/set_trap_gate实现
 	set_idt(0,(unsigned int)isr0,0x08,0x8e);
 	set_idt(1,(unsigned int)isr1,0x08,0x8e);
 	set_idt(2,(unsigned int)isr2,0x08,0x8e);

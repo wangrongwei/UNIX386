@@ -1,8 +1,11 @@
+
 /*
  * 从汇编跳转到C语言的第一个.c文件
  *	author: Alexander.Wang<wangrongwei.kernel@gmail.com>
  *	time: 2017/05/13
  */
+
+
 #include <console.h>
 #include <string.h>
 #include <descriptor.h>
@@ -25,14 +28,23 @@ void logo(void);
 
 /*
  *	kernel.s------>kernel_start()
+ *	汇编代码跳入到C语言的第一个函数，需对如下使用C语言重新初始化
+ *	
+ *	1.初始化全局描述符和中断描述符
+ *	2.初始化调色板
+ *	3.初始化键盘
+ *	4.初始化时钟中断
+ * 
  */
 void kernel_start()
 {
 	int i;
-	//字符串存在什么区间的
+	//字符串存在ELF文件的.stab节和.stabstr节（这部分特别大）
 	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
 	unsigned int page_addr1=0,page_addr2=0;
 	printk("enter the kernel_start function...\n");
+	/* 打印内核版本 */
+	printk("DeeppinkOS version-0.0.1\n");
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
 	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
@@ -75,9 +87,11 @@ void kernel_start()
 	//printk("alloc page2 = 0x%08X\n",page_addr2);
 	//pmm_free_page(page_addr2);
 	//pmm_free_page(page_addr1);
+
 	//for(i=0xa0000;i<=0xa0140;i++){
 	//	write_vram(i,1);
 	//}
+	
 	logo();	//在屏幕显示logo
 	//write_vram(0xa0000,1);
 	while(1){

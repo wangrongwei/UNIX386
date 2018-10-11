@@ -2,7 +2,8 @@
  *
  *	Filename:  printk.c
  *
- *	Description:  内核的打印函数
+ *	Description:  内核的打印函数实现，依赖于gcc内置变量和函数：
+ *  (__builtin_va_start(ap,last)) (__builtin_va_arg(ap,type))
  *
  */
 
@@ -13,6 +14,9 @@
 
 static int vsprintf(char *buff, const char *format, va_list args);
 
+/*
+ * 内核打印函数，依赖于vsprintf(...)
+ */
 void printk(const char *format, ...)
 {
 	// 避免频繁创建临时变量，内核的栈很宝贵
@@ -20,6 +24,7 @@ void printk(const char *format, ...)
 	va_list args;
 	int i;
 
+	// 按照format格式转换到buff
 	va_start(args, format);
 	i = vsprintf(buff, format, args);
 	va_end(args);
@@ -32,6 +37,12 @@ void printk(const char *format, ...)
 // 判断是否是数字 返回 1：代表是数字
 #define is_digit(c)	((c) >= '0' && (c) <= '9')
 
+/*
+ * 函数功能：将字符串s转换成数字，如果字符串中有字母，则终止
+ * 
+ * 例子：	s = "12a9aaa",	 i = 12
+ *		  s	= "s12aaa", i = 0
+ */
 static int skip_atoi(const char **s)
 {
 	int i = 0;
@@ -56,6 +67,10 @@ static int skip_atoi(const char **s)
 		__asm__("divl %4":"=a" (n),"=d" (__res):"0" (n),"1" (0),"r" (base)); \
 		__res; })
 
+/*
+ * 
+ *
+ */
 static char *number(char *str, int num, int base, int size, int precision, int type)
 {
 	char c, sign, tmp[36];
@@ -77,7 +92,8 @@ static char *number(char *str, int num, int base, int size, int precision, int t
 	if (type & SIGN && num < 0) {
 		sign = '-';
 		num = -num;
-	} else {
+	} 
+	else {
 		sign = (type&PLUS) ? '+' : ((type&SPACE) ? ' ' : 0);
 	}
 
@@ -87,14 +103,17 @@ static char *number(char *str, int num, int base, int size, int precision, int t
 	if (type & SPECIAL) {
 		if (base == 16) {
 			size -= 2;
-		} else if (base == 8) {
+		} 
+		else if (base == 8) {
 			size--;
 		}
 	}
+	
 	i = 0;
 	if (num == 0) {
 		tmp[i++] = '0';
-	} else {
+	} 
+	else {
 		while (num != 0) {
 			tmp[i++] = digits[do_div(num,base)];
 		}
@@ -116,7 +135,8 @@ static char *number(char *str, int num, int base, int size, int precision, int t
 	if (type & SPECIAL) {
 		if (base == 8) {
 			*str++ = '0';
-		} else if (base == 16) {
+		} 
+		else if (base == 16) {
 			*str++ = '0';
 			*str++ = digits[33];
 		}
@@ -200,7 +220,8 @@ static int vsprintf(char *buff, const char *format, va_list args)
 			++format;
 			if (is_digit(*format)) {
 				precision = skip_atoi(&format);
-			} else if (*format == '*') {
+			}
+			else if (*format == '*') {
 				// it's the next argument
 				precision = va_arg(args, int);
 			}
@@ -210,7 +231,7 @@ static int vsprintf(char *buff, const char *format, va_list args)
 		}
 
 		// get the conversion qualifier
-		//int qualifier = -1;	// 'h', 'l', or 'L' for integer fields
+		// int qualifier = -1;	// 'h', 'l', or 'L' for integer fields
 		if (*format == 'h' || *format == 'l' || *format == 'L') {
 			//qualifier = *format;
 			++format;
@@ -234,7 +255,8 @@ static int vsprintf(char *buff, const char *format, va_list args)
 			len = strlen(s);
 			if (precision < 0) {
 				precision = len;
-			} else if (len > precision) {
+			} 
+			else if (len > precision) {
 				len = precision;
 			}
 
@@ -304,17 +326,6 @@ static int vsprintf(char *buff, const char *format, va_list args)
 
 	return (str -buff);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

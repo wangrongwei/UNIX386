@@ -1,6 +1,9 @@
+
 /*
- * 关于调度
+ * 关于进程调度相关实现
  */
+
+
 #include "schedule.h"
 #include "task_struct.h"
 
@@ -12,6 +15,8 @@ long user_stack[PAGE_SIZE >> 2]={0};
 
 long *_stack_top = &user_stack[PAGE_SIZE >> 2];
 
+/* 一个全局指针，指向当前正在执行的进程的task_struct */
+struct task_struct *current = &(init_task.task); 
 
 
 /*

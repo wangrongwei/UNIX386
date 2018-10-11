@@ -36,17 +36,24 @@ typedef void (*interrupt_handler_t)(pt_regs *);
 // h:中断处理函数
 void register_interrupt_handler(unsigned char n, interrupt_handler_t h);
 
-// 调用中断处理函数
+
+/*
+ * 在CPU中存在中断、异常和陷阱（与软中断实现相关）三种方式
+ * 需要在此处分开设计
+ *
+ */
+
+
+// 调用异常处理函数
 void isr_handler(pt_regs *regs);
 
 interrupt_handler_t interrupt_handlers[256];
 
 
-
 // 32～255 用户自定义异常
 void isr255();
 
-// 声明中断处理函数 0-19 属于 CPU 的异常中断
+// 声明中断处理函数 0-19 属于 CPU 的异常
 // ISR:中断服务程序(interrupt service routine)
 void isr0(); 		// 0 #DE 除 0 异常 
 void isr1(); 		// 1 #DB 调试异常 
