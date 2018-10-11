@@ -116,6 +116,14 @@ static void set_idt(int num,unsigned int base,unsigned short sel,\
 
 }
 
+
+// 中断
+#define set_int_gate(num,base) set_idt(num,base,0x08,0x8e)
+// 系统调用
+#define set_system_gate(num,base) set_idt(num,base,0x08,0x8e)
+// 陷阱
+#define set_trap_gate(num,base) set_idt(num,base,0x08,0x8e)
+
 /*
  * 设置5个全局描述符（包括全0）
  * 使用load_gdtr函数加载到gdtr寄存器
@@ -216,22 +224,22 @@ static void init_idt()
 	set_idt(30,(unsigned int)isr30,0x08,0x8e);
 	set_idt(31,(unsigned int)isr31,0x08,0x8e);
 
-	set_idt(32,(unsigned int)irq0, 0x08,0x8E);
-	set_idt(33,(unsigned int)irq1, 0x08,0x8E);
-	set_idt(34,(unsigned int)irq2, 0x08,0x8E);
-	set_idt(35,(unsigned int)irq3, 0x08,0x8E);
-	set_idt(36,(unsigned int)irq4, 0x08,0x8E);
-	set_idt(37,(unsigned int)irq5, 0x08,0x8E);
-	set_idt(38,(unsigned int)irq6, 0x08,0x8E);
-	set_idt(39,(unsigned int)irq7, 0x08,0x8E);
-	set_idt(40,(unsigned int)irq8, 0x08,0x8E);
-	set_idt(41,(unsigned int)irq9, 0x08,0x8E);
-	set_idt(42,(unsigned int)irq10, 0x08,0x8E);
-	set_idt(43,(unsigned int)irq11, 0x08,0x8E);
-	set_idt(44,(unsigned int)irq12, 0x08,0x8E);
-	set_idt(45,(unsigned int)irq13, 0x08,0x8E);
-	set_idt(46,(unsigned int)irq14, 0x08,0x8E);
-	set_idt(47,(unsigned int)irq15, 0x08,0x8E);
+	set_idt(32,(unsigned int)irq0, 0x08,0x8e);
+	set_idt(33,(unsigned int)irq1, 0x08,0x8e);
+	set_idt(34,(unsigned int)irq2, 0x08,0x8e);
+	set_idt(35,(unsigned int)irq3, 0x08,0x8e);
+	set_idt(36,(unsigned int)irq4, 0x08,0x8e);
+	set_idt(37,(unsigned int)irq5, 0x08,0x8e);
+	set_idt(38,(unsigned int)irq6, 0x08,0x8e);
+	set_idt(39,(unsigned int)irq7, 0x08,0x8e);
+	set_idt(40,(unsigned int)irq8, 0x08,0x8e);
+	set_idt(41,(unsigned int)irq9, 0x08,0x8e);
+	set_idt(42,(unsigned int)irq10, 0x08,0x8e);
+	set_idt(43,(unsigned int)irq11, 0x08,0x8e);
+	set_idt(44,(unsigned int)irq12, 0x08,0x8e);
+	set_idt(45,(unsigned int)irq13, 0x08,0x8e);
+	set_idt(46,(unsigned int)irq14, 0x08,0x8e);
+	set_idt(47,(unsigned int)irq15, 0x08,0x8e);
 
 	// 用于实现系统调用
 	set_idt(255,(unsigned int)isr255,0x08,0x8e);

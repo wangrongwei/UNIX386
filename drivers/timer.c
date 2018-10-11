@@ -13,7 +13,7 @@
 void timer_callback(pt_regs *regs)
 {
 	static unsigned int tick = 0;
-	printk("tick:%d\n",tick++);
+	tick++;
 }
 
 
