@@ -25,7 +25,9 @@ struct task_struct *current = &(init_task.task);
 void schedule_init(void)
 {
 	int i;
-	// 第一步   在gdt表后边加上ldt和tss
+	// 在gdt表后边加上进程0的tss和ldt
+	set_gdt(FIRST_TASKTSS_INDEX,&(init_task.task.tss),sizeof(tss_struct),0x89,0);
+	set_gdt(FIRST_TASKLDT_INDEX,&(init_task.task.ldt),sizeof(tss_struct),0x82,0);
 
 	// 将tss挂接到TR寄存器
 

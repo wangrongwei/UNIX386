@@ -33,7 +33,7 @@ typedef struct gdt_struct_t{
 	unsigned short limit0;	     //长度限制15--0 占两个字节
 	unsigned short base0;	     //基地址15--0
 	unsigned char  base1;	     //基地址23--16
-	unsigned char  access;       //P_DVL(2位)_S_Type
+	unsigned char  access;       //P_DPL(2bits)_S_Type(4bits)，总共8位
 	unsigned char  limit1:4;     //长度限制19--16
 	unsigned char  G_DB_L_AVL:4; //
 	unsigned char  base2;        //基地址31--24
@@ -82,7 +82,8 @@ struct idtr_t IDTR;
  *	num: 在gdt的位置
  *	base: 填充的段的基地址
  *	limit: 该段的段限长
- *	access: 
+ *	access: 包括段的特权级别、段类型（代码段、数据段或者堆栈段）
+ *		对于进程而言，ldt: access=0x82，tss: access=0x89
  *	G_DB_L_AVL: 权限
  */
 static void set_gdt(int num,unsigned int base,unsigned int limit,\
@@ -140,13 +141,14 @@ static void init_gdt()
 	set_gdt(0,0,0,0,0);
 	set_gdt(1,0,0xfffff,0x9a,0x0c); //代码段
 	set_gdt(2,0,0xfffff,0x92,0x0c); //数据段
-	set_gdt(3,0,0xfffff,0xfa,0x0c); //用户代码段
-	set_gdt(4,0,0xfffff,0xf2,0x0c); //用户数据段
+	set_gdt(3,0,0,0,0);//null
+	set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
+	set_gdt(5,0,0xfffff,0xf2,0x0c); //用户数据段-------| 进程0的LDT0
 
 	/*
 	 * 后续的段描符初始化为0（与进程相关的代码）
 	 */
-	for(i=5;i<256;i++){
+	for(i=6;i<256;i++){
 		set_gdt(i,0,0,0,0);
 	}
 

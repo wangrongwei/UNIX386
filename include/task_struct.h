@@ -21,6 +21,19 @@
 #define TASK_ZOMBIE 3
 #define TASK_STOPPED 4
 
+/* 第一个进程在gdt中的位置 */
+#define FIRST_TASKTSS_INDEX 4
+#define FIRST_TASKLDT_INDEX 5
+
+// 将tss或者ldt相对于第一个tss或者第一个ldt进行编码
+// 可以不直接编码，需要后续完善
+#define _TSS(n)  (n)
+#define _LDT(n) (n)
+
+/* 将tss和ldt地址加载到TR和LDTR寄存器 */
+#define ltr(n) __asm__("ltr %%ax"::"a" (_TSS(n)))
+#define lldt(n) __asm__("lldt %%ax"::"a" (_LDT(n)))
+
 
 /* 在32位编译器下int 占4个字节 */
 
