@@ -8,6 +8,9 @@
 #include "task_struct.h"
 
 
+extern tss_struct;
+
+
 #define PAGE_SIZE 4096
 
 /* 在kernel.asm需要用到 */
