@@ -25,7 +25,7 @@ struct task_struct *current = &(init_task.task);
 /*
  * 调度初始化，启动进程0
  */
-void schedule_init(void)
+static void schedule_init(void)
 {
 	int i;
 	// 在gdt表后边加上进程0的tss和ldt

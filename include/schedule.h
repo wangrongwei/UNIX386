@@ -7,6 +7,7 @@
  *
  */
 
+static void schedule_init(void);
 
 /* 在kernel.asm文件中，与_page_dir是相同的含义 */
 #define pg_dir (0)

@@ -14,6 +14,7 @@
 #include <pmm.h>
 #include <font.h>
 
+#include <schedule.h>
 
 #define HZ 100
 
@@ -71,6 +72,7 @@ void kernel_start()
 	/* 这段代码有bug */
 	init_keyboard();
 	init_timer(HZ);
+	schedule_init();
 	//asm volatile("sti"); // 打开中断
 	//while(1){
 	//	keyboard_read();
