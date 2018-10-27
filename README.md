@@ -75,10 +75,10 @@ README.md-----------------帮助文档（遇到的相关bug和设计步骤）  <
 
 | 贡献者 | 贡献内容 |
 | ------ | -------- |
-| @wangrongwei |  |
-| @clee01 |  |
-| @Zhangshuai95 |  |
-| @Stephenhua |  |
+| @wangrongwei | Maintainer |
+| @clee01 | Developer |
+| @Zhangshuai95 | Developer |
+| @Stephenhua | Developer |
 
 # TODO
 82258（DMA控制器）</br>
@@ -87,3 +87,5 @@ README.md-----------------帮助文档（遇到的相关bug和设计步骤）  <
 82385（Cache控制器）</br>
 82062（硬盘控制器）：wangrongwei</br>
 8254（可编程定时/计数器）：clee01</br>
+
+&#160; &#160; &#160; &#160;实现系统调用（是实现多进程切换的前提），在<b>include/i386</b>文件下添加<b>sys.h</b>文件（包含系统库），初步打算再<b>kernel.asm</b>下实现系统调用。正在完善中...

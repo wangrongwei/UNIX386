@@ -217,6 +217,8 @@ isr_common_stub:
 	iret
 .end:
 
+
+
 ; 构造中断请求的宏
 %macro IRQ 2
 [GLOBAL irq%1]
@@ -274,6 +276,67 @@ irq_common_stub:
 	add esp, 8     		 ; 清理压栈的 错误代码 和 ISR 编号
 	iret          		 ; 出栈 CS, EIP, EFLAGS, SS, ESP
 .end:
+
+
+
+
+
+; =============================================================================
+;                                 sys_call
+; =============================================================================
+; 系统调用入口函数
+[GLOBAL sys_call]
+sys_call:
+; =============================================================================
+;                                   save
+; =============================================================================
+	pushad          ; `.
+        push    ds      ;  |
+        push    es      ;  | 保存原寄存器值
+        push    fs      ;  |
+        push    gs      ; /
+
+	;; 注意，从这里开始，一直到 `mov esp, StackTop'，中间坚决不能用 push/pop 指令，
+	;; 因为当前 esp 指向 proc_table 里的某个位置，push 会破坏掉进程表，导致灾难性后果！
+
+	mov	esi, edx	; 保存 edx，因为 edx 里保存了系统调用的参数
+				;（没用栈，而是用了另一个寄存器 esi）
+	mov	dx, ss
+	mov	ds, dx
+	mov	es, dx
+	mov	fs, dx
+
+	mov	edx, esi	; 恢复 edx
+
+        mov     esi, esp                    ;esi = 进程表起始地址
+
+        inc     dword [k_reenter]           ;k_reenter++;
+        cmp     dword [k_reenter], 0        ;if(k_reenter ==0)
+        jne     .1                          ;{
+        mov     esp, StackTop               ;  mov esp, StackTop <--切换到内核栈
+        push    restart                     ;  push restart
+        jmp     [esi + RETADR - P_STACKBASE];  return;
+.1:                                         ;} else { 已经在内核栈，不需要再切换
+        push    restart_reenter             ;  push restart_reenter
+        jmp     [esi + RETADR - P_STACKBASE];  return;
+                                            ;}
+
+        sti
+	push	esi
+
+	push	dword [p_proc_ready]
+	push	edx
+	push	ecx
+	push	ebx
+        call    [sys_call_table + eax * 4]
+	add	esp, 4 * 4
+
+	pop	esi
+        mov     [esi + EAXREG - P_STACKBASE], eax
+        cli
+
+        ret
+
 
 ;
 ; 保留此处

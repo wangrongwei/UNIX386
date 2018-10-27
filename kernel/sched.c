@@ -33,16 +33,16 @@ static void schedule_init(void)
 	set_gdt(FIRST_TASKLDT_INDEX,&(init_task.task.ldt),sizeof(tss_struct),0x82,0);
 
 	// 将tss挂接到TR寄存器
-
-
+	ltr(0);
+	
 	// 将LDT挂接到LDTR寄存器
-
+	lldt(0);
 
 	// 初始化时钟
+	init_timer(HZ);
 
-
-	//设置系统调度总入口
-	//set_system_gate(0x80,&system_call);
+	// 设置系统调度总入口
+	set_system_gate(0x80,&system_call);
 	
 
 }

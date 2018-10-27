@@ -62,12 +62,11 @@ typedef struct idt_struct_t{
 	unsigned char  zero;    //全是0
 	unsigned char  flags;	//相关标志 P_DVL_'E'
 	unsigned short base1;	//中断函数基地址31--16
-
 }__attribute__((packed)) idt_struct_t;
 
 struct idtr_t{
 	unsigned short length; //这个大小代表了idt表的大小
-	unsigned int   base   //gdt表的基地址
+	unsigned int   base;   //gdt表的基地址
 }__attribute__((packed)) idtr_t;
 
 gdt_struct_t gdt_list[GDT_LEN];
@@ -154,8 +153,9 @@ static void init_gdt()
 
 	// 加载gdt地址到gdtr寄存器
 	load_gdtr((unsigned int)&GDTR);
-
 }
+
+
 /*
  * 初始化8259A，设置中断向量表
  */

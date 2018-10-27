@@ -27,10 +27,11 @@
 
 // 将tss或者ldt相对于第一个tss或者第一个ldt进行编码
 // 可以不直接编码，需要后续完善
-#define _TSS(n)  (n)
-#define _LDT(n) (n)
+#define _TSS(n)  (n+4)
+#define _LDT(n) (n+5)
 
 /* 将tss和ldt地址加载到TR和LDTR寄存器 */
+/* 根据TR寄存器的位图可以看出需要加载一个TSS选择子到TR寄存器 */
 #define ltr(n) __asm__("ltr %%ax"::"a" (_TSS(n)))
 #define lldt(n) __asm__("lldt %%ax"::"a" (_LDT(n)))
 

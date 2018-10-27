@@ -16,6 +16,17 @@ void timer_callback(pt_regs *regs)
 	tick++;
 }
 
+/*
+ * 正式的时钟中断
+ *		供进程实现
+ */
+void timer_interrupt(pt_regs *regs)
+{
+	long tick = 0;
+	tick++;
+}
+
+
 
 /*
  * 时钟初始化驱动
@@ -26,7 +37,7 @@ void init_timer(unsigned int frequency)
 	printk("initial timer,set timer interrupt......\n");
 	unsigned char low=0,high=0;
 	unsigned int div=0;
-	register_interrupt_handler(IRQ0,timer_callback);
+	register_interrupt_handler(IRQ0,timer_interrupt);
 
 	// 设置时钟模式：模式3
 	outb(0x43,0x36);
@@ -37,6 +48,10 @@ void init_timer(unsigned int frequency)
 	high = (unsigned char)(div >> 8) & 0xff;
 	outb(0x40,low);
 	outb(0x40,high);
+
+	// 开启时钟中断
+	outb();
+	
 }
 
 

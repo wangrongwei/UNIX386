@@ -3,8 +3,7 @@
 
 /*
  * 说明：在初始化gdt表以后,需要开始初始化idt，该头文件定义相关中断处理函数
- * 这些中断处理函数只是填充idt表中的offset项
- *
+ * 		这些中断处理函数只是填充idt表中的offset项
  */
 
 
@@ -52,6 +51,18 @@ interrupt_handler_t interrupt_handlers[256];
 
 // 32～255 用户自定义异常
 void isr255();
+
+
+/*
+ * 系统调用（需要嵌套AT&T汇编），gcc只支持在c语言中嵌套AT&T汇编
+ * 在即isr128
+ */
+void system_call()
+{
+
+	__asm__("call sys_call\n\t");
+}
+
 
 // 声明中断处理函数 0-19 属于 CPU 的异常
 // ISR:中断服务程序(interrupt service routine)
@@ -133,7 +144,7 @@ void irq15(); 		// IDE1 传输控制使用
 
 
 
-
-
 #endif
+
+
 
