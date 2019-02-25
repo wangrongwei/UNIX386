@@ -1,5 +1,10 @@
 ##################################################
-#		 Makefile
+# author : wangrongwei
+# time : 2018/08/12
+# usage : 	make 
+#			make qemu
+#			make bochs
+#			make dis
 ##################################################
 BOOT:=boot/boot.asm
 KERNEL:=init/kernel.asm
@@ -53,23 +58,23 @@ link:
 	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o $(KERNEL_ELF)
 	$(OBJCOPY) -O binary -R .note -R .comment -S $(KERNEL_ELF) $(KERNEL_BIN)
 
-.PHONY:qemu
+.PHONY:qemu clean debug dis
 qemu:
 	@echo '启动虚拟机...'
 	qemu-system-i386  -boot order=a -fda deeppink.img
-.PHONY:clean
+
 clean :
 	rm -f $(BOOT_BIN) $(KERNEL_BIN) $(S_OBJECTS) $(C_OBJECTS)
 
-.PHONY:debug
+
 debug:
 	qemu-system-i386 -s -S deeppink.img
 
 	#qemu-system-i386 -s -S -boot order=a -fda deeppink.img
-.PHONY:bochs
+
 bochs:
 	bochs
-.PHONY:dis
+
 dis:
 	ndisasm ./boot/boot.bin > ./boot/boot.txt
 	objdump -d ./init/kernel.elf > ./init/kernel.txt
