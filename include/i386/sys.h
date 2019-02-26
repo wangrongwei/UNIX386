@@ -5,6 +5,7 @@
  *		完整的内核支持的系统调用较多，本内核简单设置
  */
 
+/* 定义函数指针，代表各系统调用函数 */
 typedef int (*syscall_ptr)();
 
 extern int sys_setup();
