@@ -12,7 +12,6 @@
 #####################################################################
 
 
-
 BOOT:=boot/boot.asm
 KERNEL:=init/kernel.asm
 BOOT_BIN:=$(subst .asm,.bin,$(BOOT))
@@ -68,7 +67,7 @@ $(S_OBJECTS):$(S_SOURCES)
 	$(ASM) $(ASM_FLAGS) $< -o $@
 
 
-.PHONY:qemu clean debug dis
+.PHONY: qemu clean bochs debug dis
 qemu:
 	@echo '启动虚拟机...'
 	qemu-system-i386  -boot order=a -fda deeppink.img

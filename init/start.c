@@ -94,16 +94,15 @@ void kernel_start()
 	//	write_vram(i,1);
 	//}
 	
-	logo();	//在屏幕显示logo
+	logo();
 	//write_vram(0xa0000,1);
 	while(1){
-		
 		keyboard_read();
-		
 	}
 
 #endif
 }
+
 /*
  * 从端口输出一个字节
  */
@@ -112,6 +111,7 @@ inline void outb(unsigned short port,unsigned short value)
 	asm volatile("outb %1,%0"::"dN"(port),"a"(value));
 
 }
+
 /*
  * 从端口读一个字节
  */
@@ -121,6 +121,7 @@ inline unsigned char inb(unsigned short port)
 	asm volatile("inb %1,%0":"=a"(retval):"dN"(port));
 	return retval;
 }
+
 /*
  * 从端口读一个字
  */
@@ -131,6 +132,7 @@ inline unsigned short inw(unsigned short port)
 	return retval;
 }
 
+#if 0
 /*
  * 向显存写数据
  *
@@ -147,6 +149,8 @@ void write_vram(int address,int data)
 
 }
 *********************************************/
+#endif
+
 /*
  * 部分初始化完成以后，开始清屏，再显示
  * DeeppinkOS内核的logo
@@ -166,9 +170,7 @@ void logo(void)
 	for(i=0;i<=15;i++){
 		pixel = font_A[i];
 		for(j=0;j<=7;j++){
-			/*
-			 * 此处对最高位做判断，分别显示不同颜色
-			 */
+			/* 此处对最高位做判断，分别显示不同颜色 */
 			if(pixel & 0x80)
 				write_vram(0xa0000+j+320*i,1);
 			else
@@ -179,4 +181,6 @@ void logo(void)
 	}
 
 }
+
+
 
