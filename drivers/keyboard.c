@@ -42,6 +42,9 @@ void keyboard_handler(pt_regs *regs)
 
 }
 
+/*
+ * 读取键盘缓存区kb_in，并打印显示
+ */
 void keyboard_read()
 {
 	unsigned char scancode;
