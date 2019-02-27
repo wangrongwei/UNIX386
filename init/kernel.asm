@@ -311,8 +311,9 @@ sys_call:
 
         mov     esi, esp                    ;esi = 进程表起始地址
 
+	; 下面这段代码！
         inc     dword [k_reenter]           ;k_reenter++;
-        cmp     dword [k_reenter], 0        ;if(k_reenter ==0)
+        cmp     dword [k_reenter], 0        ;if(k_reenter == 0)
         jne     .1                          ;{
         mov     esp, StackTop               ;  mov esp, StackTop <--切换到内核栈
         push    restart                     ;  push restart

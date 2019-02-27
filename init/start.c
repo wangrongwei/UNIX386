@@ -109,7 +109,6 @@ void kernel_start()
 inline void outb(unsigned short port,unsigned short value)
 {
 	asm volatile("outb %1,%0"::"dN"(port),"a"(value));
-
 }
 
 /*
