@@ -20,7 +20,7 @@ typedef int (*syscall_ptr)();
 
 extern int sys_setup();
 extern int sys_exit();
-extern int sys_fork();
+extern int sys_fork(); /* 汇编实现，执行fork时被调用 */
 extern int sys_read();
 extern int sys_write();
 extern int sys_open();

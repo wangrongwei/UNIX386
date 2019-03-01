@@ -283,7 +283,21 @@ irq_common_stub:
 
 ; =============================================================================
 ;				sys_call
-; 目前系统调用的函数定义和system_call_table数组在include/i386/sys.h下                                
+; 目前系统调用的函数定义和system_call_table数组在include/i386/sys.h下  
+;
+; 从系统调用返回是，栈分布如下：
+;	 esp+0 - %eax
+;	 esp+4 - %ebx
+;	 esp+8 - %ecx
+;	 esp+C - %edx
+;	esp+10 - %fs
+;	esp+14 - %es
+;	esp+18 - %ds
+;	esp+1C - %eip
+;	esp+20 - %cs
+;	esp+24 - %eflags
+;	esp+28 - %oldesp
+;	esp+2C - %oldss
 ; =============================================================================
 ; 系统调用入口函数
 [GLOBAL sys_call]
@@ -297,40 +311,26 @@ sys_call:
         push    fs      ;  |
         push    gs      ; /
 
-	;; 注意，从这里开始，一直到 `mov esp, StackTop'，中间坚决不能用 push/pop 指令，
-	;; 因为当前 esp 指向 proc_table 里的某个位置，push 会破坏掉进程表，导致灾难性后果！
-
-	mov	esi, edx	; 保存 edx，因为 edx 里保存了系统调用的参数
-				;（没用栈，而是用了另一个寄存器 esi）
-	mov	dx, ss
-	mov	ds, dx
-	mov	es, dx
-	mov	fs, dx
-
-	mov	edx, esi	; 恢复 edx
-
-        mov     esi, esp                    ;esi = 进程表起始地址
-
-	; 下面这段代码！
-        inc     dword [k_reenter]           ;k_reenter++;
-        cmp     dword [k_reenter], 0        ;if(k_reenter == 0)
-        jne     .1                          ;{
-        mov     esp, StackTop               ;  mov esp, StackTop <--切换到内核栈
-        push    restart                     ;  push restart
-        jmp     [esi + RETADR - P_STACKBASE];  return;
-.1:                                         ;} else { 已经在内核栈，不需要再切换
-        push    restart_reenter             ;  push restart_reenter
-        jmp     [esi + RETADR - P_STACKBASE];  return;
-                                            ;}
-
-        sti
-	push	esi
-
-	push	dword [p_proc_ready]
-	push	edx
+	push	edx	; edx ecx ebx为传入到系统调用的参数
 	push	ecx
 	push	ebx
+
+	mov	edx 0x10 ; 设置ds es段为内核空间
+	mov 	ds,dx
+	mov	es,dx
+
+	mov 	edx 0x17 ; 设置fs段为本地数据空间
+	mov 	fs,dx
+	
         call    [system_call_table + eax * 4]
+        push 	eax
+        mov 	current,eax
+        cmp	0,eax+state
+        jne	reschedule
+        cmp	0,eax+counter
+        je 	reschedule
+
+        
 	add	esp, 4 * 4
 
 	pop	esi

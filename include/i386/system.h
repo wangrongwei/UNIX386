@@ -11,8 +11,6 @@
  */
 #define _set_tssldt_gdt(n,addr,type)\
 __asm__("movw $104,%1\n\t"\
-
-
 )
 
 
