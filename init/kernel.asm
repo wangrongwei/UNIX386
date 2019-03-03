@@ -30,6 +30,7 @@ global  write_vram
 
 extern  kernel_start
 extern  _stack_top
+extern system_call_table
 
 ;BOOT_INFO信息
 CYLS		EQU	0x0ff0
@@ -300,8 +301,8 @@ irq_common_stub:
 ;	esp+2C - %oldss
 ; =============================================================================
 ; 系统调用入口函数
-[GLOBAL sys_call]
-sys_call:
+[GLOBAL system_call]
+system_call:
 ; =============================================================================
 ;                                   save
 ; =============================================================================
@@ -315,15 +316,17 @@ sys_call:
 	push	ecx
 	push	ebx
 
-	mov	edx 0x10 ; 设置ds es段为内核空间
+	mov	edx 0x10 ; 设置ds es段指向当前进程的内核态数据段
 	mov 	ds,dx
 	mov	es,dx
 
-	mov 	edx 0x17 ; 设置fs段为本地数据空间
+	mov 	edx 0x17 ; 设置fs段指向当前进程用户态数据段
 	mov 	fs,dx
 	
         call    [system_call_table + eax * 4]
         push 	eax
+
+        ; 下面这段函数干什么
         mov 	current,eax
         cmp	0,eax+state
         jne	reschedule

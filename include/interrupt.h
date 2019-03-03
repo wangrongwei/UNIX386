@@ -59,11 +59,7 @@ void isr255();
  *
  * 此函数后续直接使用汇编完成，此处不再需要
  */
-void system_call()
-{
-
-	__asm__("call sys_call\n\t");
-}
+extern int system_call(void);
 
 
 // 声明中断处理函数 0-19 属于 CPU 的异常

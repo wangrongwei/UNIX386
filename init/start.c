@@ -127,6 +127,7 @@ inline unsigned char inb(unsigned short port)
 inline unsigned short inw(unsigned short port)
 {
 	unsigned short retval=0;
+	/* retval为输出，port为输入 */
 	asm volatile("inw %1,%0":"=a"(retval):"dN"(port));
 	return retval;
 }
