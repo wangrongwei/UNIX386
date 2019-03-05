@@ -31,6 +31,11 @@ global  write_vram
 extern  kernel_start
 extern  _stack_top
 extern system_call_table
+extern reschedule
+extern current
+extern state
+
+
 
 ;BOOT_INFO信息
 CYLS		EQU	0x0ff0
@@ -286,6 +291,15 @@ irq_common_stub:
 ;				sys_call
 ; 目前系统调用的函数定义和system_call_table数组在include/i386/sys.h下  
 ;
+; 进入system_call：
+;	eax system number
+;	ebx arg1
+;	ecx arg2
+;	edx arg3
+;	esi arg3
+;	edi arg3
+;	ebp arg4
+;	
 ; 从系统调用返回是，栈分布如下：
 ;	 esp+0 - %eax
 ;	 esp+4 - %ebx
@@ -304,7 +318,7 @@ irq_common_stub:
 [GLOBAL system_call]
 system_call:
 ; =============================================================================
-;                                   save
+; save all general register:EAX ECX EDX EBX ESP EBP ESI EDI
 ; =============================================================================
 	pushad          ;  \
         push    ds      ;  |
@@ -312,25 +326,21 @@ system_call:
         push    fs      ;  |
         push    gs      ; /
 
-	push	edx	; edx ecx ebx为传入到系统调用的参数
-	push	ecx
-	push	ebx
-
-	mov	edx 0x10 ; 设置ds es段指向当前进程的内核态数据段
+	mov	edx,0x10 ; 设置ds es段指向当前进程的内核态数据段
 	mov 	ds,dx
 	mov	es,dx
 
-	mov 	edx 0x17 ; 设置fs段指向当前进程用户态数据段
+	mov 	edx,0x17 ; 设置fs段指向当前进程用户态数据段
 	mov 	fs,dx
 	
         call    [system_call_table + eax * 4]
         push 	eax
 
-        ; 下面这段函数干什么
-        mov 	current,eax
-        cmp	0,eax+state
+        ; 检测当前进程是否处于就绪态，时间片是否用完
+.2:     mov 	eax,current
+        cmp	0,[eax+state]
         jne	reschedule
-        cmp	0,eax+counter
+        cmp	0,[eax+counter]
         je 	reschedule
 
         
@@ -339,6 +349,7 @@ system_call:
 	pop	esi
         mov     [esi + EAXREG - P_STACKBASE], eax
         cli
+
 
         ret
 
