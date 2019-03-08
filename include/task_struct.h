@@ -75,7 +75,7 @@ struct tss_struct{
 
 /* task_struct：进程的描述符 */
 struct task_struct{
-	int state; /* 进程当前的状态 */
+	long state; /* 进程当前的状态 */
 	long counter;
 	long priority; /* 优先级 */
 	long signal;

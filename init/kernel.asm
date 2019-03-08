@@ -318,7 +318,7 @@ irq_common_stub:
 [GLOBAL system_call]
 system_call:
 ; =============================================================================
-; save all general register:EAX ECX EDX EBX ESP EBP ESI EDI
+; save all general register:EAX ECX EDX EBX ESP EBP ESI EDI and ds es fs gs
 ; =============================================================================
 	pushad          ;  \
         push    ds      ;  |
@@ -326,30 +326,33 @@ system_call:
         push    fs      ;  |
         push    gs      ; /
 
+	mov 	esi,esp
+	
 	mov	edx,0x10 ; 设置ds es段指向当前进程的内核态数据段
 	mov 	ds,dx
 	mov	es,dx
 
 	mov 	edx,0x17 ; 设置fs段指向当前进程用户态数据段
 	mov 	fs,dx
-	
-        call    [system_call_table + eax * 4]
-        push 	eax
 
-        ; 检测当前进程是否处于就绪态，时间片是否用完
-.2:     mov 	eax,current
-        cmp	0,[eax+state]
-        jne	reschedule
-        cmp	0,[eax+counter]
-        je 	reschedule
+	sti
+        call    [system_call_table + eax * 4]
+        ; why add esi to 11*4 ? --> from EAX to gs has 11*4 
+        mov     [esi + 11*4], eax
+	cli
+	
+        ; 检测当前进程是否处于就绪态（state），时间片是否用完
+        ; if state == TASK_RUNNING, then the task would be rescheduled
+;.2:     mov 	eax,current
+;        cmp	0,[eax]
+;        jne	reschedule
+;        cmp	0,[eax+4]
+;        je 	reschedule
 
         
-	add	esp, 4 * 4
+;	add	esp, 4 * 4
 
-	pop	esi
-        mov     [esi + EAXREG - P_STACKBASE], eax
-        cli
-
+;	pop	esi
 
         ret
 
