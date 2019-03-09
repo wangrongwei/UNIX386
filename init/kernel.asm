@@ -345,9 +345,9 @@ system_call:
         ; 检测当前进程是否处于就绪态（state），时间片是否用完
         ; if state == TASK_RUNNING, then the task would be rescheduled
 .2:     mov 	eax,current
-        cmp	0,[eax]
+        cmp	[eax],0
         jne	reschedule
-        cmp	0,[eax+4]
+        cmp	[eax+4],0
         je 	reschedule
 
 	;add	esp, 4 * 4
