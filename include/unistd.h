@@ -2,7 +2,7 @@
 /*
  *	实现POSIX标准中对内核的规定，参考POSIX文档完善！
  *
- *	author:	Patrick
+ *	author:	Patrick Wang
  *
  *	标准符号常量与类型
  */
