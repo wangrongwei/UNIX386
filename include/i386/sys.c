@@ -11,6 +11,40 @@
 #define filename #sys.h
 
 
+int sys_setup()
+{
+	return 0;
+}
 
+int sys_exit()
+{
+	return 0;
+}
+
+ /* 汇编实现，执行fork时被调用 */
+int sys_fork()
+{
+	return 0;
+}
+
+int sys_read()
+{
+	return 0;
+}
+
+int sys_write()
+{
+	return 0;
+}
+
+int sys_open()
+{
+	return 0;
+}
+
+int sys_close()
+{
+	return 0;
+}
 
 
