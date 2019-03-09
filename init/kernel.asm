@@ -318,7 +318,8 @@ irq_common_stub:
 [GLOBAL system_call]
 system_call:
 ; =============================================================================
-; save all general register:EAX ECX EDX EBX ESP EBP ESI EDI and ds es fs gs
+; already on stack: ss,sp,flags,cs,ip
+; next to save general register:EAX ECX EDX EBX ESP EBP ESI EDI and ds es fs gs
 ; =============================================================================
 	pushad          ;  \
         push    ds      ;  |
@@ -343,19 +344,22 @@ system_call:
 	
         ; 检测当前进程是否处于就绪态（state），时间片是否用完
         ; if state == TASK_RUNNING, then the task would be rescheduled
-;.2:     mov 	eax,current
-;        cmp	0,[eax]
-;        jne	reschedule
-;        cmp	0,[eax+4]
-;        je 	reschedule
+.2:     mov 	eax,current
+        cmp	0,[eax]
+        jne	reschedule
+        cmp	0,[eax+4]
+        je 	reschedule
 
-        
-;	add	esp, 4 * 4
-
-;	pop	esi
-
+	;add	esp, 4 * 4
+	;pop	esi
+	pop	gs
+	pop	fs
+	pop	es
+	pop	ds
+	popad
+	
         ret
-
+	
 
 ;
 ; 保留此处
