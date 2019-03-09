@@ -6,6 +6,8 @@
 
 #include "schedule.h"
 #include "task_struct.h"
+#include <i386/sys.h>
+
 
 
 extern tss_struct;

@@ -16,6 +16,8 @@
 
 #include <schedule.h>
 
+#include <i386/sys.h>
+
 #define HZ 100
 
 extern unsigned char kernel_s[];

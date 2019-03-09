@@ -5,6 +5,7 @@
  *		完整的内核支持的系统调用较多，本内核简单设置
  */
 
+#define HZ 100
 
 #define __NR_setup	0
 #define __NR_exit	1
