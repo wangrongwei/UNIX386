@@ -4,9 +4,9 @@
  *	author: Patrick Wang
  */
 
-#include <sys.h>
+#include <i386/sys.h>
 #include <unistd.h>
-#include <fork.h>
+#include <i386/fork.h>
 
 
 
