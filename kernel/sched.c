@@ -22,7 +22,7 @@ long *_stack_top = &user_stack[PAGE_SIZE >> 2];
 
 /* 一个全局指针，指向当前正在执行的进程的task_struct */
 struct task_struct *current = &(init_task.task); 
-
+extern syscall_ptr system_call_table[];
 
 /*
  * 调度初始化，启动进程0
