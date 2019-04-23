@@ -22,6 +22,7 @@
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
+extern syscall_ptr system_call_table[];
 void outb(unsigned short port,unsigned short value);
 
 unsigned char inb(unsigned short port);
