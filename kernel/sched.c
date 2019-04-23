@@ -52,7 +52,7 @@ void schedule_init(void)
 /*
  * 重新调度
  */
-static void reschedule(void)
+void reschedule(void)
 {
 
 	return;
