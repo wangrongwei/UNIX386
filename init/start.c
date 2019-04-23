@@ -18,7 +18,7 @@
 
 #include <i386/sys.h>
 
-#define HZ 100
+
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
@@ -44,7 +44,7 @@ void kernel_start()
 	int i;
 	//字符串存在ELF文件的.stab节和.stabstr节（这部分特别大）
 	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
-	unsigned int page_addr1=0,page_addr2=0;
+	unsigned int page_addr1 = 0,page_addr2 = 0;
 	printk("enter the kernel_start function...\n");
 	/* 打印内核版本 */
 	printk("DeeppinkOS version-0.0.1\n");
@@ -88,16 +88,8 @@ void kernel_start()
 	page_addr1 = pmm_alloc_page();
 	printk("alloc page1 = 0x%08X\n",page_addr1);
 	//page_addr2 = pmm_alloc_page();
-	//printk("alloc page2 = 0x%08X\n",page_addr2);
-	//pmm_free_page(page_addr2);
-	//pmm_free_page(page_addr1);
-
-	//for(i=0xa0000;i<=0xa0140;i++){
-	//	write_vram(i,1);
-	//}
 	
 	logo();
-	//write_vram(0xa0000,1);
 	while(1){
 		keyboard_read();
 	}

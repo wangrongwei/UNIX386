@@ -56,7 +56,7 @@ extern int sys_close();
 /*
  * 先使用这7个系统调用，system_call_table会被kernel.asm中调用
  */
-static syscall_ptr system_call_table[]={sys_setup,sys_exit,sys_fork,
+syscall_ptr system_call_table[]={sys_setup,sys_exit,sys_fork,
 sys_read,sys_write,sys_open,sys_close};
 
 
