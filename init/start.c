@@ -70,12 +70,10 @@ void kernel_start()
 
 	//asm volatile("int $0x4");
 
-	//init_timer(200);
-
 	/* 这段代码有bug */
 	init_keyboard();
 	schedule_init();
-	//asm volatile("sti"); // 打开中断
+	asm volatile("sti"); // 打开中断
 	//while(1){
 	//	keyboard_read();
 	//}
