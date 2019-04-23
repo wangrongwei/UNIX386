@@ -27,8 +27,8 @@
 
 // 将tss或者ldt相对于第一个tss或者第一个ldt进行编码
 // 可以不直接编码，需要后续完善
-#define _TSS(n) (((unsigned long)n << 4) + (FIRST_TASKTSS_INDEX << 3))
-#define _LDT(n) (((unsigned long)n << 4) + (FIRST_TASKLDT_INDEX << 3)) 
+#define _TSS(n) ((((unsigned long)n) << 4) + (FIRST_TASKTSS_INDEX << 3))
+#define _LDT(n) ((((unsigned long)n) << 4) + (FIRST_TASKLDT_INDEX << 3)) 
 
 
 /* 将tss和ldt地址加载到TR和LDTR寄存器 */
