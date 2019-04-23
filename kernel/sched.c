@@ -30,6 +30,7 @@ extern syscall_ptr system_call_table[];
 void schedule_init(void)
 {
 	int i;
+	printk("scheduler initial.");
 	// 在gdt表后边加上进程0的tss和ldt
 	set_gdt(FIRST_TASKTSS_INDEX,&(init_task.task.tss),sizeof(tss_struct),0x89,0);
 	set_gdt(FIRST_TASKLDT_INDEX,&(init_task.task.ldt),sizeof(tss_struct),0x82,0);
@@ -45,7 +46,7 @@ void schedule_init(void)
 
 	// 设置系统调度总入口
 	set_system_gate(0x80,&system_call);
-	
+	printk("scheduler initial..");
 
 }
 
