@@ -60,5 +60,25 @@ void reschedule(void)
 }
 
 
+/*
+ * 改变进程权限：从0到3特权级 ss,sp,flags,cs,ip
+ */
+#define from_zero_to_three_level() \
+__asm__("movl %%esp,%%eax\n\t"\
+	"pushl $0x17\n\t"\
+	"pushl %eax\n\t"\
+	"pushfl\n\t"\
+	"movl 0x0f\n\t"\
+	"pushl $1f\n\t"\
+	"iret\n\t"\
+	"1:\tmovl $0x17,%%eax\n\t"\
+		"movl %%ax,%%ds\n\t"\
+		"movl %%ax,%%es\n\t"\
+		"movl %%ax,%%fs\n\t"\
+		"movl %%ax,%%gs\n\t"\
+		:::ax)
+
+
+
 
 
