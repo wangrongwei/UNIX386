@@ -39,11 +39,14 @@
 
 /* 在32位编译器下int 占4个字节 */
 
-/* tss_struct是一个进程的tss描述符 */
+/* 
+ * tss_struct是一个进程的tss描述符（TSS结构参考Intel 80386 programmer's
+ * manual 1986） 
+ */
 struct tss_struct{
-	long backlink;
+	long backlink;/* back link to previous TSS */
 	long esp0;
-	long ss0;
+	long ss0;/* 16位，后续若为16位寄存器则占用低16位，高16位为0 */
 	long esp1;
 	long ss1;
 	long esp2;
@@ -51,7 +54,7 @@ struct tss_struct{
 
 	long cr3;
 	long eip;
-	long flags;
+	long eflags;
 
 	long eax;
 	long ecx;
@@ -62,13 +65,14 @@ struct tss_struct{
 	long ebp;
 	long esi;
 	long edi;
-	long es;
+	long es;/* 以下皆为16位寄存器 */
 	long cs;
 	long ss;
 	long ds;
 	long fs;
 	long gs;
-	long ldt;
+	long ldt;/* 只取16位 */
+	/* tss最后32位中，0：trap，16-31：iobase,其他位为0 */
 	long trap;
 	long iobase;
 
