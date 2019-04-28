@@ -228,6 +228,7 @@ void init0(void)
 {
 	int i=0;
 	i++;
+	while(1);
 	return;
 }
 
