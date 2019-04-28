@@ -88,6 +88,10 @@ void kernel_start()
 	//page_addr2 = pmm_alloc_page();
 	
 	logo();
+	/* 其他设备初始化 */
+
+	/* 从ring0转换到ring1 */
+	move_to_user_mode();
 	while(1){
 		keyboard_read();
 	}

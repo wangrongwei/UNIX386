@@ -222,6 +222,15 @@ struct task_struct INIT_TASK={
 };
 #endif
 
+
+/* 初始化一个函数作为init进程程序体 */
+void init0(void)
+{
+	int i=0;
+	i++;
+	return;
+}
+
 /* 使用宏对INIT_TASK进行初始化 */
 #define INIT_TASK \
 {\
@@ -303,7 +312,7 @@ struct task_struct INIT_TASK={
 \
 /* 进程与内核使用同一个页目录表 */ \
 /* tss.cr3 */	pg_dir,\
-/* tss.eip */	0,\
+/* tss.eip */	init0,\
 /* tss.flags */	0,\
 \
 /* tss.eax */	0,\
