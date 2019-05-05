@@ -31,20 +31,20 @@ void schedule_init(void)
 {
 	int i;
 	printk("scheduler initial.\n");
-	// 在gdt表后边加上进程0的tss和ldt
+	/* 在gdt表后边加上进程0的tss和ldt */
 	set_gdt(FIRST_TASKTSS_INDEX,&(init_task.task.tss),sizeof(tss_struct),0x89,0);
 	set_gdt(FIRST_TASKLDT_INDEX,&(init_task.task.ldt),sizeof(tss_struct),0x82,0);
 	printk("scheduler initial..\n");
-	// 将tss挂接到TR寄存器
+	/* 将tss挂接到TR寄存器 */
 	ltr(0);
 	
-	// 将LDT挂接到LDTR寄存器
+	/* 将LDT挂接到LDTR寄存器 */
 	lldt(0);
 
-	// 初始化时钟
+	/* 初始化时钟 */
 	init_timer(HZ);
 
-	// 设置系统调度总入口
+	/* 设置系统调度总入口 */
 	set_system_gate(0x80,&system_call);
 	printk("scheduler initial...\n");
 

@@ -3,14 +3,14 @@
 
 /*
  * 说明：在初始化gdt表以后,需要开始初始化idt，该头文件定义相关中断处理函数
- * 		这些中断处理函数只是填充idt表中的offset项
+ * 	这些中断处理函数只是填充idt表中的offset项
  */
 
 
 // 寄存器类型
 typedef struct pt_regs_t {
-	unsigned int ds;		// 用于保存用户的数据段描述符
-	unsigned int edi;		// 从 edi 到 eax 由 pusha 指令压入
+	unsigned int ds;	// 用于保存用户的数据段描述符
+	unsigned int edi;	// 从 edi 到 eax 由 pusha 指令压入
 	unsigned int esi;
 	unsigned int ebp;
 	unsigned int esp;
@@ -20,7 +20,7 @@ typedef struct pt_regs_t {
 	unsigned int eax;
 	unsigned int int_no;	// 中断号
 	unsigned int err_code;	// 错误代码(有中断错误代码的中断会由CPU压入)
-	unsigned int eip;		// 以下由处理器自动压入
+	unsigned int eip;	// 以下由处理器自动压入
 	unsigned int cs;
 	unsigned int eflags;
 	unsigned int useresp;

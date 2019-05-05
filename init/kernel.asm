@@ -53,7 +53,7 @@ _page_tab2      EQU     0x3000
 _page_tab3      EQU     0x4000
 
 
-;采用Intel汇编格式
+; 采用Intel汇编格式
 _start:
 	MOV	EAX,0x00000010
 	MOV	DS,AX
