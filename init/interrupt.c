@@ -4,6 +4,11 @@
  */
 #include <interrupt.h>
 #include <debug.h>
+
+#ifdef _DEBUG
+#include <console.h>
+#endif
+
 /*
  * 中断服务程序
  * 函数说明：识别到底是发生了说明中断（通过regs->int_no），然后
@@ -19,6 +24,7 @@ void isr_handler(pt_regs *regs)
 	else{
 		printk("unhandle interrupt_handler:%d\n",regs->int_no);
 #ifdef _DEBUG
+		console_clear();
 		printk("ds:%d\n",regs->ds);		// 用于保存用户的数据段描述符
 		printk("edi:%d\n",regs->edi);		// 从 edi 到 eax 由 pusha 指令压入
 		printk("esi:%d\n",regs->esi);
