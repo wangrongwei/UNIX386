@@ -233,6 +233,9 @@ void init0(void)
 }
 
 /* 使用宏对INIT_TASK进行初始化 */
+/*  
+{0,0},{0x9f,0xc0fa00},{0x9f,0xc0f200},
+*/
 #define INIT_TASK \
 {\
 /* state */ TASK_RUNNING,\
@@ -271,7 +274,7 @@ void init0(void)
 \
 /* tty */ 0,\
 \
-	/* 填充ldt */\
+	/* 填充ldt（此处需要改进） */\
 	/* 填充ldt[0] */\
 {\
 /* ldt[0].limit0 */	 0,\
@@ -283,21 +286,21 @@ void init0(void)
 /* ldt[0].base2 */	0,\
 \
 	/* 填充ldt[1] */\
-/* ldt[1].limit0 */	 0,\
+/* ldt[1].limit0 */	 0x9f,\
 /* ldt[1].base0 */	 0,\
 /* ldt[1].base1 */	 0,\
-/* ldt[1].access */	 0,\
+/* ldt[1].access */	 0xfa,\
 /* ldt[1].limit1 */	 0,\
-/* ldt[1].GD_DB_L_AVL */ 0,\
+/* ldt[1].GD_DB_L_AVL */ 0x0c,\
 /* ldt[1].base2 */	0,\
 \	
 	/* 填充ldt[2] */\
-/* ldt[2].limit0 */	 0,\
+/* ldt[2].limit0 */	 0x9f,\
 /* ldt[2].base0 */	 0,\
 /* ldt[2].base1 */	 0,\
-/* ldt[2].access */	 0,\
+/* ldt[2].access */	 0xf2,\
 /* ldt[2].limit1 */	 0,\
-/* ldt[2].GD_DB_L_AVL */ 0,\
+/* ldt[2].GD_DB_L_AVL */ 0x0c,\
 /* ldt[2].base2 */	0,\
 },\
 \

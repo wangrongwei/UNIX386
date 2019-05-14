@@ -49,7 +49,7 @@ typedef struct ldt_struct_t{
 	unsigned short limit0;	     //长度限制15--0 占两个字节
 	unsigned short base0;	     //基地址15--0
 	unsigned char  base1;	     //基地址23--16
-	unsigned char  access;       //P_DVL(2位)_S_Type
+	unsigned char  access;       //P_DPL(2位)_S_Type
 	unsigned char  limit1:4;     //长度限制19--16
 	unsigned char  G_DB_L_AVL:4; //
 	unsigned char  base2;         //基地址31--24
