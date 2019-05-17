@@ -10,21 +10,22 @@
  * 采用intel嵌套汇编形式
  */
 #define _set_tssldt_gdt(n,addr,type)\
-__asm__("movw $104,%1\n\t"\
-)
-
-
+__asm__ ("movw $104,%1\n\t" \
+	"movw %%ax,%2\n\t" \
+	"rorl $16,%%eax\n\t" \
+	"movb %%al,%3\n\t" \
+	"movb $" type ",%4\n\t" \
+	"movb $0x00,%5\n\t" \
+	"movb %%ah,%6\n\t" \
+	"rorl $16,%%eax" \
+	::"a" (addr), "m" (*(n)), "m" (*(n+2)), "m" (*(n+4)), \
+	 "m" (*(n+5)), "m" (*(n+6)), "m" (*(n+7)) \
+	)
 
 // 将进程的tss和ldt添加到系统全局gdt和ldt上
 // 其中0x89代表tss，0x82代表ldt
 #define set_tss_gdt(n,addr) _set_tssldt_gdt(((char *) (n)),((int)(addr)),"0x89")
 #define set_ldt_gdt(n,addr) _set_tssldt_gdt(((char *) (n)),((int)(addr)),"0x82")
-
-
-
-
-
-
 
 
 
