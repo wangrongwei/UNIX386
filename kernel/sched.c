@@ -33,8 +33,6 @@ void schedule_init(void)
 	int i;
 	printk("scheduler initial.\n");
 	/* 在gdt表后边加上进程0的tss和ldt */
-	set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
-	set_gdt(5,0,0xfffff,0xf2,0x0c); //用户数据段-------| 进程0的LDT0
 	
 	//set_gdt(FIRST_TASKTSS_INDEX,&(init_task.task.tss),sizeof(tss_struct),0x89,0);
 	//set_gdt(FIRST_TASKLDT_INDEX,&(init_task.task.ldt),sizeof(tss_struct),0x82,0);
