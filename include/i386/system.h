@@ -10,8 +10,8 @@
  * 采用intel嵌套汇编形式
  */
 #define _set_tssldt_gdt(n,addr,type)\
-__asm__ __volatile__("movw $104,%1\n\t" \
-	"movb %%ax,%2\n\t" \
+__asm__ __volatile__("movb $104,%1\n\t" \
+	"movw %%ax,%2\n\t" \
 	"rorl $16,%%eax\n\t" \
 	"movb %%al,%3\n\t" \
 	"movb $"type",%4\n\t" \
