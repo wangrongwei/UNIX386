@@ -15,7 +15,7 @@ __asm__ __volatile__("movb $104,%0\n\t"\
 	"movw %%ax,%1\n\t" \
 	"rorl $16,%%eax\n\t" \
 	"movb %%al,%2\n\t" \
-	"movb $type,%3\n\t" \
+	"movb %7,%3\n\t" \
 	"movb $0x00,%4\n\t" \
 	"movb %%ah,%5\n\t" \
 	"rorl $16,%%eax\n\t"\
