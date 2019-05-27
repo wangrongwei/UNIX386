@@ -12,7 +12,7 @@
 #define _set_tssldt_gdt(n,addr,type)\
 __asm__ __volatile__("movb $104,%0\n\t"\
 	"movl %6,%%ecx\n\t"\
-	"movw %6,%1\n\t" \
+	"movw %%cx,%1\n\t" \
 	"rorl $16,%%eax\n\t" \
 	"movb %%al,%2\n\t" \
 	"movb %7,%3\n\t" \
