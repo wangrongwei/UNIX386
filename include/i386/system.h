@@ -16,7 +16,7 @@ __asm__ __volatile__("movb $104,%0\n\t"\
 	"rorl $16,%%eax\n\t" \
 	"movb %%al,%2\n\t" \
 	"movb %7,%3\n\t" \
-	"movb $0x00,%4\n\t" \
+	"movb $0,%4\n\t" \
 	"movb %%ah,%5\n\t" \
 	"rorl $16,%%eax\n\t"\
 	:"=m"(*(n)),"=m"(*(n+2)),"=m"(*(n+4)),"=m"(*(n+5)),"=m"(*(n+6)),"=m"(*(n+7))\
