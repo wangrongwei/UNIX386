@@ -9,6 +9,7 @@
  * 添加进程的tss和ldt到gdt表后的基本函数
  * 采用intel嵌套汇编形式
  */
+///***********************************************************************************
 #define _set_tssldt_gdt(n,addr,type)\
 __asm__ __volatile__("movb $104,%0\n\t"\
 	"movl %6,%%ecx\n\t"\
@@ -20,10 +21,21 @@ __asm__ __volatile__("movb $104,%0\n\t"\
 	"movb %%ah,%5\n\t" \
 	"rorl $16,%%eax\n\t"\
 	:"=m"(*(n)),"=m"(*(n+2)),"=m"(*(n+4)),"=m"(*(n+5)),"=m"(*(n+6)),"=m"(*(n+7))\
-	:"a"(addr),"d"(type)\
+	:"g"(addr),"g"(type)\
 	:"memory"\
 )
+//***********************************************************************************/
 
+//#define _set_tssldt_gdt(n,addr,type)\
+//__asm__ __volatile__("movb $104,%0\n\t"\
+//	"movw %%cx,%1\n\t"\
+//	"rorl $16,%%eax\n\t"\
+//	"movb %%al,%2\n\t"\
+//	"movb %%cx,%3\n\t"\
+//	:"=m"(*(n)),"=m"(*(n+2)),"=m"(*(n+4)),"=m"(*(n+5)),"=m"(*(n+6)),"=m"(*(n+7))\
+//	:"g"(addr)\
+//)
+		
 // 将进程的tss和ldt添加到系统全局gdt和ldt上
 // 其中0x89代表tss，0x82代表ldt
 #define set_tss_gdt(n,addr) _set_tssldt_gdt(((char *) (n)),((int)(addr)),0x89)
