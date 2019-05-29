@@ -33,16 +33,16 @@ __asm__ __volatile__("movb $104,%0\n\t"\
 // %3 - (描述符项n 的地址偏移4 处)；%4 - (描述符项n 的地址偏移5 处)；
 // %5 - (描述符项n 的地址偏移6 处)；%6 - (描述符项n 的地址偏移7 处)；
 #define _set_tssldt_gdt(n,addr,type) \
-__asm__ ( "movw $104,%1\n\t" \
-"movw %%ax,%2\n\t" \        
-  "rorl $16,%%eax\n\t" \    
-  "movb %%al,%3\n\t" \      
-  "movb $" type ",%4\n\t" \ 
-  "movb $0x00,%5\n\t" \   
-  "movb %%ah,%6\n\t" \ 
-  "rorl $16,%%eax" \ 
-  ::"g" (addr), "m" (*(n)), "m" (*(n + 2)), "m" (*(n + 4)),\
-  "m" (*(n + 5)), "m" (*(n + 6)), "m" (*(n + 7)))
+__asm__ __volatile__( "movw $104,%1\n\t" \
+	"movw %%ax,%2\n\t" \        
+  	"rorl $16,%%eax\n\t" \    
+  	"movb %%al,%3\n\t" \      
+  	"movb $" type ",%4\n\t" \ 
+  	"movb $0x00,%5\n\t" \   
+  	"movb %%ah,%6\n\t" \ 
+  	"rorl $16,%%eax" \ 
+  	::"g" (addr), "m" (*(n)), "m" (*(n + 2)), "m" (*(n + 4)),\
+  	"m" (*(n + 5)), "m" (*(n + 6)), "m" (*(n + 7)))
 
 		
 // 将进程的tss和ldt添加到系统全局gdt和ldt上

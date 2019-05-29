@@ -69,7 +69,6 @@ void kernel_start()
 	//asm volatile("int $0x3");
 	//asm volatile("int $0x4");
 
-	/* 这段代码有bug */
 	init_keyboard();
 	schedule_init();
 	asm volatile("sti"); // 打开中断
