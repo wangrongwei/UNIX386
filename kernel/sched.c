@@ -35,7 +35,7 @@ void schedule_init(void)
 	set_tss_gdt(gdt_list + FIRST_TASKTSS_INDEX,&(init_task.task.tss));
 	set_ldt_gdt(gdt_list + FIRST_TASKLDT_INDEX,&(init_task.task.ldt));
 	
-	printk("scheduler initial..\n");
+	printk("scheduler midle..\n");
 	/* 将tss挂接到TR寄存器 */
 	ltr(0);
 	
@@ -47,7 +47,7 @@ void schedule_init(void)
 
 	/* 设置系统调度总入口 */
 	set_system_gate(0x80,&system_call);
-	printk("scheduler initial...\n");
+	printk("scheduler initial end...\n");
 
 }
 
