@@ -6,6 +6,7 @@
 #include <debug.h>
 
 #ifdef _DEBUG
+#undef _DEBUG
 #include <console.h>
 #endif
 
