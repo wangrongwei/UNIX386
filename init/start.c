@@ -29,6 +29,14 @@ void outb(unsigned short port,unsigned short value);
 unsigned char inb(unsigned short port);
 
 unsigned short inw(unsigned short port);
+
+
+/* 定义fork函数 */
+static inline _create_systemcall(int,fork)
+
+static inline _create_systemcall(int,pause)
+
+
 void logo(void);
 
 /*
