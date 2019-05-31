@@ -48,8 +48,8 @@ __asm__ __volatile__( "movw $104,%1\n\t" \
 		
 // 将进程的tss和ldt添加到系统全局gdt和ldt上
 // 其中0x89代表tss，0x82代表ldt
-#define set_tss_gdt(n,addr) _set_tssldt_gdt(((char *) (n)),((int)(addr)),"0x89")
-#define set_ldt_gdt(n,addr) _set_tssldt_gdt(((char *) (n)),((int)(addr)),"0x82")
+#define set_tss_gdt(n,addr) _set_tssldt_gdt(((char *) (n)),addr,"0x89")
+#define set_ldt_gdt(n,addr) _set_tssldt_gdt(((char *) (n)),addr,"0x82")
 
 
 
