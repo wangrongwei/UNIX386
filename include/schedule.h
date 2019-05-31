@@ -23,7 +23,7 @@ __asm__ __volatile__("movl %%esp,%%eax\n\t"\
 	"pushfl\n\t" 		/* 压入eflags */\
 	"pushl $0x0f\n\t"	/* 压入cs */\
 	"pushl $1f\n\t"		/* 压入ip */\
-	"ret\n"\
+	"iret\n"\
 	"1:\tmovl $0x17,%%eax\n\t"	/* RPL=3 TI=1(ldt) SEL=1 */\
 	"movw %%ax,%%ds\n\t" \
 	"movw %%ax,%%es\n\t" \
