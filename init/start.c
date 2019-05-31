@@ -81,6 +81,7 @@ void kernel_start()
 #endif
 
 #if 1
+	printk("physicial init\n");
 	init_pmm();
 	//page_addr1 = pmm_alloc_page();
 	//printk("alloc page1 = 0x%08X\n",page_addr1);
@@ -90,6 +91,7 @@ void kernel_start()
 	/* 其他设备初始化 */
 
 	/* 从ring0转换到ring1 */
+	printk("move to user mode\n");
 	move_to_user_mode();
 	while(1){
 		//keyboard_read();
