@@ -11,8 +11,8 @@
 
 
 /* 定义fork函数 */
-inline _create_systemcall(int,fork)
-inline _create_systemcall(int,pause)
+static inline _create_systemcall(int,fork)
+static inline _create_systemcall(int,pause)
 
 
 

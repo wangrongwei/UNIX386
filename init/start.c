@@ -18,6 +18,7 @@
 
 #include <i386/sys.h>
 
+#include <unistd.h>
 
 
 extern unsigned char kernel_s[];
