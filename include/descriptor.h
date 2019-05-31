@@ -24,6 +24,9 @@ static void init_idt();
 static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	     unsigned char access,unsigned char G_DB_L_AVL);
 
+/* 设置tss与ldt */
+
+static void set_tssldt2_gdt(int num,unsigned int base,char type);
 // 填充idt表
 static void set_idt(int num,unsigned int base,unsigned short sel,\
 		    unsigned short flags);
@@ -94,6 +97,24 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	gdt_list[num].access = access;
 	gdt_list[num].limit1 = (limit >> 16);
 	gdt_list[num].G_DB_L_AVL = G_DB_L_AVL;
+	gdt_list[num].base2 = (base >> 24);
+
+}
+
+/*
+ *	填充gdt列表
+ *	num: 在gdt的位置
+ *	base: 填充的段的基地址
+ *	type: 0x89为tss，0x82为ldt
+ */
+static void set_tssldt2_gdt(int num,unsigned int base,char type)
+{
+	gdt_list[num].limit0 = (104 & 0xffff);
+	gdt_list[num].base0 = (base & 0xffff);
+	gdt_list[num].base1 = (base >> 16) & 0xff;
+	gdt_list[num].access = type;
+	gdt_list[num].limit1 = 0;
+	gdt_list[num].G_DB_L_AVL = 0;
 	gdt_list[num].base2 = (base >> 24);
 
 }
