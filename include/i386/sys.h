@@ -15,6 +15,8 @@
 #define __NR_open	5
 #define __NR_close	6
 
+#define __NR_pause	29
+
 
 /* __NR_##name ---> __NR_fork */
 /* 定义无形参的系统调用 */
