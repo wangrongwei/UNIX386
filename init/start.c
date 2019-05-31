@@ -82,11 +82,11 @@ void kernel_start()
 
 #if 1
 	init_pmm();
-	page_addr1 = pmm_alloc_page();
-	printk("alloc page1 = 0x%08X\n",page_addr1);
+	//page_addr1 = pmm_alloc_page();
+	//printk("alloc page1 = 0x%08X\n",page_addr1);
 	//page_addr2 = pmm_alloc_page();
 	
-	logo();
+	//logo();
 	/* 其他设备初始化 */
 
 	/* 从ring0转换到ring1 */

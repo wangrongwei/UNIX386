@@ -34,10 +34,7 @@ void schedule_init(void)
 	/* 在gdt表后边加上进程0的tss和ldt */
 	set_tssldt2_gdt(FIRST_TASKTSS_INDEX,&(init_task.task.tss),0x89);
 	set_tssldt2_gdt(FIRST_TASKLDT_INDEX,&(init_task.task.ldt),0x82);
-	//printk("scheduler tss end..\n");
-	//set_ldt_gdt(gdt_list + FIRST_TASKLDT_INDEX,&(init_task.task.ldt));
 	
-	printk("scheduler midle..\n");
 	/* 将tss挂接到TR寄存器 */
 	ltr(0);
 	
