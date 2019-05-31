@@ -162,8 +162,8 @@ static void init_gdt()
 	set_gdt(1,0,0xfffff,0x9a,0x0c); //代码段
 	set_gdt(2,0,0xfffff,0x92,0x0c); //数据段
 	set_gdt(3,0,0,0,0);//null
-	set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
-	set_gdt(5,0,0xfffff,0xf2,0x0c); //用户数据段-------| 进程0的LDT0
+	//set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
+	//set_gdt(5,0,0xfffff,0xf2,0x0c); //用户数据段-------| 进程0的LDT0
 
 	/*
 	 * 后续的段描符初始化为0（与进程相关的代码）
