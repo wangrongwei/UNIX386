@@ -82,7 +82,7 @@ debug:
 	#qemu-system-i386 -s -S -boot order=a -fda deeppink.img
 
 bochs:
-	bochs
+	bochs -f ./bochsrc
 
 dis:
 	ndisasm ./boot/boot.bin > ./boot/boot.txt
