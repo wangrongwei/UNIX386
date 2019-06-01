@@ -5,6 +5,8 @@
 #include "console.h"
 #include "vargs.h"
 
+/* 开启调试功能 */
+#define _DEBUG 0
 
 void prink(const char *format,...);
 

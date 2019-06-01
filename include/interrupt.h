@@ -3,15 +3,14 @@
 
 /*
  * 说明：在初始化gdt表以后,需要开始初始化idt，该头文件定义相关中断处理函数
- * 这些中断处理函数只是填充idt表中的offset项
- *
+ * 	这些中断处理函数只是填充idt表中的offset项
  */
 
 
 // 寄存器类型
 typedef struct pt_regs_t {
-	unsigned int ds;		// 用于保存用户的数据段描述符
-	unsigned int edi;		// 从 edi 到 eax 由 pusha 指令压入
+	unsigned int ds;	// 用于保存用户的数据段描述符
+	unsigned int edi;	// 从 edi 到 eax 由 pusha 指令压入
 	unsigned int esi;
 	unsigned int ebp;
 	unsigned int esp;
@@ -21,7 +20,7 @@ typedef struct pt_regs_t {
 	unsigned int eax;
 	unsigned int int_no;	// 中断号
 	unsigned int err_code;	// 错误代码(有中断错误代码的中断会由CPU压入)
-	unsigned int eip;		// 以下由处理器自动压入
+	unsigned int eip;	// 以下由处理器自动压入
 	unsigned int cs;
 	unsigned int eflags;
 	unsigned int useresp;
@@ -36,17 +35,34 @@ typedef void (*interrupt_handler_t)(pt_regs *);
 // h:中断处理函数
 void register_interrupt_handler(unsigned char n, interrupt_handler_t h);
 
-// 调用中断处理函数
+
+/*
+ * 在CPU中存在中断、异常和陷阱（与软中断实现相关）三种方式
+ * 需要在此处分开设计
+ *
+ */
+
+
+// 调用异常处理函数
 void isr_handler(pt_regs *regs);
 
 interrupt_handler_t interrupt_handlers[256];
 
 
-
 // 32～255 用户自定义异常
 void isr255();
 
-// 声明中断处理函数 0-19 属于 CPU 的异常中断
+
+/*
+ * 系统调用（需要嵌套AT&T汇编），gcc只支持在c语言中嵌套AT&T汇编
+ * 在即isr128
+ *
+ * 此函数后续直接使用汇编完成，此处不再需要
+ */
+extern int system_call(void);
+
+
+// 声明中断处理函数 0-19 属于 CPU 的异常
 // ISR:中断服务程序(interrupt service routine)
 void isr0(); 		// 0 #DE 除 0 异常 
 void isr1(); 		// 1 #DB 调试异常 
@@ -126,7 +142,7 @@ void irq15(); 		// IDE1 传输控制使用
 
 
 
-
-
 #endif
+
+
 

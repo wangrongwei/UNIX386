@@ -26,12 +26,11 @@ void init_keyboard()
 void keyboard_handler(pt_regs *regs)
 {
 	unsigned char scancode;
-	//printk("keyboard down\n");
 	scancode = inb(0x60);
 	if(kb_in.count < KB_IN_BYTES){
 		*(kb_in.p_head) = scancode;
 		kb_in.p_head++;
-		// 如果满了，又指向开始
+		/* 判断键盘缓冲区是否满，若满，则指向开始 */
 		if(kb_in.p_head == kb_in.buf+KB_IN_BYTES){
 			kb_in.p_head = kb_in.buf;
 		}
@@ -42,6 +41,9 @@ void keyboard_handler(pt_regs *regs)
 
 }
 
+/*
+ * 读取键盘缓存区kb_in，并打印显示
+ */
 void keyboard_read()
 {
 	unsigned char scancode;
@@ -50,7 +52,7 @@ void keyboard_read()
 		scancode = *(kb_in.p_tail);
 		kb_in.p_tail++;
 		kb_in.p_tail++;
-		// 如果读到了最后
+		/* 判断是否读到最后 */
 		if(kb_in.p_tail == kb_in.buf + KB_IN_BYTES){
 			kb_in.p_tail = kb_in.buf;
 		}

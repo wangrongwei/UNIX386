@@ -1,7 +1,10 @@
+
 /*
  * 物理内存的管理
- * 此程序有问题，主要是还没有
+ * 此程序有问题，主要是还没有理解透在何时分配物理地址，此外虚拟地址的初始化没有健全
  */
+
+
 #include <pmm.h>
 #include <debug.h>
 
@@ -19,7 +22,7 @@ static unsigned int pmm_stack_top;
 unsigned int phy_page_count=0;
 
 /*
- * 系统的物理内存从0x0---0x9fc00,0x100000---0x7ffe000是RAM区
+ * 函数功能：初始化物理地址，系统的物理内存从0x0---0x9fc00,0x100000---0x7ffe000是RAM区
  * 可使用
  */
 void init_pmm()
@@ -49,6 +52,7 @@ void init_pmm()
 
 }
 
+
 /*
  * 将分配的每一页（4KB）开头地址存储到pmm_stack数组
  */
@@ -57,6 +61,8 @@ void pmm_free_page(unsigned int p)
 	pmm_stack[pmm_stack_top++] = p;
 	//printk("pmm_stack_top = 0x%08X\n",&pmm_stack_top);
 }
+
+
 /*
  * 分配一个页
  */

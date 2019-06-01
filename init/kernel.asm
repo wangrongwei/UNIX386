@@ -1,11 +1,11 @@
-;	deeppinkos
+;					Deeppinkos
 ;-------------------------------------------------------------------------------
 ;                                      BIOS内存映射
 ;-------------------------------------------------------------------------------
 ;	TAB=4			SP=0x7c00		0x8000=拷贝到启动区
 ;-------------------------------------------------------------------------------
-;	|中断向量表|		|;代码存储位置|	......	| 512|
-;	|	  |		|	     |	......	|    |
+;	|中断向量表|		|代码存储位置|	......	| 512|
+;	|	  |	|	     |	......	|    |
 ;-------------------------------------------------------------------------------
 ;								0x8200=后边的程序
 ;	在某种意义上理解，我们的程序只需要在磁盘的开始512字节就行
@@ -30,6 +30,12 @@ global  write_vram
 
 extern  kernel_start
 extern  _stack_top
+extern system_call_table
+extern reschedule
+extern current
+extern state
+
+
 
 ;BOOT_INFO信息
 CYLS		EQU	0x0ff0
@@ -47,6 +53,7 @@ _page_tab2      EQU     0x3000
 _page_tab3      EQU     0x4000
 
 
+; 采用Intel汇编格式
 _start:
 	MOV	EAX,0x00000010
 	MOV	DS,AX
@@ -88,6 +95,7 @@ setup_paging:
         CLD;EDI往加的方向执行
         REP     STOSD ;每次移动4个字节,直到ECX==0(目的是将这5K内存清0)
         ;页目录表只用到了前面16字节
+        ;7：表示 U/S R/W P都为1
         MOV     dword [_page_dir],_page_tab0+7
         MOV     dword [_page_dir+4],_page_tab1+7
         MOV     dword [_page_dir+8],_page_tab2+7
@@ -215,6 +223,8 @@ isr_common_stub:
 	iret
 .end:
 
+
+
 ; 构造中断请求的宏
 %macro IRQ 2
 [GLOBAL irq%1]
@@ -272,6 +282,84 @@ irq_common_stub:
 	add esp, 8     		 ; 清理压栈的 错误代码 和 ISR 编号
 	iret          		 ; 出栈 CS, EIP, EFLAGS, SS, ESP
 .end:
+
+
+
+
+
+; =============================================================================
+;				sys_call
+; 目前系统调用的函数定义和system_call_table数组在include/i386/sys.h下  
+;
+; 进入system_call：
+;	eax system number
+;	ebx arg1
+;	ecx arg2
+;	edx arg3
+;	esi arg3
+;	edi arg3
+;	ebp arg4
+;	
+; 从系统调用返回是，栈分布如下：
+;	 esp+0 - %eax
+;	 esp+4 - %ebx
+;	 esp+8 - %ecx
+;	 esp+C - %edx
+;	esp+10 - %fs
+;	esp+14 - %es
+;	esp+18 - %ds
+;	esp+1C - %eip
+;	esp+20 - %cs
+;	esp+24 - %eflags
+;	esp+28 - %oldesp
+;	esp+2C - %oldss
+; =============================================================================
+; 系统调用入口函数
+[GLOBAL system_call]
+system_call:
+; =============================================================================
+; already on stack: ss,sp,flags,cs,ip
+; next to save general register:EAX ECX EDX EBX ESP EBP ESI EDI and ds es fs gs
+; =============================================================================
+	pushad          ;  \
+        push    ds      ;  |
+        push    es      ;  | 保存原寄存器值
+        push    fs      ;  |
+        push    gs      ; /
+
+	mov 	esi,esp
+	
+	mov	edx,0x10 ; 设置ds es段指向当前进程的内核态数据段
+	mov 	ds,dx
+	mov	es,dx
+
+	mov 	edx,0x17 ; 设置fs段指向当前进程用户态数据段
+	mov 	fs,dx
+
+	sti
+        call    [system_call_table + eax * 4]
+        ; why add esi to 11*4 ? --> from EAX to gs has 11*4 
+        mov     [esi + 11*4], eax
+	cli
+	
+        ; 检测当前进程是否处于就绪态（state），时间片是否用完
+        ; if state == TASK_RUNNING, then the task would be rescheduled
+.2:     mov 	eax,current
+        cmp	dword [eax],0
+        jne	reschedule
+        cmp	dword [eax+4],0
+        je 	reschedule
+
+	;add	esp, 4 * 4
+	;pop	esi
+	pop	gs
+	pop	fs
+	pop	es
+	pop	ds
+	popad
+	
+        ret
+	
 
 ;
 ; 保留此处
