@@ -101,7 +101,7 @@ void kernel_start()
 
 	/* 从ring0转换到ring1 */
 	printk("move to user mode\n");
-	//move_to_user_mode();
+	move_to_user_mode();
 	//fork();
 	while(1){
 		//pause();
