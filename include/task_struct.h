@@ -85,7 +85,6 @@ struct task_struct{
 	long priority; /* 优先级 */
 	long signal;
 
-
 	long blocked;
 	int exit_code;
 	unsigned long start_code,end_code,end_data,brk,start_stack;
@@ -223,14 +222,7 @@ struct task_struct INIT_TASK={
 #endif
 
 
-/* 初始化一个函数作为init进程程序体 */
-void init0(void)
-{
-	int i=0;
-	i++;
-	while(1);
-	return;
-}
+
 
 /* 使用宏对INIT_TASK进行初始化 */
 /*  
@@ -316,8 +308,8 @@ void init0(void)
 \
 /* 进程与内核使用同一个页目录表 */ \
 /* tss.cr3 */	pg_dir,\
-/* tss.eip */	init0,\
-/* tss.flags */	0,\
+/* tss.eip */	0,\
+/* tss.eflags */0,\
 \
 /* tss.eax */	0,\
 /* tss.ecx */	0,\
@@ -348,7 +340,7 @@ void init0(void)
 //TODO 此处有bug，如果这样写需要INIT_TASK是一个宏，反正不能是一个变量
 static union task_union init_task={INIT_TASK,};
 
-
+union task_union task_tables[NR_TASKS] = {init_task,};
 
 #endif
 

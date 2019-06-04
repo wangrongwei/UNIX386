@@ -9,6 +9,8 @@
 
 void schedule_init(void);
 void reschedule(void);
+void init0_ready(void);
+void init0_body(void);
 
 /* 在kernel.asm文件中，与_page_dir是相同的含义 */
 #define pg_dir (0)
