@@ -13,6 +13,7 @@
 
 extern tss_struct;
 extern gdt_struct_t gdt_list[];
+extern union task_union task_tables[];
 
 #define PAGE_SIZE 4096
 
