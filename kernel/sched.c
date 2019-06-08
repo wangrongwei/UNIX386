@@ -13,9 +13,11 @@
 
 extern tss_struct;
 extern gdt_struct_t gdt_list[];
-extern union task_union task_tables[];
+extern syscall_ptr system_call_table[];
 
 #define PAGE_SIZE 4096
+
+union task_union task_tables[NR_TASKS] = {{INIT_TASK,},};
 
 /* 在kernel.asm需要用到 */
 long user_stack[PAGE_SIZE >> 2]={0};
@@ -24,7 +26,7 @@ long *_stack_top = &user_stack[PAGE_SIZE >> 2];
 
 /* 一个全局指针，指向当前正在执行的进程的task_struct */
 struct task_struct *current = &(init_task.task); 
-extern syscall_ptr system_call_table[];
+
 
 
 

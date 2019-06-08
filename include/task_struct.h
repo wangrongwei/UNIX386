@@ -340,7 +340,7 @@ struct task_struct INIT_TASK={
 //TODO 此处有bug，如果这样写需要INIT_TASK是一个宏，反正不能是一个变量
 static union task_union init_task={INIT_TASK,};
 
-union task_union task_tables[NR_TASKS] = {{INIT_TASK,},};
+
 
 #endif
 
