@@ -19,12 +19,13 @@
 #include <i386/sys.h>
 
 #include <unistd.h>
-#include <task_struct.h>
 
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
 extern syscall_ptr system_call_table[];
+extern union task_union task_tables[];
+
 void outb(unsigned short port,unsigned short value);
 
 unsigned char inb(unsigned short port);
