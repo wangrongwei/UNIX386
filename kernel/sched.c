@@ -70,10 +70,11 @@ void init0_ready()
 {
 	/* 设置栈 */
 	union task_union *init0_point = task_tables;
-	init0_point->task.tss.esp = (long)task_tables[0].task+4096;
+	init0_point->task.tss.esp = (long)&(task_tables[0].task)+4096;
 	init0_point->task.tss.eip = (long)init0_body;
 	init0_point->task.tss.eflags = 0x1202;
 }
+
 
 /* 初始化一个函数作为init进程程序体 */
 void init0_body(void)

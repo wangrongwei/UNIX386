@@ -101,11 +101,12 @@ void kernel_start()
 
 	/* 从ring0转换到ring1 */
 	printk("move to user mode\n");
+	__asm__ __volatile("movl %0,%%esp"::"a"((long)&(task_tables[0].task)+4096));
 	move_to_user_mode();
 	//fork();
 	while(1){
 		//pause();
-		keyboard_read();
+		//keyboard_read();
 	}
 
 #endif
