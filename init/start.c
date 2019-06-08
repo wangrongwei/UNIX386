@@ -19,7 +19,7 @@
 #include <i386/sys.h>
 
 #include <unistd.h>
-
+#include <task_struct.h>
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
