@@ -126,8 +126,7 @@ static void set_tssldt2_gdt(int num,unsigned int base,char type)
  *	sel:
  *	flags:
  */
-static void set_idt(int num,unsigned int base,unsigned short sel,\
-		    unsigned short flags)
+static void set_idt(int num,unsigned int base,unsigned short sel,unsigned short flags)
 {
 	idt_list[num].base0 = base & 0xffff;
 	idt_list[num].base1 = (base >> 16) & 0xffff;
