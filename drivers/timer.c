@@ -22,7 +22,7 @@ void timer_callback(pt_regs *regs)
  */
 void timer_interrupt(pt_regs *regs)
 {
-	long tick = 0;
+	static long tick = 0;
 	tick++;
 	if(tick == 1000){
 		printk("tick == 1000");
