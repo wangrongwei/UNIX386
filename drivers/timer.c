@@ -54,7 +54,7 @@ void init_timer(unsigned int frequency)
 	outb(0x40,high);
 
 	// 开启时钟中断
-	outb();
+	outb(0x21,inb(0x21)&~0x01);
 	
 }
 
