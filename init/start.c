@@ -101,9 +101,8 @@ void kernel_start()
 	//logo();
 	/* 其他设备初始化 */
 
-	/* 从ring0转换到ring1 */
-	printk("move to user mode\n");
-	printk("xx = %x",(long)&task_tables[0]+4096);
+	/* 从ring0转换到ring3 */
+	printk("move to user mode: ring0->ring3\n");
 	__asm__ __volatile("movl %0,%%esp"::"a"((long)&task_tables[0]+4096));
 	move_to_user_mode();
 	//fork();
