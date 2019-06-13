@@ -9,7 +9,7 @@
 //#undef _DEBUG
 
 #include <console.h>
-#endif
+//#endif
 
 /*
  * 中断服务程序
