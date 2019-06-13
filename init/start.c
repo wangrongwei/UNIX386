@@ -59,7 +59,7 @@ void kernel_start()
 	unsigned int page_addr1 = 0,page_addr2 = 0;
 	printk("enter the kernel_start function...\n");
 	/* 打印内核版本 */
-	printk("DeeppinkOS version-0.0.1\n");
+	printk("UNIX386 v0.0.1\n");
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
 	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
@@ -83,9 +83,6 @@ void kernel_start()
 	init_keyboard();
 	schedule_init();
 	asm volatile("sti"); // 打开中断
-	//while(1){
-	//	keyboard_read();
-	//}
 	printk("kernel start addr = 0x%08X\n",kernel_s);
 	printk("kernel end   addr = 0x%08X\n",kernel_e);
 	printk("kernel size = %dKB\n",(kernel_e-kernel_s + 1023) / 1024);
