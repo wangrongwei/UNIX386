@@ -71,9 +71,9 @@ void init0_ready()
 {
 	/* 设置栈 */
 	struct task_struct *init0_point = task_tables;
-	init0_point->task.tss.esp = (long)&(task_tables[0].task)+4096;
-	init0_point->task.tss.eip = (long)init0_body;
-	init0_point->task.tss.eflags = 0x1202;
+	init0_point->tss.esp = (long)&(task_tables[0])+4096;
+	init0_point->tss.eip = (long)init0_body;
+	init0_point->tss.eflags = 0x1202;
 }
 
 
