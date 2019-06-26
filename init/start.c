@@ -1,7 +1,7 @@
 
 /*
  * 从汇编跳转到C语言的第一个.c文件
- *	author: Alexander.Wang<wangrongwei.kernel@gmail.com>
+ *	author: Wang<wangrongwei.kernel@gmail.com>
  *	time: 2017/05/13
  */
 
@@ -100,9 +100,10 @@ void kernel_start()
 	/* 从ring0转换到ring3 */
 	printk("move to user mode: ring0->ring3\n");
 	init0_ready();
-	asm volatile("cli");
+	
 	__asm__ __volatile("movl %0,%%esp"::"a"((long)&task_tables[0]+4096));
 	move_to_user_mode();
+	asm volatile("cli");
 	//fork();
 	while(1);
 
