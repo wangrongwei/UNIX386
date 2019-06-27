@@ -65,7 +65,7 @@ _start:
         CALL    setup_paging
 ; 开始打开分页机制
         XOR     EAX,EAX
-        MOV     EAX,CR3 ;将_page_dir地址0x0000写给CR3
+        MOV     CR3,EAX ;将_page_dir地址0x0000写给CR3
         MOV     EAX,CR0
         OR      EAX,0x80000000
         MOV     CR0,EAX ;PG位置1

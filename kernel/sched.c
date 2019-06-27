@@ -28,8 +28,6 @@ long *_stack_top = &user_stack[PAGE_SIZE >> 2];
 struct task_struct *current = &(init_task.task); 
 
 
-
-
 /*
  * 调度初始化，启动进程0
  */
@@ -83,6 +81,5 @@ void init0_body(void)
 	int i=0;
 	i++;
 	while(1);
-	return;
 }
 
