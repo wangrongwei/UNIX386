@@ -71,14 +71,12 @@ void kernel_start()
 
 	//console_puts(string,0,green);
 	//printk(string);
-
-#if 1
 	init_gdt();
 	/* 初始化中断/异常/系统调用，填充中断描述符 */
 	init_idt();
 	init_palette();
-	//asm volatile("int $0x3");
-	//asm volatile("int $0x4");
+	/* asm volatile("int $0x3"); */
+	/* asm volatile("int $0x4"); */
 
 	init_keyboard();
 	schedule_init();
@@ -86,7 +84,6 @@ void kernel_start()
 	printk("kernel start addr = 0x%08X\n",kernel_s);
 	printk("kernel end   addr = 0x%08X\n",kernel_e);
 	printk("kernel size = %dKB\n",(kernel_e-kernel_s + 1023) / 1024);
-#endif
 
 #if 1
 	printk("physicial init\n");
@@ -101,10 +98,10 @@ void kernel_start()
 	printk("move to user mode: ring0->ring3\n");
 	init0_ready();
 	
-	__asm__ __volatile("movl %0,%%esp"::"a"((long)&task_tables[0]+4096));
+	__asm__ __volatile__("movl %0,%%esp"::"a"((long)&task_tables[0]+4096));
 	move_to_user_mode();
 	asm volatile("cli");
-	//fork();
+	fork();
 	while(1);
 
 #endif
