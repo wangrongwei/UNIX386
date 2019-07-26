@@ -71,7 +71,7 @@ struct tss_struct{
 	long ds;
 	long fs;
 	long gs;
-	long ldt;/* 只取16位 */
+	unsigned int ldt;/* 只取16位 */
 	/* tss最后32位中，0：trap，16-31：iobase,其他位为0 */
 	long trap;
 	long iobase;
@@ -309,7 +309,7 @@ struct task_struct INIT_TASK={
 /* 进程与内核使用同一个页目录表 */ \
 /* tss.cr3 */	pg_dir,\
 /* tss.eip */	0,\
-/* tss.eflags */0,\
+/* tss.eflags */0x1202,\
 \
 /* tss.eax */	0,\
 /* tss.ecx */	0,\
