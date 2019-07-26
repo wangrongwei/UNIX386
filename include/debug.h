@@ -6,7 +6,7 @@
 #include "vargs.h"
 
 /* 开启调试功能 */
-#define _DEBUG 1
+#define _DEBUG 0
 
 void printk(const char *format,...);
 
