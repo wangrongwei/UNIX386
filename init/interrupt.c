@@ -6,10 +6,10 @@
 #include <debug.h>
 
 #ifdef _DEBUG
-#undef _DEBUG
-
 #include <console.h>
 #endif
+
+#undef _DEBUG
 
 /*
  * 中断服务程序
