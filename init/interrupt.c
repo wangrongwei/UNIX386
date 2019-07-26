@@ -5,11 +5,11 @@
 #include <interrupt.h>
 #include <debug.h>
 
-//#ifdef _DEBUG
-//#undef _DEBUG
+#ifdef _DEBUG
+#undef _DEBUG
 
 #include <console.h>
-//#endif
+#endif
 
 /*
  * 中断服务程序
