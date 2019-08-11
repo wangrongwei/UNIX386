@@ -309,7 +309,7 @@ struct task_struct INIT_TASK={
 /* 进程与内核使用同一个页目录表 */ \
 /* tss.cr3 */	pg_dir,\
 /* tss.eip */	0,\
-/* tss.eflags */0x1202,\
+/* tss.eflags */0x3202,\
 \
 /* tss.eax */	0,\
 /* tss.ecx */	0,\

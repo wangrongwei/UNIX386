@@ -71,7 +71,7 @@ void init0_ready()
 	struct task_struct *init0_point = task_tables;
 	init0_point->tss.esp = (long)&(task_tables[0])+4096;
 	init0_point->tss.eip = (long)init0_body;
-	init0_point->tss.eflags = 0x1202;
+	init0_point->tss.eflags = 0x3202; /* 设置IOPL=3 */
 }
 
 
