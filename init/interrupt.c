@@ -29,7 +29,7 @@ void isr_handler(pt_regs *regs)
 		if(count != 1)
 			return;
 		printk("unhandle interrupt_handler:%d\n",regs->int_no);
-#ifdef _DEBUG
+//#ifdef _DEBUG
 		//console_clear();
 		printk("ds:%d\n",regs->ds);		// 用于保存用户的数据段描述符
 		printk("edi:%d\n",regs->edi);		// 从 edi 到 eax 由 pusha 指令压入
@@ -47,7 +47,7 @@ void isr_handler(pt_regs *regs)
 		printk("eflags:%d\n",regs->eflags);
 		printk("useresp:%d\n",regs->useresp);
 		printk("ss:%d\n",regs->ss);
-#endif
+//#endif
 	}
 }
 
