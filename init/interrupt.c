@@ -9,7 +9,7 @@
 #include <console.h>
 #endif
 
-#undef _DEBUG
+//#undef _DEBUG
 
 /*
  * 中断服务程序
@@ -20,10 +20,14 @@
  */
 void isr_handler(pt_regs *regs)
 {
+	static count = 0;
 	if(interrupt_handlers[regs->int_no]){
 		interrupt_handlers[regs->int_no](regs);
 	}
 	else{
+		count++;
+		if(count != 1)
+			return;
 		printk("unhandle interrupt_handler:%d\n",regs->int_no);
 #ifdef _DEBUG
 		//console_clear();
