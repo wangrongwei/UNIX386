@@ -137,12 +137,12 @@ static void set_idt(int num,unsigned int base,unsigned short sel,unsigned short 
 }
 
 
-// 中断
+// 中断（权限为0）
 #define set_int_gate(num,base) set_idt(num,base,0x08,0x8e)
-// 系统调用
-#define set_system_gate(num,base) set_idt(num,base,0x08,0x8e)
-// 陷阱
+// 陷阱（权限为0）
 #define set_trap_gate(num,base) set_idt(num,base,0x08,0x8e)
+// 特殊的陷阱（权限为3）--系统调用
+#define set_system_gate(num,base) set_idt(num,base,0x08,0x8e)
 
 /*
  * 设置5个全局描述符（包括全0）
