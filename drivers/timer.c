@@ -25,7 +25,7 @@ void timer_interrupt(pt_regs *regs)
 	static long tick = 0;
 	tick++;
 	if(tick == 100){
-		printk("tick == 1000");
+		printk("tick == %d\n",tick);
 		tick = 0;
 	}
 }
