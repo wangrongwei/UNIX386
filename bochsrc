@@ -25,7 +25,7 @@ vgaromimage:file=/usr/share/bochs/VGABIOS-lgpl-latest
 #what disk images will be used 
 #=======================================================================
 
-floppya:1_44=/home/lollipop/git/DeeppinkOS/deeppink.img, status=inserted
+floppya:1_44=/root/repo/UNIX386/deeppink.img, status=inserted
 
  
 
