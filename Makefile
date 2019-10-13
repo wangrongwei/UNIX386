@@ -74,6 +74,7 @@ qemu:
 
 clean :
 	rm -f $(BOOT_BIN) $(KERNEL_BIN) $(S_OBJECTS) $(C_OBJECTS)
+	rm ./boot/boot.txt ./init/kernel.txt
 
 
 debug:
