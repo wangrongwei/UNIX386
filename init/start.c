@@ -74,6 +74,7 @@ void kernel_start()
 	init_gdt();
 	/* 初始化中断/异常/系统调用，填充中断描述符 */
 	init_idt();
+	/* 初始化调色板 */
 	init_palette();
 	/* asm volatile("int $0x3"); */
 	/* asm volatile("int $0x4"); */
@@ -88,7 +89,7 @@ void kernel_start()
 
 	printk("physicial init\n");
 	init_pmm();
-#if 0
+#if 1
 	//page_addr1 = pmm_alloc_page();
 	//printk("alloc page1 = 0x%08X\n",page_addr1);
 	//page_addr2 = pmm_alloc_page();

@@ -22,8 +22,8 @@
 #define TASK_STOPPED 4
 
 /* 第一个进程在gdt中的位置 */
-#define FIRST_TASKTSS_INDEX 4
-#define FIRST_TASKLDT_INDEX 5
+#define FIRST_TASKTSS_INDEX 6
+#define FIRST_TASKLDT_INDEX 7
 
 // 将tss或者ldt相对于第一个tss或者第一个ldt进行编码
 // 可以不直接编码，需要后续完善
@@ -316,16 +316,16 @@ struct task_struct INIT_TASK={
 /* tss.edx */	0,\
 /* tss.ebx */	0,\
 \
-/* tss.esp */	0,\
+/* tss.esp */	4096,\
 /* tss.ebp */	0,\
 /* tss.esi */	0,\
 /* tss.edi */	0,\
-/* tss.es */	0x17,\
-/* tss.cs */	0x17,\
-/* tss.ss */	0x17,\
-/* tss.ds */	0x17,\
-/* tss.fs */	0x17,\
-/* tss.gs */	0x17,\
+/* tss.es */	0x2f,\
+/* tss.cs */	0x27,\
+/* tss.ss */	0x2f,\
+/* tss.ds */	0x2f,\
+/* tss.fs */	0x2f,\
+/* tss.gs */	0x2f,\
 \
 /* 需要实现 */ \
 /* tss.ldt */	_LDT(0),\
