@@ -31,7 +31,7 @@ void isr_handler(pt_regs *regs)
 		printk("unhandle interrupt_handler:%d\n",regs->int_no);
 //#ifdef _DEBUG
 		//console_clear();
-		printk("ds:%d\n",regs->ds);		// 用于保存用户的数据段描述符
+		printk("ds: 0x%x\n",regs->ds);		// 用于保存用户的数据段描述符
 		//printk("edi:%d\n",regs->edi);		// 从 edi 到 eax 由 pusha 指令压入
 		//printk("esi:%d\n",regs->esi);
 		//printk("ebp:%d\n",regs->ebp);
@@ -42,11 +42,11 @@ void isr_handler(pt_regs *regs)
 		//printk("eax:%d\n",regs->eax);
 		printk("int_no:%d\n",regs->int_no);	// 中断号
 		printk("err_code:%d\n",regs->err_code);	// 错误代码(有中断错误代码的中断会由CPU压入)
-		printk("eip:%d\n",regs->eip);		// 以下由处理器自动压入
-		printk("cs:%d\n",regs->cs);
-		printk("eflags:%d\n",regs->eflags);
+		printk("eip: 0x%x\n",regs->eip);		// 以下由处理器自动压入
+		printk("cs: 0x%x\n",regs->cs);
+		printk("eflags: 0x%x\n",regs->eflags);
 		printk("useresp:%d\n",regs->useresp);
-		printk("ss:%d\n",regs->ss);
+		printk("ss:0x%x\n",regs->ss);
 //#endif
 	}
 }
