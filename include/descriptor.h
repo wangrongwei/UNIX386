@@ -114,7 +114,7 @@ static void set_tssldt2_gdt(int num,unsigned int base,char type)
 	gdt_list[num].base1 = (base >> 16) & 0xff;
 	gdt_list[num].access = type;
 	gdt_list[num].limit1 = 0;
-	gdt_list[num].G_DB_L_AVL = 0;
+	gdt_list[num].G_DB_L_AVL = 0x0c;
 	gdt_list[num].base2 = (base >> 24);
 
 }
