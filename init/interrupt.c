@@ -40,13 +40,13 @@ void isr_handler(pt_regs *regs)
 		//printk("edx:%d\n",regs->edx);
 		//printk("ecx:%d\n",regs->ecx);
 		//printk("eax:%d\n",regs->eax);
-		printk("int_no:%d\n",regs->int_no);	// 中断号
-		printk("err_code:%d\n",regs->err_code);	// 错误代码(有中断错误代码的中断会由CPU压入)
+		printk("int_no: %d\n",regs->int_no);	// 中断号
+		printk("err_code: %d\n",regs->err_code);	// 错误代码(有中断错误代码的中断会由CPU压入)
 		printk("eip: 0x%x\n",regs->eip);		// 以下由处理器自动压入
 		printk("cs: 0x%x\n",regs->cs);
 		printk("eflags: 0x%x\n",regs->eflags);
-		printk("useresp:%d\n",regs->useresp);
-		printk("ss:0x%x\n",regs->ss);
+		printk("useresp: %d\n",regs->useresp);
+		printk("ss: 0x%x\n",regs->ss);
 //#endif
 	}
 }
