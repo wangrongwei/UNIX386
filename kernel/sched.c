@@ -80,6 +80,8 @@ void init0_body(void)
 {
 	int i=0;
 	i++;
-	while(1);
+	while(1){
+		__asm__ __volatile__("hlt":::);
+	};
 }
 
