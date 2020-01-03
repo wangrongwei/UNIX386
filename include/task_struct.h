@@ -95,7 +95,7 @@ struct task_struct{
 	long alarm;
 	long utime,stime,cutime,cstime,start_time;
 
-	int tty; /* 自设备号 */
+	int nr_tty; /* 自设备号 */
 
 	/* 接下来需要三个结构体代码该进程执行的对象 */
 	// 目前先不设置
