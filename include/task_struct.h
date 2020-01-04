@@ -26,7 +26,8 @@
 #define FIRST_TASKLDT_INDEX 7
 
 // 将tss或者ldt相对于第一个tss或者第一个ldt进行编码
-// 可以不直接编码，需要后续完善
+
+// TR [---selector(16 bit, visible)---/---base(hidden)---/---limit(hidden)---]
 #define _TSS(n) ((((unsigned long)n) << 4) + (FIRST_TASKTSS_INDEX << 3))
 #define _LDT(n) ((((unsigned long)n) << 4) + (FIRST_TASKLDT_INDEX << 3)) 
 

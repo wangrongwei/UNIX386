@@ -40,7 +40,7 @@ void schedule_init(void)
 	__asm__ __volatile__("pushfl ; andl $0xffffbfff,(%esp) ; popfl");
 	/* 将tss挂接到TR寄存器 */
 	ltr(0);
-	
+	set_tssldt2_gdt(FIRST_TASKTSS_INDEX,&(init_task.task.tss),0x8b);
 	/* 将LDT挂接到LDTR寄存器 */
 	lldt(0);
 
