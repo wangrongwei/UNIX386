@@ -41,7 +41,7 @@ int sys_read()
 	return 0;
 }
 
-int sys_write(char *       buf, int len, task_struct *task)
+int sys_write(char *       buf, int len, struct task_struct *task)
 {
 	tty_write(&tty_table[task->nr_tty], buf, len);
 	return 0;
