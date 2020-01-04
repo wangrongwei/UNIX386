@@ -11,8 +11,51 @@
 #include "interrupt.h"
 #include "string.h"
 
+
+
 #define GDT_LEN 256
 #define IDT_LEN 256
+
+#define P_UNSET 0x00
+#define P_SET 0x80
+
+#define TI_UNSET (0x00 << 2)
+#define TI_SET (0x01  << 2)
+
+#define GDT_TI TI_UNSET
+#define LDT_TI TI_SET
+
+/* 全局描述符 */
+
+#define DPL0 0x00
+#define DPL1 0x01
+#define DPL2 0x02
+#define DPL3 0x03
+
+/* RPL只在选择子（selector）中 */
+#define RPL0 0x00
+#define RPL1 0x01
+#define RPL2 0x02
+#define RPL3 0x03
+
+#define TYPE_NOTBUSY 0x09
+#define TYPE_BUSY 0x0b
+
+#define AVL 0
+
+/* 中断描述符 */
+
+/* 三种门 */
+#define TYPE_TASK_GATE	0x05 
+#define TYPE_INT_GATE	0x0E 
+#define TYPE_TRAP_GATE	0x0F 
+
+
+#define KERNEL_CS ((0x01 << 3) | GDT_TI | RPL0)
+#define KERNEL_DS ((0x02 << 3) | GDT_TI | RPL0)
+
+#define USER_CS ((0x04 << 3) | GDT_TI | RPL3)
+#define USER_DS ((0x05 << 3) | GDT_TI | RPL3)
 
 extern load_gdtr(unsigned int *);
 extern load_idtr(unsigned int *);
@@ -138,11 +181,11 @@ static void set_idt(int num,unsigned int base,unsigned short sel,unsigned short 
 
 
 // 中断（权限为0）
-#define set_int_gate(num,base) set_idt(num,base,0x08,0x8e)
+#define set_int_gate(num,base) set_idt(num,base,KERNEL_CS,P_SET | (DPL0 << 5) | TYPE_INT_GATE)
 // 陷阱（权限为0）
-#define set_trap_gate(num,base) set_idt(num,base,0x08,0x8f)
+#define set_trap_gate(num,base) set_idt(num,base,KERNEL_CS,P_SET | (DPL0 << 5) | TYPE_TRAP_GATE)
 // 特殊的陷阱（权限为3）--系统调用
-#define set_system_gate(num,base) set_idt(num,base,0x08,0xef)
+#define set_system_gate(num,base) set_idt(num,base,KERNEL_CS,P_SET | (DPL3 << 5) | TYPE_TRAP_GATE)
 
 /*
  * 设置5个全局描述符（包括全0）
@@ -241,6 +284,7 @@ static void init_idt()
 	set_trap_gate(17,(unsigned int)isr17);
 	set_trap_gate(18,(unsigned int)isr18);
 	set_trap_gate(19,(unsigned int)isr19);
+	/* Intel保留 */
 	set_trap_gate(20,(unsigned int)isr20);
 	set_trap_gate(21,(unsigned int)isr21);
 	set_trap_gate(22,(unsigned int)isr22);
@@ -253,7 +297,7 @@ static void init_idt()
 	set_trap_gate(29,(unsigned int)isr29);
 	set_trap_gate(30,(unsigned int)isr30);
 	set_trap_gate(31,(unsigned int)isr31);
-
+	/* 用户定义 */
 	set_trap_gate(32,(unsigned int)irq0);
 	set_trap_gate(33,(unsigned int)irq1);
 	set_trap_gate(34,(unsigned int)irq2);
