@@ -6,6 +6,9 @@
 #define NR_CONSOLES 3
 #define TTY_IN_BYTES 256
 
+extern TTY tty_table[NR_CONSOLES];
+extern CONSOLE console_table[NR_CONSOLES];
+
 typedef struct tty_struct
 {
 	unsigned long in_buf[TTY_IN_BYTES];

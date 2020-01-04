@@ -6,6 +6,7 @@
 
 
 #include "sys.h"
+#include "tty.h"
 #include "task_struct.h"
 
 #define filename #sys.h
