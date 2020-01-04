@@ -35,8 +35,9 @@ void schedule_init(void)
 {
 	printk("scheduler initial.\n");
 	/* 在gdt表后边加上进程0的tss和ldt */
-	set_tssldt2_gdt(FIRST_TASKTSS_INDEX,&(init_task.task.tss),0x89);
-	set_tssldt2_gdt(FIRST_TASKLDT_INDEX,&(init_task.task.ldt),0x82);
+	/* 该确认tss段的DPL应该是3还是0 */
+	set_tssldt2_gdt(FIRST_TASKTSS_INDEX,&(init_task.task.tss),0xe9);
+	set_tssldt2_gdt(FIRST_TASKLDT_INDEX,&(init_task.task.ldt),0xe2);
 	__asm__ __volatile__("pushfl ; andl $0xffffbfff,(%esp) ; popfl");
 	/* 将tss挂接到TR寄存器 */
 	ltr(0);
