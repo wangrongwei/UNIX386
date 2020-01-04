@@ -6,8 +6,6 @@
 #define NR_CONSOLES 3
 #define TTY_IN_BYTES 256
 
-extern TTY tty_table[NR_CONSOLES];
-extern CONSOLE console_table[NR_CONSOLES];
 
 typedef struct tty_struct
 {
@@ -26,6 +24,9 @@ typedef struct console_struct
 	unsigned int mem_limit;
 	unsigned int cursor;
 }CONSOLE;
+
+extern TTY tty_table[NR_CONSOLES];
+extern CONSOLE console_table[NR_CONSOLES];
 
 void tty_write(TTY *tty, char *buf, int len);
 
