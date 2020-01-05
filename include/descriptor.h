@@ -3,14 +3,12 @@
 
 /*
  * 文件描述：全局描述符和中断描述符相关结构体定义
- *
  */
 #include "debug.h"
 #include "console.h"
 #include "vargs.h"
 #include "interrupt.h"
 #include "string.h"
-
 
 
 #define GDT_LEN 256
@@ -46,9 +44,20 @@
 /* 中断描述符 */
 
 /* 三种门 */
-#define TYPE_TASK_GATE	0x05 
-#define TYPE_INT_GATE	0x0E 
-#define TYPE_TRAP_GATE	0x0F 
+#define TYPE_TASK_GATE 0x05 
+#define TYPE_INT_GATE 0x0E 
+#define TYPE_TRAP_GATE 0x0F 
+
+/*
+ * P----DPL----S----TYPE
+ * S=0：系统段
+ * S=1：非系统段
+ * 在系统段中，TYPE字段意义不同
+ * 在非系统段中，TYPE字段分为代码段和数据段，四位分别为X-R-C-A
+ */
+#define TYPE_TSS_BUSY 0x0B
+#define TYPE_TSS_NOTBUSY 0x09
+#define TYPE_LDT 0x02 
 
 
 #define KERNEL_CS ((0x01 << 3) | GDT_TI | RPL0)
@@ -56,6 +65,12 @@
 
 #define USER_CS ((0x04 << 3) | GDT_TI | RPL3)
 #define USER_DS ((0x05 << 3) | GDT_TI | RPL3)
+
+/* 使用选择子的概念 */
+#define _KERNEL_CS_SELECTOR KERNEL_CS
+#define _KERNEL_DS_SELECTOR KERNEL_DS
+#define _USER_CS_SELECTOR USER_CS
+#define _USER_DS_SELECTOR USER_DS
 
 extern load_gdtr(unsigned int *);
 extern load_idtr(unsigned int *);
@@ -68,7 +83,6 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	     unsigned char access,unsigned char G_DB_L_AVL);
 
 /* 设置tss与ldt */
-
 static void set_tssldt2_gdt(int num,unsigned int base,char type);
 // 填充idt表
 static void set_idt(int num,unsigned int base,unsigned short sel,\
@@ -79,7 +93,7 @@ typedef struct gdt_struct_t{
 	unsigned short limit0;	     //长度限制15--0 占两个字节
 	unsigned short base0;	     //基地址15--0
 	unsigned char  base1;	     //基地址23--16
-	unsigned char  access;       //P_DPL(2bits)_S_Type(4bits)，总共8位
+	unsigned char  access;       //P_DPL(2bits)_S_Type(4bits)，共8位
 	unsigned char  limit1:4;     //长度限制19--16
 	unsigned char  G_DB_L_AVL:4; //
 	unsigned char  base2;        //基地址31--24
@@ -101,12 +115,12 @@ typedef struct ldt_struct_t{
 	unsigned char  base2;         //基地址31--24
 }__attribute__((packed)) ldt_struct_t;
 
-
+/* 中断门 / 调用门 / 陷阱门 */
 typedef struct idt_struct_t{
 	unsigned short base0;   //中断函数基地址15--0
 	unsigned short sel;     //选择段描述符
 	unsigned char  zero;    //全是0
-	unsigned char  flags;	//相关标志 P_DVL_'E'
+	unsigned char  flags;	//相关标志 P_DPL_TYPE
 	unsigned short base1;	//中断函数基地址31--16
 }__attribute__((packed)) idt_struct_t;
 
@@ -123,13 +137,13 @@ struct idtr_t IDTR;
 
 
 /*
- *	填充gdt列表
- *	num: 在gdt的位置
- *	base: 填充的段的基地址
- *	limit: 该段的段限长
- *	access: 包括段的特权级别、段类型（代码段、数据段或者堆栈段）
+ * 填充gdt列表
+ * num: 在gdt的位置
+ * base: 填充的段的基地址
+ * limit: 该段的段限长
+ * access: 包括段的特权级别、段类型（代码段、数据段或者堆栈段）
  *		对于进程而言，ldt: access=0x82，tss: access=0x89
- *	G_DB_L_AVL: 权限
+ * G_DB_L_AVL: 权限
  */
 static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	     unsigned char access,unsigned char G_DB_L_AVL)
@@ -137,7 +151,7 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	gdt_list[num].limit0 = (limit & 0xffff);
 	gdt_list[num].base0 = (base & 0xffff);
 	gdt_list[num].base1 = (base >> 16) & 0xff;
-	gdt_list[num].access = access;
+	gdt_list[num].access = access; 
 	gdt_list[num].limit1 = (limit >> 16);
 	gdt_list[num].G_DB_L_AVL = G_DB_L_AVL;
 	gdt_list[num].base2 = (base >> 24);
@@ -145,10 +159,10 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 }
 
 /*
- *	填充gdt列表
- *	num: 在gdt的位置
- *	base: 填充的段的基地址
- *	type: 0x89为tss，0x82为ldt
+ * 填充gdt列表
+ * num: 在gdt的位置
+ * base: 填充的段的基地址
+ * type: 0x89为tss，0x82为ldt
  */
 static void set_tssldt2_gdt(int num,unsigned int base,char type)
 {
@@ -163,18 +177,18 @@ static void set_tssldt2_gdt(int num,unsigned int base,char type)
 }
 
 /*
- *	填充idt表
- *	num: 填充的中断项在idt中的位置
- *	base: 
- *	sel:
- *	flags:
+ * 填充idt表
+ * num: 填充的中断项在idt中的位置
+ * base: 
+ * sel:
+ * flags:
  */
 static void set_idt(int num,unsigned int base,unsigned short sel,unsigned short flags)
 {
 	idt_list[num].base0 = base & 0xffff;
 	idt_list[num].base1 = (base >> 16) & 0xffff;
 	idt_list[num].sel = sel;
-	idt_list[num].zero = 0;
+	idt_list[num].zero = 0x0;
 	idt_list[num].flags = flags;
 
 }
@@ -194,7 +208,7 @@ static void set_idt(int num,unsigned int base,unsigned short sel,unsigned short 
 static void init_gdt()
 {
 	int i=0;
-	printk("New,update gdt!!!\n");
+	printk("update gdt!\n");
 	// sizeof是编译器内部的宏,不需要定义
 	GDTR.length = sizeof(gdt_struct_t)*GDT_LEN - 1;
 	GDTR.base = (unsigned int)&gdt_list;
@@ -315,9 +329,9 @@ static void init_idt()
 	set_trap_gate(46,(unsigned int)irq14);
 	set_trap_gate(47,(unsigned int)irq15);
 
-	// 用于实现系统调用
+	/* 用于实现系统调用 */
 	set_system_gate(255,(unsigned int)isr255);
-	// 加载idt表地址
+	/* 加载idt表地址 */
 	load_idtr((unsigned int)&IDTR);
 
 }
