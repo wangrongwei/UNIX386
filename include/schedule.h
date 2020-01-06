@@ -25,7 +25,7 @@ __asm__ __volatile__("movl %%esp,%%eax\n\t"\
 	"pushl $0x23\n\t" 	/* 压入ss */\
 	"pushl %%eax\n\t" 	/* 压入sp */\
 	"pushfl\n\t" 		/* 压入eflags */\
-	"pushl $0x0f\n\t"	/* 压入cs */\
+	"pushl $0x23\n\t"	/* 压入cs */\
 	"pushl $1f\n\t"		/* 压入ip */\
 	"iret\n"\
 	"1:\tmovl $0x2b,%%eax\n\t"\

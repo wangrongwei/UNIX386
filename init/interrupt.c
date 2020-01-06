@@ -45,7 +45,7 @@ void isr_handler(pt_regs *regs)
 		printk("eip: 0x%x\n",regs->eip);		// 以下由处理器自动压入
 		printk("cs: 0x%x\n",regs->cs);
 		printk("eflags: 0x%x\n",regs->eflags);
-		printk("useresp: %d\n",regs->useresp);
+		printk("useresp: 0x%x\n",regs->useresp);
 		printk("ss: 0x%x\n",regs->ss);
 //#endif
 	}

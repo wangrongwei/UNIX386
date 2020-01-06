@@ -139,7 +139,7 @@ write_vram:
 [GLOBAL isr%1]
 isr%1:
 	cli      ; 首先关闭中断
-	push 0   ; push 无效的中断错误代码(起到占位作用，便于所有isr函数统一清栈)
+	push 0x0   ; push 无效的中断错误代码(起到占位作用，便于所有isr函数统一清栈)
 	push %1  ; push 中断号
 	jmp isr_common_stub
 %endmacro
