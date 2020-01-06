@@ -35,6 +35,8 @@ __asm__ __volatile__("movl %%esp,%%eax\n\t"\
 	"movw %%ax,%%gs" \
 	 :::"ax")
 
+extern struct task_struct *current;
+
 #endif
 
 
