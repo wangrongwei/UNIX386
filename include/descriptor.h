@@ -16,6 +16,8 @@
 
 #define P_UNSET 0x00
 #define P_SET 0x80
+#define S_SS (0x00) /* 系统段 */
+#define S_NSS (0x01 << 4) /* 非系统段 */
 
 #define TI_UNSET (0x00 << 2)
 #define TI_SET (0x01  << 2)
@@ -43,10 +45,7 @@
 
 /* 中断描述符 */
 
-/* 三种门 */
-#define TYPE_TASK_GATE 0x05 
-#define TYPE_INT_GATE 0x0E 
-#define TYPE_TRAP_GATE 0x0F 
+
 
 /*
  * P----DPL----S----TYPE
@@ -55,22 +54,32 @@
  * 在系统段中，TYPE字段意义不同
  * 在非系统段中，TYPE字段分为代码段和数据段，四位分别为X-R-C-A
  */
+
+/* 以下为TYPE的字段功能 */
+/* S=0 */
 #define TYPE_TSS_BUSY 0x0B
 #define TYPE_TSS_NOTBUSY 0x09
-#define TYPE_LDT 0x02 
+#define TYPE_LDT 0x02
 
+/* 三种门 */
+#define TYPE_TASK_GATE 0x05
+#define TYPE_CALL_GATE 0x0C 
+#define TYPE_INT_GATE 0x0E 
+#define TYPE_TRAP_GATE 0x0F 
 
-#define KERNEL_CS ((0x01 << 3) | GDT_TI | RPL0)
-#define KERNEL_DS ((0x02 << 3) | GDT_TI | RPL0)
+/* S=1 */
+#define TYPE_KERNEL_CS ((0x01 << 3) | GDT_TI | RPL0)
+#define TYPE_KERNEL_DS ((0x02 << 3) | GDT_TI | RPL0)
 
-#define USER_CS ((0x04 << 3) | GDT_TI | RPL3)
-#define USER_DS ((0x05 << 3) | GDT_TI | RPL3)
+#define TYPE_USER_CS ((0x04 << 3) | GDT_TI | RPL3)
+#define TYPE_USER_DS ((0x05 << 3) | GDT_TI | RPL3)
 
+ 
 /* 使用选择子的概念 */
-#define _KERNEL_CS_SELECTOR KERNEL_CS
-#define _KERNEL_DS_SELECTOR KERNEL_DS
-#define _USER_CS_SELECTOR USER_CS
-#define _USER_DS_SELECTOR USER_DS
+#define _KERNEL_CS_SELECTOR TYPE_KERNEL_CS
+#define _KERNEL_DS_SELECTOR TYPE_KERNEL_DS
+#define _USER_CS_SELECTOR TYPE_USER_CS
+#define _USER_DS_SELECTOR TYPE_USER_DS
 
 extern load_gdtr(unsigned int *);
 extern load_idtr(unsigned int *);
@@ -215,15 +224,17 @@ static void init_gdt()
 
 	// 开始设置gdt表中的内容
 	set_gdt(0,0,0,0,0);
-	set_gdt(1,0,0xfffff,0x9a,0x0c); //内核代码段
-	set_gdt(2,0,0xfffff,0x92,0x0c); //内核数据段
+	//set_gdt(1,0,0xfffff,0x9a,0x0c); //内核代码段
+	//set_gdt(2,0,0xfffff,0x92,0x0c); //内核数据段
+	set_gdt(1, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS, 0x0c); //内核代码段
+	set_gdt(2, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS, 0x0c); //内核数据段
+	
 	set_gdt(3,0,0,0,0);//null
-	set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
-	set_gdt(5,0,0xfffff,0xf2,0x0c); //用户数据段-------| 进程0的LDT0
-
-	/*
-	 * 后续的段描符初始化为0（与进程相关的代码）
-	 */
+	//set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
+	//set_gdt(5,0,0xfffff,0xf2,0x0c); //用户数据段-------| 进程0的LDT0
+	set_gdt(4, 0, 0xfffff, P_SET&(DPL3 << 5)|S_NSS|TYPE_USER_CS, 0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
+	set_gdt(5, 0, 0xfffff, P_SET&(DPL3 << 5)|S_NSS|TYPE_USER_DS, 0x0c); //用户数据段-------| 进程0的LDT0
+	/* 后续的段描符初始化为0（与进程相关的代码） */
 	for(i=6;i<256;i++){
 		set_gdt(i,0,0,0,0);
 	}
@@ -238,7 +249,7 @@ static void init_gdt()
  */
 static void init_idt()
 {
-	printk("New,load idt!!!\n");
+	printk("load idt!\n");
 	// 重新映射 IRQ 表
 	// 两片级联的 Intel 8259A 芯片
 	// 主片端口 0x20 0x21

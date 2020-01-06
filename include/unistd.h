@@ -7,7 +7,8 @@
  *	标准符号常量与类型
  */
 
-
+#ifndef __UNISTD_H__
+#define __UNISTD_H__
 
 
 /* 参考POSIX-2001标准 */
@@ -21,7 +22,7 @@ static int pause(void);
 int open(const char* filename,int flag,...);
 int close(int fd);
 
-
+#endif
 
 
 

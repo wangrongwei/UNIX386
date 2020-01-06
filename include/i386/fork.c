@@ -10,8 +10,9 @@
 
 
 
-/* 定义fork函数 */
+/* 实现fork */
 static inline _create_systemcall(int,fork)
+/* 实现pause */
 static inline _create_systemcall(int,pause)
 
 

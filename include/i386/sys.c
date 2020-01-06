@@ -34,16 +34,19 @@ int sys_exit()
  /* 汇编实现，执行fork时被调用 */
 int sys_fork()
 {
+	printk("fork...\n");
 	return 0;
 }
 
 int sys_read()
 {
+	printk("read...\n");
 	return 0;
 }
 
 int sys_write(char *       buf, int len, struct task_struct *task)
 {
+	printk("write...\n");
 	tty_write(&tty_table[task->nr_tty], buf, len);
 	return 0;
 }

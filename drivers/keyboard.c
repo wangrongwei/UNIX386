@@ -13,7 +13,7 @@ static KB_INPUT kb_in;
 
 void init_keyboard()
 {
-	printk("keyboard initial,and set keyboard_handler......\n");
+	printk("keyboard initial,and set keyboard_handler!\n");
 	kb_in.count = 0;
 	kb_in.p_head = kb_in.p_tail = kb_in.buf;
 	register_interrupt_handler(IRQ1,keyboard_handler);

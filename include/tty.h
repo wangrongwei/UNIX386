@@ -1,7 +1,7 @@
 
 
-#ifndef _TTY_H
-#define _TTY_H
+#ifndef __TTY_H__
+#define __TTY_H__
 
 #define NR_CONSOLES 3
 #define TTY_IN_BYTES 256

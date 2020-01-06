@@ -33,12 +33,6 @@ unsigned char inb(unsigned short port);
 unsigned short inw(unsigned short port);
 
 
-/* 定义fork函数 */
-static inline _create_systemcall(int,fork)
-
-static inline _create_systemcall(int,pause)
-
-
 void logo(void);
 
 /*
@@ -81,13 +75,11 @@ void kernel_start()
 
 	init_keyboard();
 	schedule_init();
-	asm volatile("sti"); /* 打开中断 */
-	printk("kernel start addr = 0x%08X\n",kernel_s);
-	printk("kernel end   addr = 0x%08X\n",kernel_e);
-	printk("kernel size = %dKB\n",(kernel_e-kernel_s + 1023) / 1024);
+	__asm__ volatile("sti"); /* 打开中断 */
+	printk("kernel start addr = 0x%08X\n", kernel_s);
+	printk("kernel end   addr = 0x%08X\n", kernel_e);
+	printk("kernel size = %dKB\n", (kernel_e-kernel_s + 1023) / 1024);
 
-
-	printk("physicial init\n");
 	init_pmm();
 #if 1
 	//page_addr1 = pmm_alloc_page();
@@ -95,9 +87,7 @@ void kernel_start()
 	//page_addr2 = pmm_alloc_page();
 	//logo();
 	/* 其他设备初始化 */
-
-	/* 从ring0转换到ring3 */
-	printk("move to user mode: ring0->ring3\n");
+	printk("move to user mode: ring0->ring3\n"); /* 从ring0转换到ring3 */
 	init0_ready();
 	
 	__asm__ __volatile__("movl %0,%%esp"::"a"((long)&task_tables[0]+4096));

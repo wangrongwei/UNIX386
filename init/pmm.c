@@ -27,6 +27,7 @@ unsigned int phy_page_count=0;
  */
 void init_pmm()
 {
+	printk("physicial memory init\n");
 	unsigned int page_addr = PMM_START_ADDR;
 	pmm_stack_top = 0;
 	// 到0x7ffd000,不在往下分配
