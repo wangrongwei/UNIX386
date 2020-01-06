@@ -68,18 +68,18 @@
 #define TYPE_TRAP_GATE 0x0F 
 
 /* S=1 */
-#define TYPE_KERNEL_CS ((0x01 << 3) | GDT_TI | RPL0)
-#define TYPE_KERNEL_DS ((0x02 << 3) | GDT_TI | RPL0)
+#define TYPE_KERNEL_CS 0x0A
+#define TYPE_KERNEL_DS 0x02
 
-#define TYPE_USER_CS ((0x04 << 3) | GDT_TI | RPL3)
-#define TYPE_USER_DS ((0x05 << 3) | GDT_TI | RPL3)
+#define TYPE_USER_CS 0x0F
+#define TYPE_USER_DS 0x07
 
  
 /* 使用选择子的概念 */
-#define _KERNEL_CS_SELECTOR TYPE_KERNEL_CS
-#define _KERNEL_DS_SELECTOR TYPE_KERNEL_DS
-#define _USER_CS_SELECTOR TYPE_USER_CS
-#define _USER_DS_SELECTOR TYPE_USER_DS
+#define _KERNEL_CS_SELECTOR ((0x01 << 3) | GDT_TI | RPL0)
+#define _KERNEL_DS_SELECTOR ((0x02 << 3) | GDT_TI | RPL0)
+#define _USER_CS_SELECTOR ((0x04 << 3) | GDT_TI | RPL3)
+#define _USER_DS_SELECTOR ((0x05 << 3) | GDT_TI | RPL3)
 
 extern load_gdtr(unsigned int *);
 extern load_idtr(unsigned int *);
@@ -219,17 +219,17 @@ static void init_gdt()
 	int i=0;
 	printk("update gdt!\n");
 	printk("CS: 0x%x\n",P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS);
-	printk("CS: 0x%x\n",P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS);
+	printk("DS: 0x%x\n",P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS);
 	// sizeof是编译器内部的宏,不需要定义
 	GDTR.length = sizeof(gdt_struct_t)*GDT_LEN - 1;
 	GDTR.base = (unsigned int)&gdt_list;
 
 	// 开始设置gdt表中的内容
 	set_gdt(0,0,0,0,0);
-	set_gdt(1,0,0xfffff,0x9a,0x0c); //内核代码段
-	set_gdt(2,0,0xfffff,0x92,0x0c); //内核数据段
-	//set_gdt(1, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS, 0x0c); //内核代码段
-	//set_gdt(2, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS, 0x0c); //内核数据段
+	//set_gdt(1,0,0xfffff,0x9a,0x0c); //内核代码段
+	//set_gdt(2,0,0xfffff,0x92,0x0c); //内核数据段
+	set_gdt(1, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS, 0x0c); //内核代码段
+	set_gdt(2, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS, 0x0c); //内核数据段
 	
 	set_gdt(3,0,0,0,0);//null
 	set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
