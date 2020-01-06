@@ -218,16 +218,18 @@ static void init_gdt()
 {
 	int i=0;
 	printk("update gdt!\n");
+	printk("CS: 0x%x\n",P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS);
+	printk("CS: 0x%x\n",P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS);
 	// sizeof是编译器内部的宏,不需要定义
 	GDTR.length = sizeof(gdt_struct_t)*GDT_LEN - 1;
 	GDTR.base = (unsigned int)&gdt_list;
 
 	// 开始设置gdt表中的内容
 	set_gdt(0,0,0,0,0);
-	//set_gdt(1,0,0xfffff,0x9a,0x0c); //内核代码段
-	//set_gdt(2,0,0xfffff,0x92,0x0c); //内核数据段
-	set_gdt(1, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS, 0x0c); //内核代码段
-	set_gdt(2, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS, 0x0c); //内核数据段
+	set_gdt(1,0,0xfffff,0x9a,0x0c); //内核代码段
+	set_gdt(2,0,0xfffff,0x92,0x0c); //内核数据段
+	//set_gdt(1, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS, 0x0c); //内核代码段
+	//set_gdt(2, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS, 0x0c); //内核数据段
 	
 	set_gdt(3,0,0,0,0);//null
 	//set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
