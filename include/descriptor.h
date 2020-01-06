@@ -68,8 +68,8 @@
 #define TYPE_TRAP_GATE 0x0F 
 
 /* S=1 */
-#define TYPE_KERNEL_CS 0x0A
-#define TYPE_KERNEL_DS 0x02
+#define TYPE_KERNEL_CS 0x0F
+#define TYPE_KERNEL_DS 0x07
 
 #define TYPE_USER_CS 0x0F
 #define TYPE_USER_DS 0x07
