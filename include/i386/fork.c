@@ -11,7 +11,7 @@
 
 
 /* 实现fork */
-static inline _create_systemcall(int,fork)
+inline _create_systemcall(int,fork)
 /* 实现pause */
 static inline _create_systemcall(int,pause)
 

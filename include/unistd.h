@@ -16,7 +16,7 @@
 #define _POSIX2_VERSION 200112L
 #define _XOPEN_VERSION 600
 
-static int fork(void);
+int fork(void);
 static int pause(void);
 
 int open(const char* filename,int flag,...);
