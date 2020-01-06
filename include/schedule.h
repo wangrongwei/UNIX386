@@ -32,9 +32,7 @@ __asm__ __volatile__("movl %%esp,%%eax\n\t"\
 	"movw %%ax,%%ds\n\t" \
 	"movw %%ax,%%es\n\t" \
 	"movw %%ax,%%fs\n\t" \
-	"movw %%ax,%%gs\n\t" \
-	"2:\tmovl %%eax,%%eax\n\t" \
-	"jmp $2" \
+	"movw %%ax,%%gs" \
 	 :::"ax")
 
 #endif
