@@ -24,9 +24,9 @@ void timer_interrupt(pt_regs *regs)
 {
 	static long tick = 0;
 	tick++;
-	printk("%d \n",tick);
-	if(tick == 100){
+	if(tick == 189){
 		tick = 0;
+		printk("%d \n",tick);
 	}
 }
 
