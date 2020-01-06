@@ -92,7 +92,7 @@ void kernel_start()
 	
 	__asm__ __volatile__("movl %0,%%esp"::"a"((long)&task_tables[0]+4096));
 	move_to_user_mode();
-	(current->tss.eip)();
+	init0_body();
 #endif
 	//fork();
 	while(1);
