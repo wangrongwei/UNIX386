@@ -204,11 +204,11 @@ static void set_idt(int num,unsigned int base,unsigned short sel,unsigned short 
 
 
 // 中断（权限为0）
-#define set_int_gate(num,base) set_idt(num,base,KERNEL_CS,P_SET | (DPL0 << 5) | TYPE_INT_GATE)
+#define set_int_gate(num,base) set_idt(num,base,TYPE_KERNEL_CS,P_SET | (DPL0 << 5) | TYPE_INT_GATE)
 // 陷阱（权限为0）
-#define set_trap_gate(num,base) set_idt(num,base,KERNEL_CS,P_SET | (DPL0 << 5) | TYPE_TRAP_GATE)
+#define set_trap_gate(num,base) set_idt(num,base,TYPE_KERNEL_CS,P_SET | (DPL0 << 5) | TYPE_TRAP_GATE)
 // 特殊的陷阱（权限为3）--系统调用
-#define set_system_gate(num,base) set_idt(num,base,KERNEL_CS,P_SET | (DPL3 << 5) | TYPE_TRAP_GATE)
+#define set_system_gate(num,base) set_idt(num,base,TYPE_KERNEL_CS,P_SET | (DPL3 << 5) | TYPE_TRAP_GATE)
 
 /*
  * 设置5个全局描述符（包括全0）
