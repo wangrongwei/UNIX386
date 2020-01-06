@@ -17,7 +17,7 @@ extern syscall_ptr system_call_table[];
 
 #define PAGE_SIZE 4096
 
-struct task_struct task_tables[NR_TASKS] = {&(init_task.task),};
+struct task_struct* task_tables[NR_TASKS] = {&(init_task.task),};
 
 /* 在kernel.asm需要用到 */
 long user_stack[PAGE_SIZE >> 2]={0};
@@ -70,7 +70,7 @@ void reschedule(void)
 void init0_ready()
 {
 	/* 设置栈 */
-	struct task_struct *init0_point = task_tables;
+	struct task_struct *init0_point = task_tables[0];
 	init0_point->tss.esp = (long)&(task_tables[0]) + PAGE_SIZE;
 	init0_point->tss.eip = (long)init0_body;
 	init0_point->tss.eflags = 0x3202; /* 设置IOPL=3 */
