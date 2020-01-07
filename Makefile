@@ -33,7 +33,7 @@ ASM = nasm
 LD = ld
 OBJCOPY = objcopy
 
-C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin \
+C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -std=c99\
 -fno-stack-protector -I include
 
 LD_FLAGS  = -T scripts/kernel.ld -m elf_i386
