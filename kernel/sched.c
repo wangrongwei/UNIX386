@@ -24,7 +24,7 @@ long user_stack[PAGE_SIZE >> 2]={0};
 char kernel_stack[PAGE_SIZE << 1]={0};
 
 long *_stack_top = &user_stack[PAGE_SIZE >> 2];
-long kernel_stack_top;
+long kernel_stack_top = (long)kernel_stack + STACK_SIZE;
 
 /* 一个全局指针，指向当前正在执行的进程的task_struct */
 struct task_struct *current = &(init_task.task); 

@@ -48,7 +48,7 @@ void logo(void);
  */
 void kernel_start()
 {
-	kernel_stack_top = (long)kernel_stack + STACK_SIZE;
+	//kernel_stack_top = (long)kernel_stack + STACK_SIZE;
 	__asm__ __volatile__("mov %0,%%esp\n\t"::"r"(kernel_stack_top));
 	__asm__ __volatile__("xor %ebp, %ebp");
 	int i;
