@@ -58,6 +58,24 @@ void schedule_init(void)
 
 }
 
+void move_to_user_mode(void)
+{
+	__asm__ __volatile__("cli\n\t"\
+		"mov $0x2b,%%ax\n\t"\
+		"mov %%ax,%%ds\n\t" \
+		"mov %%ax,%%es\n\t" \
+		"mov %%ax,%%fs\n\t" \
+		"mov %%ax,%%gs\n\t" \
+		"movl %%esp,%%eax\n\t"\
+		"pushl $0x23\n\t" 	/* 压入ss */\
+		"pushl %%eax\n\t" 	/* 压入sp */\
+		"pushfl\n\t" 		/* 压入eflags */\
+		"pushl $0x23\n\t"	/* 压入cs */\
+		"pushl $1f\n\t"		/* 压入ip */\
+		"iret\n"\
+		"1:\tsti"\
+		 :::"ax")
+}
 /*
  * 重新调度
  */

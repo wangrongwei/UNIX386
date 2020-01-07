@@ -81,7 +81,7 @@ void kernel_start()
 
 	init_keyboard();
 	schedule_init();
-	__asm__ volatile("sti"); /* 打开中断 */
+	__asm__ __volatile__("sti"); /* 打开中断 */
 	printk("kernel start addr = 0x%08X\n", kernel_s);
 	printk("kernel end   addr = 0x%08X\n", kernel_e);
 	printk("kernel size = %dKB\n", (kernel_e-kernel_s + 1023) / 1024);
@@ -108,7 +108,7 @@ void kernel_start()
  */
 inline void outb(unsigned short port,unsigned short value)
 {
-	__asm__ volatile("outb %1,%0"::"dN"(port),"a"(value));
+	__asm__ __volatile__("outb %1,%0"::"dN"(port),"a"(value));
 }
 
 /*
@@ -117,7 +117,7 @@ inline void outb(unsigned short port,unsigned short value)
 inline unsigned char inb(unsigned short port)
 {
 	unsigned char retval=0;
-	__asm__ volatile("inb %1,%0":"=a"(retval):"dN"(port));
+	__asm__ __volatile__("inb %1,%0":"=a"(retval):"dN"(port));
 	return retval;
 }
 
@@ -128,7 +128,7 @@ inline unsigned short inw(unsigned short port)
 {
 	unsigned short retval=0;
 	/* retval为输出，port为输入 */
-	__asm__ volatile("inw %1,%0":"=a"(retval):"dN"(port));
+	__asm__ __volatile__("inw %1,%0":"=a"(retval):"dN"(port));
 	return retval;
 }
 
