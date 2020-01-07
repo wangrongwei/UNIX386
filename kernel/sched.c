@@ -35,14 +35,17 @@ struct task_struct *current = &(init_task.task);
  */
 void schedule_init(void)
 {
+	unsigned int base,limit;
 	printk("scheduler init!\n");
 	/* 在gdt表后边加上进程0的tss和ldt */
 	//set_tssldt2_gdt(FIRST_TASKTSS_INDEX, &(init_task.task.tss), 0xe9);
 	//set_tssldt2_gdt(FIRST_TASKLDT_INDEX, &(init_task.task.ldt), 0xe2);
-	unsigned int base = &(init_task.task.tss);
-	unsigned int limit = &(init_task.task.tss) + sizeof(init_task.task.tss);
+	base = &(init_task.task.tss);
+	limit = &(init_task.task.tss) + sizeof(init_task.task.tss);
 	set_tssldt2_gdt(FIRST_TASKTSS_INDEX, base, limit, P_SET | (DPL3 << 5) | TYPE_TSS_NOTBUSY);
-	//set_tssldt2_gdt(FIRST_TASKLDT_INDEX, &(init_task.task.ldt), P_SET | (DPL3 << 5) | TYPE_LDT);
+	base = &(init_task.task.ldt);
+	limit = &(init_task.task.ldt) + sizeof(init_task.task.ldt);
+	set_tssldt2_gdt(FIRST_TASKLDT_INDEX, base, limit, P_SET | (DPL3 << 5) | TYPE_LDT);
 	__asm__ __volatile__("pushfl ; andl $0xffffbfff,(%esp) ; popfl");
 	/* 将tss挂接到TR寄存器 */
 	ltr(0);
