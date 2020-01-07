@@ -21,7 +21,7 @@ struct task_struct* task_tables[NR_TASKS] = {&(init_task.task),};
 
 /* 在kernel.asm需要用到 */
 long user_stack[PAGE_SIZE >> 2]={0};
-char kernel_stack[PAGE_SIZE << 1]={0};
+char kernel_stack[PAGE_SIZE << 1] __attribute__ ((aligned(16)));
 
 long *_stack_top = &user_stack[PAGE_SIZE >> 2];
 long kernel_stack_top = (long)kernel_stack + STACK_SIZE;

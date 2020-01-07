@@ -30,7 +30,7 @@ global  load_idtr
 global  write_vram
 
 extern  kernel_start
-extern  _stack_top
+extern kernel_stack_top
 extern system_call_table
 extern reschedule
 extern current
@@ -71,7 +71,7 @@ _start:
         OR      EAX,0x80000000
         MOV     CR0,EAX ;PG位置1
 ; 设置堆栈
-	MOV     ESP,_stack_top
+	MOV     ESP,kernel_stack_top
         MOV     EBP,ESP
         ;AND     ESP,0FFFFFFF0H
         ;MOV     AH,0x0f
