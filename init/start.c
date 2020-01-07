@@ -20,6 +20,7 @@
 
 #include <unistd.h>
 #include <task_struct.h>
+#include <schedule.h>
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];

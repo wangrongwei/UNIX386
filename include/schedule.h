@@ -7,6 +7,8 @@
  *
  */
 
+extern long kernel_stack_top;
+
 void schedule_init(void);
 void reschedule(void);
 void schedule(void);
