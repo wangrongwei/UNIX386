@@ -37,7 +37,7 @@ void init_palette(void)
 void set_palette(unsigned char *table_rgb)
 {
 	int i;
-	asm volatile("cli");//先关闭中断
+	__asm__ volatile("cli");//先关闭中断
 	outb(0x03c8,0);
 	for(i=0;i<=15;i++){
 		outb(0x03c9,table_rgb[0] / 4);
