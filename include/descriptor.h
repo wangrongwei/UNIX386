@@ -92,7 +92,7 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	     unsigned char access,unsigned char G_DB_L_AVL);
 
 /* 设置tss与ldt */
-static void set_tssldt2_gdt(int num,unsigned int base,char type);
+static void set_tssldt2_gdt(int num,unsigned int base,unsigned int limit,char type);
 // 填充idt表
 static void set_idt(int num,unsigned int base,unsigned short sel,\
 		    unsigned short flags);
