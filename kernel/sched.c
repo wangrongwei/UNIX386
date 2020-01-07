@@ -76,7 +76,7 @@ void move_to_user_mode(void)
 		"pushl $0x23\n\t"	/* 压入cs */\
 		"pushl $1f\n\t"		/* 压入ip */\
 		"iret\n"\
-		"1:\tsti"\
+		"1:\t"\
 		 :::"ax");
 	printk("hello,user\n");
 }
