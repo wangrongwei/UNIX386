@@ -80,8 +80,8 @@ void kernel_start()
 	/* asm volatile("int $0x4"); */
 
 	init_keyboard();
+	__asm__ __volatile__("cli"); /* 关闭中断 */
 	schedule_init();
-	__asm__ __volatile__("sti"); /* 打开中断 */
 	printk("kernel start addr = 0x%08X\n", kernel_s);
 	printk("kernel end   addr = 0x%08X\n", kernel_e);
 	printk("kernel size = %dKB\n", (kernel_e-kernel_s + 1023) / 1024);
@@ -95,6 +95,7 @@ void kernel_start()
 	/* 其他设备初始化 */
 	printk("move to user mode: ring0->ring3\n"); /* 从ring0转换到ring3 */
 	init0_ready();
+	__asm__ __volatile__("sti"); /* 关闭中断 */
 	
 	//__asm__ __volatile__("movl %0,%%esp"::"r"((long)task_tables+4096));
 	move_to_user_mode();
