@@ -5,7 +5,7 @@
 #include <timer.h>
 #include <debug.h>
 #include <interrupt.h>
-
+#include <schedule.h>
 
 /*
  * 时钟测试函数
@@ -14,6 +14,7 @@ void timer_callback(pt_regs *regs)
 {
 	static unsigned int tick = 0;
 	tick++;
+	schedule();
 }
 
 /*
@@ -24,9 +25,9 @@ void timer_interrupt(pt_regs *regs)
 {
 	static long tick = 0;
 	tick++;
-	if(tick == 189){
-		tick = 0;
+	if(tick == 99){
 		printk("%d \n",tick);
+		tick = 0;
 	}
 }
 

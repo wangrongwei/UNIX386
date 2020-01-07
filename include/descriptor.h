@@ -69,7 +69,7 @@
 
 /* S=1 */
 #define TYPE_KERNEL_CS 0x0A
-#define TYPE_KERNEL_DS 0x07
+#define TYPE_KERNEL_DS 0x02
 
 #define TYPE_USER_CS 0x0F
 #define TYPE_USER_DS 0x07
@@ -173,7 +173,7 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
  * base: 填充的段的基地址
  * type: 0x89为tss，0x82为ldt
  */
-static void set_tssldt2_gdt(int num,unsigned int base,char type)
+static void set_tssldt2_gdt(int num,unsigned int base,unsigned int limit,char type)
 {
 	gdt_list[num].limit0 = (104 & 0xffff);
 	gdt_list[num].base0 = (base & 0xffff);

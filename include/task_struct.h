@@ -97,7 +97,7 @@ struct task_struct{
 	long utime,stime,cutime,cstime,start_time;
 
 	int nr_tty; /* 自设备号 */
-
+	struct task_struct *next; /* 一个进程 */
 	/* 接下来需要三个结构体代码该进程执行的对象 */
 	// 目前先不设置
 
@@ -301,9 +301,9 @@ struct task_struct INIT_TASK={
 {\
 /* tss.backlink */	0,\
 /* tss.esp0 */	PAGE_SIZE + (long)&init_task,\
-/* tss.ss0 */	0x10,\
+/* tss.ss0 */	_KERNEL_DS_SELECTOR,\
 /* tss.esp1 */	0,\
-/* tss.ss1 */	0,\
+/* tss.ss1 */	_KERNEL_CS_SELECTOR,\
 /* tss.esp2 */	0,\
 /* tss.ss2 */	0,\
 \
@@ -321,12 +321,12 @@ struct task_struct INIT_TASK={
 /* tss.ebp */	0,\
 /* tss.esi */	0,\
 /* tss.edi */	0,\
-/* tss.es */	0x2f,\
-/* tss.cs */	0x27,\
-/* tss.ss */	0x2f,\
-/* tss.ds */	0x2f,\
-/* tss.fs */	0x2f,\
-/* tss.gs */	0x2f,\
+/* tss.es */	0x13,\
+/* tss.cs */	0x0b,\
+/* tss.ss */	0x13,\
+/* tss.ds */	0x13,\
+/* tss.fs */	0x13,\
+/* tss.gs */	0x13,\
 \
 /* 需要实现 */ \
 /* tss.ldt */	_LDT(0),\
