@@ -29,6 +29,7 @@ void timer_interrupt(pt_regs *regs)
 		printk("%d \n",tick);
 		tick = 0;
 	}
+	schedule();
 }
 
 

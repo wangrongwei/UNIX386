@@ -93,8 +93,24 @@ void reschedule(void)
  */
 void schedule(void)
 {
+	unsigned int eip,esp,ebp;
+	__asm__ __volatile__("mov %%esp, %0":"=r"(esp));
+	__asm__ __volatile__("mov %%ebp, %0":"=r"(ebp));
 	if(current != NULL){
-
+		eip = current->tss.eip;
+		current->tss.esp = esp;
+		current->tss.ebp = ebp;
+		/* 实现跳转 */
+		__asm__ __volatile__("         \
+			cli;                 \
+			mov %0, %%ecx;       \
+			mov %1, %%esp;       \
+			mov %2, %%ebp;       \
+			mov %3, %%cr3;       \
+			mov $0x12345, %%eax; \
+			sti;                 \
+			jmp *%%ecx           "
+			:: "r"(eip), "r"(esp), "r"(ebp), "r"(current->tss.cr3));
 	}
 }
 
