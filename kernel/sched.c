@@ -74,7 +74,7 @@ void move_to_user_mode(void)
 		"pushl $1f\n\t"		/* 压入ip */\
 		"iret\n"\
 		"1:\tsti"\
-		 :::"ax")
+		 :::"ax");
 }
 /*
  * 重新调度
