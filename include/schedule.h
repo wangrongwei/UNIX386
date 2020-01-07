@@ -7,6 +7,7 @@
  *
  */
 
+extern char kernel_stack[];
 extern long kernel_stack_top;
 
 void schedule_init(void);
