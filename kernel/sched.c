@@ -16,7 +16,6 @@ extern gdt_struct_t gdt_list[];
 extern syscall_ptr system_call_table[];
 
 #define PAGE_SIZE 4096
-#define STACK_SIZE 8192
 
 struct task_struct* task_tables[NR_TASKS] = {&(init_task.task),};
 

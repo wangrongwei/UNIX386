@@ -6,7 +6,7 @@
  * 定义与调度相关的变量
  *
  */
-
+#define STACK_SIZE 8192
 extern char kernel_stack[];
 extern long kernel_stack_top;
 
