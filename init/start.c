@@ -48,9 +48,11 @@ void logo(void);
  */
 void kernel_start()
 {
-	//kernel_stack_top = (long)kernel_stack + STACK_SIZE;
+#if 0
+	kernel_stack_top = (long)kernel_stack + STACK_SIZE;
 	__asm__ __volatile__("mov %0,%%esp\n\t"::"r"(kernel_stack_top));
 	__asm__ __volatile__("xor %ebp, %ebp");
+#endif
 	int i;
 	//字符串存在ELF文件的.stab节和.stabstr节（这部分特别大）
 	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
