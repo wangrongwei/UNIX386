@@ -48,8 +48,8 @@ void logo(void);
  */
 void kernel_start()
 {
-	int i;
 	kernel_stack_top = (long)kernel_stack + STACK_SIZE;
+	int i;
 	__asm__ __volatile__("mov %0,%%esp\n\t"::"r"(kernel_stack_top));
 	__asm__ __volatile__("xor %ebp, %ebp");
 	//字符串存在ELF文件的.stab节和.stabstr节（这部分特别大）
