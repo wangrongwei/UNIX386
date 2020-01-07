@@ -300,7 +300,7 @@ struct task_struct INIT_TASK={
 	/* 填充tss */\
 {\
 /* tss.backlink */	0,\
-/* tss.esp0 */	PAGE_SIZE + (long)&init_task,\
+/* tss.esp0 */	0,\
 /* tss.ss0 */	_KERNEL_DS_SELECTOR,\
 /* tss.esp1 */	0,\
 /* tss.ss1 */	_KERNEL_CS_SELECTOR,\
