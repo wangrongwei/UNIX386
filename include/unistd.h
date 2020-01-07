@@ -16,6 +16,7 @@
 #define _POSIX2_VERSION 200112L
 #define _XOPEN_VERSION 600
 
+#define NULL 0
 int fork(void);
 static int pause(void);
 
