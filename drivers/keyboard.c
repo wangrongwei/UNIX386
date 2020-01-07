@@ -47,7 +47,7 @@ void keyboard_handler(pt_regs *regs)
 void keyboard_read()
 {
 	unsigned char scancode;
-	asm volatile("cli");
+	__asm__ volatile("cli");
 	if(kb_in.count > 0){
 		scancode = *(kb_in.p_tail);
 		kb_in.p_tail++;
@@ -60,7 +60,7 @@ void keyboard_read()
 		//keycode[0] = scancode;
 		printk("%c",keymap[scancode*3]);
 	}
-	asm volatile("sti");
+	__asm__ volatile("sti");
 }
 
 
