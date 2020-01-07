@@ -75,6 +75,7 @@ void move_to_user_mode(void)
 		"iret\n"\
 		"1:\tsti"\
 		 :::"ax");
+	printk("hello,user\n");
 }
 /*
  * 重新调度
