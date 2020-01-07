@@ -106,7 +106,7 @@ void kernel_start()
  */
 inline void outb(unsigned short port,unsigned short value)
 {
-	asm volatile("outb %1,%0"::"dN"(port),"a"(value));
+	__asm__ volatile("outb %1,%0"::"dN"(port),"a"(value));
 }
 
 /*
@@ -115,7 +115,7 @@ inline void outb(unsigned short port,unsigned short value)
 inline unsigned char inb(unsigned short port)
 {
 	unsigned char retval=0;
-	asm volatile("inb %1,%0":"=a"(retval):"dN"(port));
+	__asm__ volatile("inb %1,%0":"=a"(retval):"dN"(port));
 	return retval;
 }
 
@@ -126,7 +126,7 @@ inline unsigned short inw(unsigned short port)
 {
 	unsigned short retval=0;
 	/* retval为输出，port为输入 */
-	asm volatile("inw %1,%0":"=a"(retval):"dN"(port));
+	__asm__ volatile("inw %1,%0":"=a"(retval):"dN"(port));
 	return retval;
 }
 
