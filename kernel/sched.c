@@ -84,7 +84,7 @@ void init0_ready()
 {
 	/* 设置栈 */
 	struct task_struct *init0_point = task_tables[0];
-	init0_point->tss.esp0 = (long)&(task_tables[0]) + PAGE_SIZE;
+	init0_point->tss.esp0 = (long)task_tables + PAGE_SIZE;
 	init0_point->tss.eip = (long)thread_init0;
 	init0_point->tss.eflags = 0x3202; /* 设置IOPL=3 */
 }

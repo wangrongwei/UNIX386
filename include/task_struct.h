@@ -11,6 +11,7 @@
 
 #include "descriptor.h"
 #include "page.h"
+#include <protect.h>
 
 #define NR_TASKS 128
 
@@ -28,7 +29,7 @@
 // 将tss或者ldt相对于第一个tss或者第一个ldt进行编码
 
 // TR [---selector(16 bit, visible)---/---base(hidden)---/---limit(hidden)---]
-#define _TSS(n) ((((unsigned long)n) << 4) + (FIRST_TASKTSS_INDEX << 3))
+#define _TSS(n) ((((unsigned long)n) << 4) + (FIRST_TASKTSS_INDEX << 3) + RPL3)
 #define _LDT(n) ((((unsigned long)n) << 4) + (FIRST_TASKLDT_INDEX << 3)) 
 
 
