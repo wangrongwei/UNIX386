@@ -50,8 +50,8 @@ void kernel_start()
 {
 	int i;
 	kernel_stack_top = (long)kernel_stack + STACK_SIZE;
-	//__asm__ volatile("mov %0,%%esp\n\t"::"r"(kernel_stack_top));
-	//__asm__ volatile ("xor %ebp, %ebp");
+	__asm__ __volatile__("mov %0,%%esp\n\t"::"r"(kernel_stack_top));
+	__asm__ __volatile__("xor %ebp, %ebp");
 	//字符串存在ELF文件的.stab节和.stabstr节（这部分特别大）
 	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
 	unsigned int page_addr1 = 0,page_addr2 = 0;
