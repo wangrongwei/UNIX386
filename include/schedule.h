@@ -25,7 +25,8 @@ void thread_init0(void);
  * movl $0x17,%%eax	RPL=3 TI=1(ldt) SEL=1
  */
 #define move_to_user_mode() \
-__asm__ __volatile__("movl %%esp,%%eax\n\t"\
+__asm__ __volatile__("cli\n\t"\
+	"movl %%esp,%%eax\n\t"\
 	"pushl $0x23\n\t" 	/* 压入ss */\
 	"pushl %%eax\n\t" 	/* 压入sp */\
 	"pushfl\n\t" 		/* 压入eflags */\
@@ -36,7 +37,8 @@ __asm__ __volatile__("movl %%esp,%%eax\n\t"\
 	"movw %%ax,%%ds\n\t" \
 	"movw %%ax,%%es\n\t" \
 	"movw %%ax,%%fs\n\t" \
-	"movw %%ax,%%gs" \
+	"movw %%ax,%%gs\n\t" \
+	"sti" \
 	 :::"ax")
 
 extern struct task_struct *current;
