@@ -21,11 +21,12 @@
 #include <unistd.h>
 #include <task_struct.h>
 #include <schedule.h>
+#include <buddy.h>
+#include <init.h>
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
 extern syscall_ptr system_call_table[];
-extern union task_union task_tables[];
 
 void outb(unsigned short port,unsigned short value);
 
@@ -74,6 +75,7 @@ void kernel_start()
 	init_gdt();
 	/* 初始化中断/异常/系统调用，填充中断描述符 */
 	init_idt();
+	init_paging();
 	/* 初始化调色板 */
 	init_palette();
 	/* asm volatile("int $0x3"); */
@@ -87,20 +89,32 @@ void kernel_start()
 	printk("kernel size = %dKB\n", (kernel_e-kernel_s + 1023) / 1024);
 
 	init_pmm();
+	printk("The size of key structure:\n");
+	printk("task_struct: %d\n",sizeof(struct task_struct));
+	printk("tss_struct: %d\n",sizeof(struct tss_struct));
+	printk("buddy_element: %d\n",sizeof(struct buddy_element));
+	printk("phy_page_count: %d\n",phy_page_count);
 #if 1
 	//page_addr1 = pmm_alloc_page();
 	//printk("alloc page1 = 0x%08X\n",page_addr1);
 	//page_addr2 = pmm_alloc_page();
 	//logo();
 	/* 其他设备初始化 */
-	printk("move to user mode: ring0->ring3\n"); /* 从ring0转换到ring3 */
-	init0_ready();
-	__asm__ __volatile__("sti"); /* 关闭中断 */
-	
-	//__asm__ __volatile__("movl %0,%%esp"::"r"((long)task_tables+4096));
-	move_to_user_mode();
+	init_thread();
+	init_buddy();
+	init();
 #endif
-	while(1);
+	__asm__ __volatile__("sti");
+	/* 以下代码类似CPU进入idle */
+	while(1){
+		//schedule();
+		i++;
+		if(i == 5000){
+			printk("s");
+			i = 0;
+		}
+		__asm__ __volatile__("sti");
+	}
 
 }
 

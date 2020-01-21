@@ -2,6 +2,9 @@
 #ifndef __SCHEDULE_H__
 #define __SCHEDULE_H__
 
+#include <task_struct.h>
+#include <interrupt.h>
+
 /*
  * 定义与调度相关的变量
  *
@@ -15,6 +18,10 @@ void reschedule(void);
 void schedule(void);
 void init0_ready(void);
 void thread_init0(void);
+void thread_idle(void);
+void init_thread(void);
+
+void save_context(pt_regs *regs);
 
 /* 在kernel.asm文件中，与_page_dir是相同的含义 */
 #define pg_dir (0)
@@ -25,8 +32,9 @@ void thread_init0(void);
  * movl $0x17,%%eax	RPL=3 TI=1(ldt) SEL=1
  */
 void move_to_user_mode(void);
-
+void init(void);
 extern struct task_struct *current;
+extern union task_union* task_tables[];
 
 #endif
 

@@ -5,20 +5,15 @@
 
 #include <buddy.h>
 #include <unistd.h>
+#include <pmm.h>
 #include <list.h>
 
 
-#define MAX_ORDER 11
+#define MAX_ORDER 5
 
 //uint32_t pmm_alloc_page()
 //phy_page_count
 
-
-struct buddy_element{
-	uint32_t index; /* 空闲数量 */
-	uint32_t *data;
-	struct list_head order_list_head;
-}
 
 struct buddy_element buddy_order[MAX_ORDER];
 
@@ -27,14 +22,23 @@ struct buddy_element buddy_order[MAX_ORDER];
  */
 void init_buddy()
 {
+	/* 一个简单的伙伴系统 */
 	int i,j;
 	struct buddy_element *pr_be=NULL,*pr_prev=NULL,*pr_next=NULL;
-	uint32_t average = phy_page_count;
+	uint32_t average = 20;
 	for(i=0;i<MAX_ORDER;i++){
 		for(j=0;j<average;j++){
 			pr_be = (struct buddy_element *)basic_allocator(sizeof(struct buddy_element));
+			if(pr_be == NULL){
+				printk("error: 1\n");
+				return;
+			}
 			pr_be->index = j;
 			pr_be->data = (uint32_t *)alloc_pages(1<<i, 0);
+			if(pr_be->data == NULL){
+				printk("error: 2\n");
+				return;
+			}
 			if(pr_prev != NULL){
 				pr_prev->order_list_head.next = pr_be;
 				pr_be->order_list_head.prev = pr_prev;

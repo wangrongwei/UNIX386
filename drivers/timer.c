@@ -6,6 +6,7 @@
 #include <debug.h>
 #include <interrupt.h>
 #include <schedule.h>
+#include <task_struct.h>
 
 /*
  * 时钟测试函数
@@ -25,11 +26,19 @@ void timer_interrupt(pt_regs *regs)
 {
 	static long tick = 0;
 	tick++;
-	if(tick == 99){
-		printk("%d \n",tick);
+	save_context(regs);
+	if(tick <= 500){
+		printk("a");
+		//current = &(task_tables[0]->task);
+		//schedule();
+	}
+	else if(tick <= 1000){
+		//current = &(task_tables[1]->task);
+		//schedule();	
+	}
+	else{
 		tick = 0;
 	}
-	schedule();
 }
 
 

@@ -14,6 +14,7 @@
 #include <protect.h>
 
 #define NR_TASKS 128
+#define PG_DIR (0)
 
 /*进程的五种状态 */
 #define TASK_RUNNING 0
@@ -37,6 +38,7 @@
 /* 根据TR寄存器的位图可以看出需要加载一个TSS选择子到TR寄存器 */
 #define ltr(n) __asm__("ltr %%ax"::"a" (_TSS(n)))
 #define lldt(n) __asm__("lldt %%ax"::"a" (_LDT(n)))
+
 
 
 /* 在32位编译器下int 占4个字节 */
@@ -309,7 +311,7 @@ struct task_struct INIT_TASK={
 /* tss.ss2 */	0,\
 \
 /* 进程与内核使用同一个页目录表 */ \
-/* tss.cr3 */	pg_dir,\
+/* tss.cr3 */	PG_DIR,\
 /* tss.eip */	0,\
 /* tss.eflags */0x3202,\
 \
@@ -322,12 +324,12 @@ struct task_struct INIT_TASK={
 /* tss.ebp */	0,\
 /* tss.esi */	0,\
 /* tss.edi */	0,\
-/* tss.es */	0x13,\
-/* tss.cs */	0x0b,\
-/* tss.ss */	0x13,\
-/* tss.ds */	0x13,\
-/* tss.fs */	0x13,\
-/* tss.gs */	0x13,\
+/* tss.es */	0x10,\
+/* tss.cs */	0x08,\
+/* tss.ss */	0x10,\
+/* tss.ds */	0x10,\
+/* tss.fs */	0x10,\
+/* tss.gs */	0x10,\
 \
 /* 需要实现 */ \
 /* tss.ldt */	_LDT(0),\

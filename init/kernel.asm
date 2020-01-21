@@ -29,9 +29,9 @@ global  load_gdtr
 global  load_idtr
 global  write_vram
 
-extern  kernel_start
-extern kernel_stack_top
-extern system_call_table
+extern  kernel_start;
+extern kernel_stack_top;
+extern system_call_table;
 extern reschedule
 extern current
 extern state
@@ -47,11 +47,11 @@ SCREENY		EQU	0x0ff6  ;	y
 LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
 ;页信息
 ;只有16M，因此只需要4个页目录
-_page_dir       EQU     0x0000
-_page_tab0      EQU     0x1000
-_page_tab1      EQU     0x2000
-_page_tab2      EQU     0x3000
-_page_tab3      EQU     0x4000
+_page_dir	EQU	0x0000
+_page_tab0	EQU	0x1000
+_page_tab1	EQU	0x2000
+_page_tab2	EQU	0x3000
+_page_tab3	EQU	0x4000
 
 
 ; 采用Intel汇编格式
@@ -196,6 +196,7 @@ ISR_NOERRCODE 255
 ; 中断服务程序
 isr_common_stub:
 	pusha            ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
+	xor eax, eax
 	mov ax, ds
 	push eax         ; 保存数据段描述符
 	
@@ -255,7 +256,7 @@ IRQ  15,    47 	; IDE1 传输控制使用
 [EXTERN irq_handler]
 irq_common_stub:
 	pusha                    ; pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
-	
+	xor eax, eax
 	mov ax, ds
 	push eax                 ; 保存数据段描述符
 	
@@ -278,12 +279,9 @@ irq_common_stub:
 	mov ss, bx
 	
 	popa                     ; Pops edi,esi,ebp...
-	add esp, 8     		 ; 清理压栈的 错误代码 和 ISR 编号
+	add esp, 8     		 ; 清理压栈的 错误代码 和 IRQ 编号
 	iret          		 ; 出栈 CS, EIP, EFLAGS, SS, ESP
 .end:
-
-
-
 
 
 ; =============================================================================

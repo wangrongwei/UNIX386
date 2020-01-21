@@ -8,9 +8,7 @@ void set_palette(unsigned char *table_rgb);
 #if 1
 void init_palette(void)
 {
-	/*
-	 * 不能定义成全局变量和静态变量
-	 */
+	/* 不能定义成全局变量和静态变量 */
 	unsigned char table_rgb[16 * 3] = {
 		0x00, 0x00, 0x00,	/*  0:黑 */
 		0xff, 0x00, 0x00,	/*  1:亮红 */

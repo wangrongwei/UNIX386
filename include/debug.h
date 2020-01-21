@@ -9,7 +9,7 @@
 #define _DEBUG 0
 
 void printk(const char *format,...);
-
+volatile void panic(const char * s);
 
 
 #endif
