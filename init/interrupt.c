@@ -6,9 +6,21 @@
 #include <debug.h>
 
 #ifdef _DEBUG
-#undef _DEBUG
 #include <console.h>
 #endif
+
+//#undef _DEBUG
+
+
+void sti()
+{
+	__asm__ __volatile__("sti");
+}
+
+void cli()
+{
+	__asm__ __volatile__("cli");
+}
 
 /*
  * 中断服务程序
@@ -19,30 +31,34 @@
  */
 void isr_handler(pt_regs *regs)
 {
+	static count = 0;
 	if(interrupt_handlers[regs->int_no]){
 		interrupt_handlers[regs->int_no](regs);
 	}
 	else{
+		count++;
+		if(count != 1)
+			return;
 		printk("unhandle interrupt_handler:%d\n",regs->int_no);
-#ifdef _DEBUG
+//#ifdef _DEBUG
 		//console_clear();
-		printk("ds:%d\n",regs->ds);		// 用于保存用户的数据段描述符
-		printk("edi:%d\n",regs->edi);		// 从 edi 到 eax 由 pusha 指令压入
-		printk("esi:%d\n",regs->esi);
-		printk("ebp:%d\n",regs->ebp);
-		printk("esp:%d\n",regs->esp);
-		printk("ebx:%d\n",regs->ebx);
-		printk("edx:%d\n",regs->edx);
-		printk("ecx:%d\n",regs->ecx);
-		printk("eax:%d\n",regs->eax);
-		printk("int_no:%d\n",regs->int_no);	// 中断号
-		printk("err_code:%d\n",regs->err_code);	// 错误代码(有中断错误代码的中断会由CPU压入)
-		printk("eip:%d\n",regs->eip);		// 以下由处理器自动压入
-		printk("cs:%d\n",regs->cs);
-		printk("eflags:%d\n",regs->eflags);
-		printk("useresp:%d\n",regs->useresp);
-		printk("ss:%d\n",regs->ss);
-#endif
+		printk("ds: 0x%x\n",regs->ds);		// 用于保存用户的数据段描述符
+		//printk("edi:%d\n",regs->edi);		// 从 edi 到 eax 由 pusha 指令压入
+		//printk("esi:%d\n",regs->esi);
+		//printk("ebp:%d\n",regs->ebp);
+		//printk("esp:%d\n",regs->esp);
+		//printk("ebx:%d\n",regs->ebx);
+		//printk("edx:%d\n",regs->edx);
+		//printk("ecx:%d\n",regs->ecx);
+		//printk("eax:%d\n",regs->eax);
+		printk("int_no: %d\n",regs->int_no);	// 中断号
+		printk("err_code: %d\n",regs->err_code);	// 错误代码(有中断错误代码的中断会由CPU压入)
+		printk("eip: 0x%x\n",regs->eip);		// 以下由处理器自动压入
+		printk("cs: 0x%x\n",regs->cs);
+		printk("eflags: 0x%x\n",regs->eflags);
+		printk("useresp: 0x%x\n",regs->useresp);
+		printk("ss: 0x%x\n",regs->ss);
+//#endif
 	}
 }
 

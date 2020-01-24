@@ -1,7 +1,7 @@
 
 /*
  * 从汇编跳转到C语言的第一个.c文件
- *	author: Alexander.Wang<wangrongwei.kernel@gmail.com>
+ *	author: Wang<wangrongwei.kernel@gmail.com>
  *	time: 2017/05/13
  */
 
@@ -19,22 +19,20 @@
 #include <i386/sys.h>
 
 #include <unistd.h>
-
+#include <task_struct.h>
+#include <schedule.h>
+#include <buddy.h>
+#include <init.h>
 
 extern unsigned char kernel_s[];
 extern unsigned char kernel_e[];
 extern syscall_ptr system_call_table[];
+
 void outb(unsigned short port,unsigned short value);
 
 unsigned char inb(unsigned short port);
 
 unsigned short inw(unsigned short port);
-
-
-/* 定义fork函数 */
-static inline _create_systemcall(int,fork)
-
-static inline _create_systemcall(int,pause)
 
 
 void logo(void);
@@ -51,13 +49,18 @@ void logo(void);
  */
 void kernel_start()
 {
+#if 0
+	kernel_stack_top = (long)kernel_stack + STACK_SIZE;
+	__asm__ __volatile__("mov %0,%%esp\n\t"::"r"(kernel_stack_top));
+	__asm__ __volatile__("xor %ebp, %ebp");
+#endif
 	int i;
 	//字符串存在ELF文件的.stab节和.stabstr节（这部分特别大）
 	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
 	unsigned int page_addr1 = 0,page_addr2 = 0;
 	printk("enter the kernel_start function...\n");
 	/* 打印内核版本 */
-	printk("DeeppinkOS version-0.0.1\n");
+	printk("UNIX386 v0.0.1\n");
 	//unsigned char *input = (unsigned char *)0xb8000;
 	//unsigned char color = (0 << 4) | (15 & white);
 	//unsigned char *string = "Hello,welcome to DeeppinkOS\n";
@@ -69,46 +72,43 @@ void kernel_start()
 
 	//console_puts(string,0,green);
 	//printk(string);
-
-#if 1
 	init_gdt();
 	/* 初始化中断/异常/系统调用，填充中断描述符 */
 	init_idt();
+	init_paging();
+	/* 初始化调色板 */
 	init_palette();
-	//asm volatile("int $0x3");
-	//asm volatile("int $0x4");
+	/* asm volatile("int $0x3"); */
+	/* asm volatile("int $0x4"); */
 
 	init_keyboard();
+	__asm__ __volatile__("cli"); /* 关闭中断 */
 	schedule_init();
-	asm volatile("sti"); // 打开中断
-	//while(1){
-	//	keyboard_read();
-	//}
-	printk("kernel start addr = 0x%08X\n",kernel_s);
-	printk("kernel end   addr = 0x%08X\n",kernel_e);
-	printk("kernel size = %dKB\n",(kernel_e-kernel_s + 1023) / 1024);
-#endif
+	printk("kernel start addr = 0x%08X\n", kernel_s);
+	printk("kernel end   addr = 0x%08X\n", kernel_e);
+	printk("kernel size = %dKB\n", (kernel_e-kernel_s + 1023) / 1024);
 
-#if 1
-	printk("physicial init\n");
 	init_pmm();
+	printk("The size of key structure:\n");
+	printk("task_struct: %d\n",sizeof(struct task_struct));
+	printk("tss_struct: %d\n",sizeof(struct tss_struct));
+	printk("buddy_element: %d\n",sizeof(struct buddy_element));
+	printk("phy_page_count: %d\n",phy_page_count);
+#if 1
 	//page_addr1 = pmm_alloc_page();
 	//printk("alloc page1 = 0x%08X\n",page_addr1);
 	//page_addr2 = pmm_alloc_page();
-	
 	//logo();
 	/* 其他设备初始化 */
-
-	/* 从ring0转换到ring1 */
-	printk("move to user mode\n");
-	//move_to_user_mode();
-	//fork();
-	while(1){
-		//pause();
-		keyboard_read();
-	}
-
+	init_thread();
+	init_buddy();
+	//init();
 #endif
+	/* 
+	 * 以下代码类似CPU进入idle，即init0
+	 * init0检测是否有其他task需要执行
+	 */
+	thread_cpu_idle();
 }
 
 /*
@@ -116,7 +116,7 @@ void kernel_start()
  */
 inline void outb(unsigned short port,unsigned short value)
 {
-	asm volatile("outb %1,%0"::"dN"(port),"a"(value));
+	__asm__ __volatile__("outb %1,%0"::"dN"(port),"a"(value));
 }
 
 /*
@@ -125,7 +125,7 @@ inline void outb(unsigned short port,unsigned short value)
 inline unsigned char inb(unsigned short port)
 {
 	unsigned char retval=0;
-	asm volatile("inb %1,%0":"=a"(retval):"dN"(port));
+	__asm__ __volatile__("inb %1,%0":"=a"(retval):"dN"(port));
 	return retval;
 }
 
@@ -136,7 +136,7 @@ inline unsigned short inw(unsigned short port)
 {
 	unsigned short retval=0;
 	/* retval为输出，port为输入 */
-	asm volatile("inw %1,%0":"=a"(retval):"dN"(port));
+	__asm__ __volatile__("inw %1,%0":"=a"(retval):"dN"(port));
 	return retval;
 }
 

@@ -11,8 +11,10 @@
 
 #include "descriptor.h"
 #include "page.h"
+#include <protect.h>
 
 #define NR_TASKS 128
+#define PG_DIR (0)
 
 /*进程的五种状态 */
 #define TASK_RUNNING 0
@@ -22,11 +24,12 @@
 #define TASK_STOPPED 4
 
 /* 第一个进程在gdt中的位置 */
-#define FIRST_TASKTSS_INDEX 4
-#define FIRST_TASKLDT_INDEX 5
+#define FIRST_TASKTSS_INDEX 6
+#define FIRST_TASKLDT_INDEX 7
 
 // 将tss或者ldt相对于第一个tss或者第一个ldt进行编码
-// 可以不直接编码，需要后续完善
+
+// TR [---selector(16 bit, visible)---/---base(hidden)---/---limit(hidden)---]
 #define _TSS(n) ((((unsigned long)n) << 4) + (FIRST_TASKTSS_INDEX << 3))
 #define _LDT(n) ((((unsigned long)n) << 4) + (FIRST_TASKLDT_INDEX << 3)) 
 
@@ -35,6 +38,7 @@
 /* 根据TR寄存器的位图可以看出需要加载一个TSS选择子到TR寄存器 */
 #define ltr(n) __asm__("ltr %%ax"::"a" (_TSS(n)))
 #define lldt(n) __asm__("lldt %%ax"::"a" (_LDT(n)))
+
 
 
 /* 在32位编译器下int 占4个字节 */
@@ -71,7 +75,7 @@ struct tss_struct{
 	long ds;
 	long fs;
 	long gs;
-	long ldt;/* 只取16位 */
+	unsigned int ldt;/* 只取16位 */
 	/* tss最后32位中，0：trap，16-31：iobase,其他位为0 */
 	long trap;
 	long iobase;
@@ -81,10 +85,9 @@ struct tss_struct{
 /* task_struct：进程的描述符 */
 struct task_struct{
 	long state; /* 进程当前的状态 */
-	long counter;
+	long counter; /* 时间片 */
 	long priority; /* 优先级 */
 	long signal;
-
 
 	long blocked;
 	int exit_code;
@@ -96,8 +99,8 @@ struct task_struct{
 	long alarm;
 	long utime,stime,cutime,cstime,start_time;
 
-	int tty; /* 自设备号 */
-
+	int nr_tty; /* 自设备号 */
+	struct task_struct *next; /* 一个进程 */
 	/* 接下来需要三个结构体代码该进程执行的对象 */
 	// 目前先不设置
 
@@ -223,14 +226,7 @@ struct task_struct INIT_TASK={
 #endif
 
 
-/* 初始化一个函数作为init进程程序体 */
-void init0(void)
-{
-	int i=0;
-	i++;
-	while(1);
-	return;
-}
+
 
 /* 使用宏对INIT_TASK进行初始化 */
 /*  
@@ -239,7 +235,7 @@ void init0(void)
 #define INIT_TASK \
 {\
 /* state */ TASK_RUNNING,\
-/* counter */ 0,\
+/* counter */ 1000,\
 /* priority */ 0,\
 /* signal */ 0,\
 \
@@ -277,63 +273,63 @@ void init0(void)
 	/* 填充ldt（此处需要改进） */\
 	/* 填充ldt[0] */\
 {\
-/* ldt[0].limit0 */	 0,\
+/* ldt[0].limit0 */	 {0,\
 /* ldt[0].base0 */	 0,\
 /* ldt[0].base1 */	 0,\
 /* ldt[0].access */	 0,\
 /* ldt[0].limit1 */	 0,\
 /* ldt[0].GD_DB_L_AVL */ 0,\
-/* ldt[0].base2 */	0,\
+/* ldt[0].base2 */	0},\
 \
 	/* 填充ldt[1] */\
-/* ldt[1].limit0 */	 0x9f,\
+/* ldt[1].limit0 */	 {0x9f,\
 /* ldt[1].base0 */	 0,\
 /* ldt[1].base1 */	 0,\
 /* ldt[1].access */	 0xfa,\
 /* ldt[1].limit1 */	 0,\
 /* ldt[1].GD_DB_L_AVL */ 0x0c,\
-/* ldt[1].base2 */	0,\
+/* ldt[1].base2 */	0},\
 \	
 	/* 填充ldt[2] */\
-/* ldt[2].limit0 */	 0x9f,\
+/* ldt[2].limit0 */	 {0x9f,\
 /* ldt[2].base0 */	 0,\
 /* ldt[2].base1 */	 0,\
 /* ldt[2].access */	 0xf2,\
 /* ldt[2].limit1 */	 0,\
 /* ldt[2].GD_DB_L_AVL */ 0x0c,\
-/* ldt[2].base2 */	0,\
+/* ldt[2].base2 */	0},\
 },\
 \
 	/* 填充tss */\
 {\
 /* tss.backlink */	0,\
-/* tss.esp0 */	PAGE_SIZE + (long)&init_task,\
-/* tss.ss0 */	0x10,\
+/* tss.esp0 */	0,\
+/* tss.ss0 */	_KERNEL_DS_SELECTOR,\
 /* tss.esp1 */	0,\
-/* tss.ss1 */	0,\
+/* tss.ss1 */	_KERNEL_CS_SELECTOR,\
 /* tss.esp2 */	0,\
 /* tss.ss2 */	0,\
 \
 /* 进程与内核使用同一个页目录表 */ \
-/* tss.cr3 */	pg_dir,\
-/* tss.eip */	init0,\
-/* tss.flags */	0,\
+/* tss.cr3 */	PG_DIR,\
+/* tss.eip */	0,\
+/* tss.eflags */0x3202,\
 \
 /* tss.eax */	0,\
 /* tss.ecx */	0,\
 /* tss.edx */	0,\
 /* tss.ebx */	0,\
 \
-/* tss.esp */	0,\
+/* tss.esp */	4096,\
 /* tss.ebp */	0,\
 /* tss.esi */	0,\
 /* tss.edi */	0,\
-/* tss.es */	0x17,\
-/* tss.cs */	0x17,\
-/* tss.ss */	0x17,\
-/* tss.ds */	0x17,\
-/* tss.fs */	0x17,\
-/* tss.gs */	0x17,\
+/* tss.es */	0x10,\
+/* tss.cs */	0x08,\
+/* tss.ss */	0x10,\
+/* tss.ds */	0x10,\
+/* tss.fs */	0x10,\
+/* tss.gs */	0x10,\
 \
 /* 需要实现 */ \
 /* tss.ldt */	_LDT(0),\

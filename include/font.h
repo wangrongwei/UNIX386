@@ -1,3 +1,8 @@
+
+/*
+ * 实现font相关函数
+ */
+
 #ifndef __FONT_H__
 #define __FONT_H__
 /*

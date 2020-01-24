@@ -1,4 +1,5 @@
-;					Deeppinkos
+
+;					UNIX386
 ;-------------------------------------------------------------------------------
 ;                                      BIOS内存映射
 ;-------------------------------------------------------------------------------
@@ -28,9 +29,9 @@ global  load_gdtr
 global  load_idtr
 global  write_vram
 
-extern  kernel_start
-extern  _stack_top
-extern system_call_table
+extern  kernel_start;
+extern kernel_stack_top;
+extern system_call_table;
 extern reschedule
 extern current
 extern state
@@ -46,11 +47,11 @@ SCREENY		EQU	0x0ff6  ;	y
 LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
 ;页信息
 ;只有16M，因此只需要4个页目录
-_page_dir       EQU     0x0000
-_page_tab0      EQU     0x1000
-_page_tab1      EQU     0x2000
-_page_tab2      EQU     0x3000
-_page_tab3      EQU     0x4000
+_page_dir	EQU	0x0000
+_page_tab0	EQU	0x1000
+_page_tab1	EQU	0x2000
+_page_tab2	EQU	0x3000
+_page_tab3	EQU	0x4000
 
 
 ; 采用Intel汇编格式
@@ -65,14 +66,12 @@ _start:
         CALL    setup_paging
 ; 开始打开分页机制
         XOR     EAX,EAX
-        MOV     EAX,CR3 ;将_page_dir地址0x0000写给CR3
+        MOV     CR3,EAX ;将_page_dir地址0x0000写给CR3
         MOV     EAX,CR0
         OR      EAX,0x80000000
         MOV     CR0,EAX ;PG位置1
-
-        ;MOV     EAX,0x8000
-        ;INT     0x10
-	MOV     ESP,_stack_top
+; 设置堆栈
+	MOV     ESP,kernel_stack_top
         MOV     EBP,ESP
         ;AND     ESP,0FFFFFFF0H
         ;MOV     AH,0x0f
@@ -140,7 +139,7 @@ write_vram:
 [GLOBAL isr%1]
 isr%1:
 	cli      ; 首先关闭中断
-	push 0   ; push 无效的中断错误代码(起到占位作用，便于所有isr函数统一清栈)
+	push 0x0   ; push 无效的中断错误代码(起到占位作用，便于所有isr函数统一清栈)
 	push %1  ; push 中断号
 	jmp isr_common_stub
 %endmacro
@@ -197,6 +196,7 @@ ISR_NOERRCODE 255
 ; 中断服务程序
 isr_common_stub:
 	pusha            ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
+	xor eax, eax
 	mov ax, ds
 	push eax         ; 保存数据段描述符
 	
@@ -256,7 +256,7 @@ IRQ  15,    47 	; IDE1 传输控制使用
 [EXTERN irq_handler]
 irq_common_stub:
 	pusha                    ; pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
-	
+	xor eax, eax
 	mov ax, ds
 	push eax                 ; 保存数据段描述符
 	
@@ -279,12 +279,9 @@ irq_common_stub:
 	mov ss, bx
 	
 	popa                     ; Pops edi,esi,ebp...
-	add esp, 8     		 ; 清理压栈的 错误代码 和 ISR 编号
+	add esp, 8     		 ; 清理压栈的 错误代码 和 IRQ 编号
 	iret          		 ; 出栈 CS, EIP, EFLAGS, SS, ESP
 .end:
-
-
-
 
 
 ; =============================================================================
@@ -349,7 +346,7 @@ system_call:
         jne	reschedule
         cmp	dword [eax+4],0
         je 	reschedule
-
+ret_from_system_call:
 	;add	esp, 4 * 4
 	;pop	esi
 	pop	gs

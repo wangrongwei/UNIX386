@@ -6,25 +6,27 @@
  * 	这些中断处理函数只是填充idt表中的offset项
  */
 
+void sti();
+void cli();
 
-// 寄存器类型
+/* 寄存器类型 */
 typedef struct pt_regs_t {
-	unsigned int ds;	// 用于保存用户的数据段描述符
-	unsigned int edi;	// 从 edi 到 eax 由 pusha 指令压入
-	unsigned int esi;
-	unsigned int ebp;
-	unsigned int esp;
-	unsigned int ebx;
-	unsigned int edx;
-	unsigned int ecx;
-	unsigned int eax;
-	unsigned int int_no;	// 中断号
-	unsigned int err_code;	// 错误代码(有中断错误代码的中断会由CPU压入)
-	unsigned int eip;	// 以下由处理器自动压入
-	unsigned int cs;
-	unsigned int eflags;
-	unsigned int useresp;
-	unsigned int ss;
+	long ds;	// 用于保存用户的数据段描述符
+	long edi;	// 从 edi 到 eax 由 pusha 指令压入
+	long esi;
+	long ebp;
+	long esp;
+	long ebx;
+	long edx;
+	long ecx;
+	long eax;
+	long int_no;	// 中断号
+	long err_code;	// 错误代码(有中断错误代码的中断会由CPU压入)
+	long eip;	// 以下由处理器自动压入
+	long cs;
+	long eflags;
+	long useresp;
+	long ss;
 } pt_regs;
 
 // 定义中断处理函数指针
@@ -103,7 +105,7 @@ void isr31();
 // IRQ 处理函数
 void irq_handler(pt_regs *regs);
 
-// 定义IRQ
+/* 外部中断从0x20开始 */
 #define  IRQ0     32 	// 电脑系统计时器
 #define  IRQ1     33 	// 键盘
 #define  IRQ2     34 	// 与 IRQ9 相接，MPU-401 MD 使用

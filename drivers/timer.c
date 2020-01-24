@@ -5,7 +5,10 @@
 #include <timer.h>
 #include <debug.h>
 #include <interrupt.h>
+#include <schedule.h>
+#include <task_struct.h>
 
+long jiffies;
 
 /*
  * 时钟测试函数
@@ -14,6 +17,7 @@ void timer_callback(pt_regs *regs)
 {
 	static unsigned int tick = 0;
 	tick++;
+	schedule();
 }
 
 /*
@@ -22,10 +26,23 @@ void timer_callback(pt_regs *regs)
  */
 void timer_interrupt(pt_regs *regs)
 {
-	long tick = 0;
+	static long tick = 0;
+	cli();
 	tick++;
+	jiffies++;
+	save_context(regs);
+	if(tick <= 200){
+		//current = &(task_tables[0]->task);
+		//schedule();
+	}
+	else if(tick <= 500){
+		//current = &(task_tables[1]->task);
+		//schedule();	
+	}
+	else{
+		tick = 0;
+	}
 }
-
 
 
 /*
@@ -50,7 +67,7 @@ void init_timer(unsigned int frequency)
 	outb(0x40,high);
 
 	// 开启时钟中断
-	outb();
+	outb(0x21,inb(0x21)&~0x01);
 	
 }
 

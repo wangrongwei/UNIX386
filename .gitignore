@@ -1,4 +1,5 @@
 /prj/
+/.autogit/
 *.o
 *.txt
 *.elf

@@ -3,7 +3,6 @@
 
 /*
  * 文件描述：全局描述符和中断描述符相关结构体定义
- *
  */
 #include "debug.h"
 #include "console.h"
@@ -11,8 +10,76 @@
 #include "interrupt.h"
 #include "string.h"
 
+
 #define GDT_LEN 256
 #define IDT_LEN 256
+
+#define P_UNSET 0x00
+#define P_SET 0x80
+#define S_SS (0x00) /* 系统段 */
+#define S_NSS (0x01 << 4) /* 非系统段 */
+
+#define TI_UNSET (0x00 << 2)
+#define TI_SET (0x01  << 2)
+
+#define GDT_TI TI_UNSET
+#define LDT_TI TI_SET
+
+/* 全局描述符 */
+
+#define DPL0 0x00
+#define DPL1 0x01
+#define DPL2 0x02
+#define DPL3 0x03
+
+/* RPL只在选择子（selector）中 */
+#define RPL0 0x00
+#define RPL1 0x01
+#define RPL2 0x02
+#define RPL3 0x03
+
+#define TYPE_NOTBUSY 0x09
+#define TYPE_BUSY 0x0b
+
+#define AVL 0
+
+/* 中断描述符 */
+
+
+
+/*
+ * P----DPL----S----TYPE
+ * S=0：系统段
+ * S=1：非系统段
+ * 在系统段中，TYPE字段意义不同
+ * 在非系统段中，TYPE字段分为代码段和数据段，四位分别为X-R-C-A
+ */
+
+/* 以下为TYPE的字段功能 */
+/* S=0 */
+#define TYPE_TSS_BUSY 0x0B
+#define TYPE_TSS_NOTBUSY 0x09
+#define TYPE_LDT 0x02
+
+/* 三种门 */
+#define TYPE_TASK_GATE 0x05
+#define TYPE_CALL_GATE 0x0C 
+#define TYPE_INT_GATE 0x0E 
+#define TYPE_TRAP_GATE 0x0F 
+
+/* S=1 */
+#define TYPE_KERNEL_CS 0x0A
+#define TYPE_KERNEL_DS 0x02
+
+#define TYPE_USER_CS 0x0F
+#define TYPE_USER_DS 0x07
+
+ 
+/* 使用选择子的概念 */
+#define _KERNEL_CS_SELECTOR ((0x01 << 3) | GDT_TI | RPL0)
+#define _KERNEL_DS_SELECTOR ((0x02 << 3) | GDT_TI | RPL0)
+#define _USER_CS_SELECTOR ((0x04 << 3) | GDT_TI | RPL3)
+#define _USER_DS_SELECTOR ((0x05 << 3) | GDT_TI | RPL3)
 
 extern load_gdtr(unsigned int *);
 extern load_idtr(unsigned int *);
@@ -25,8 +92,7 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	     unsigned char access,unsigned char G_DB_L_AVL);
 
 /* 设置tss与ldt */
-
-static void set_tssldt2_gdt(int num,unsigned int base,char type);
+static void set_tssldt2_gdt(int num,unsigned int base,unsigned int limit,char type);
 // 填充idt表
 static void set_idt(int num,unsigned int base,unsigned short sel,\
 		    unsigned short flags);
@@ -36,7 +102,7 @@ typedef struct gdt_struct_t{
 	unsigned short limit0;	     //长度限制15--0 占两个字节
 	unsigned short base0;	     //基地址15--0
 	unsigned char  base1;	     //基地址23--16
-	unsigned char  access;       //P_DPL(2bits)_S_Type(4bits)，总共8位
+	unsigned char  access;       //P_DPL(2bits)_S_Type(4bits)，共8位
 	unsigned char  limit1:4;     //长度限制19--16
 	unsigned char  G_DB_L_AVL:4; //
 	unsigned char  base2;        //基地址31--24
@@ -58,12 +124,12 @@ typedef struct ldt_struct_t{
 	unsigned char  base2;         //基地址31--24
 }__attribute__((packed)) ldt_struct_t;
 
-
+/* 中断门 / 调用门 / 陷阱门 */
 typedef struct idt_struct_t{
 	unsigned short base0;   //中断函数基地址15--0
 	unsigned short sel;     //选择段描述符
 	unsigned char  zero;    //全是0
-	unsigned char  flags;	//相关标志 P_DVL_'E'
+	unsigned char  flags;	//相关标志 P_DPL_TYPE
 	unsigned short base1;	//中断函数基地址31--16
 }__attribute__((packed)) idt_struct_t;
 
@@ -80,13 +146,13 @@ struct idtr_t IDTR;
 
 
 /*
- *	填充gdt列表
- *	num: 在gdt的位置
- *	base: 填充的段的基地址
- *	limit: 该段的段限长
- *	access: 包括段的特权级别、段类型（代码段、数据段或者堆栈段）
+ * 填充gdt列表
+ * num: 在gdt的位置
+ * base: 填充的段的基地址
+ * limit: 该段的段限长
+ * access: 包括段的特权级别、段类型（代码段、数据段或者堆栈段）
  *		对于进程而言，ldt: access=0x82，tss: access=0x89
- *	G_DB_L_AVL: 权限
+ * G_DB_L_AVL: 权限
  */
 static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	     unsigned char access,unsigned char G_DB_L_AVL)
@@ -94,7 +160,7 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 	gdt_list[num].limit0 = (limit & 0xffff);
 	gdt_list[num].base0 = (base & 0xffff);
 	gdt_list[num].base1 = (base >> 16) & 0xff;
-	gdt_list[num].access = access;
+	gdt_list[num].access = access; 
 	gdt_list[num].limit1 = (limit >> 16);
 	gdt_list[num].G_DB_L_AVL = G_DB_L_AVL;
 	gdt_list[num].base2 = (base >> 24);
@@ -102,48 +168,47 @@ static void set_gdt(int num,unsigned int base,unsigned int limit,\
 }
 
 /*
- *	填充gdt列表
- *	num: 在gdt的位置
- *	base: 填充的段的基地址
- *	type: 0x89为tss，0x82为ldt
+ * 填充gdt列表
+ * num: 在gdt的位置
+ * base: 填充的段的基地址
+ * type: 0x89为tss，0x82为ldt
  */
-static void set_tssldt2_gdt(int num,unsigned int base,char type)
+static void set_tssldt2_gdt(int num,unsigned int base,unsigned int limit,char type)
 {
 	gdt_list[num].limit0 = (104 & 0xffff);
 	gdt_list[num].base0 = (base & 0xffff);
 	gdt_list[num].base1 = (base >> 16) & 0xff;
 	gdt_list[num].access = type;
 	gdt_list[num].limit1 = 0;
-	gdt_list[num].G_DB_L_AVL = 0;
+	gdt_list[num].G_DB_L_AVL = 0x0c;
 	gdt_list[num].base2 = (base >> 24);
 
 }
 
 /*
- *	填充idt表
- *	num: 填充的中断项在idt中的位置
- *	base: 
- *	sel:
- *	flags:
+ * 填充idt表
+ * num: 填充的中断项在idt中的位置
+ * base: 
+ * sel:
+ * flags:
  */
-static void set_idt(int num,unsigned int base,unsigned short sel,\
-		    unsigned short flags)
+static void set_idt(int num,unsigned int base,unsigned short sel,unsigned short flags)
 {
 	idt_list[num].base0 = base & 0xffff;
 	idt_list[num].base1 = (base >> 16) & 0xffff;
 	idt_list[num].sel = sel;
-	idt_list[num].zero = 0;
+	idt_list[num].zero = 0x0;
 	idt_list[num].flags = flags;
 
 }
 
 
-// 中断
-#define set_int_gate(num,base) set_idt(num,base,0x08,0x8e)
-// 系统调用
-#define set_system_gate(num,base) set_idt(num,base,0x08,0x8e)
-// 陷阱
-#define set_trap_gate(num,base) set_idt(num,base,0x08,0x8e)
+// 中断（权限为0）
+#define set_int_gate(num,base) set_idt(num,base,TYPE_KERNEL_CS,P_SET & (~(DPL3 << 5)) | TYPE_INT_GATE)
+// 陷阱（权限为0）
+#define set_trap_gate(num,base) set_idt(num,base,TYPE_KERNEL_CS,P_SET & (~(DPL3 << 5)) | TYPE_TRAP_GATE)
+// 特殊的陷阱（权限为3）--系统调用
+#define set_system_gate(num,base) set_idt(num,base,TYPE_KERNEL_CS,P_SET | (DPL3 << 5) | TYPE_TRAP_GATE)
 
 /*
  * 设置5个全局描述符（包括全0）
@@ -152,22 +217,26 @@ static void set_idt(int num,unsigned int base,unsigned short sel,\
 static void init_gdt()
 {
 	int i=0;
-	printk("New,update gdt!!!\n");
+	printk("update gdt!\n");
+	printk("CS: 0x%x\n",P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS);
+	printk("DS: 0x%x\n",P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS);
 	// sizeof是编译器内部的宏,不需要定义
 	GDTR.length = sizeof(gdt_struct_t)*GDT_LEN - 1;
 	GDTR.base = (unsigned int)&gdt_list;
 
 	// 开始设置gdt表中的内容
 	set_gdt(0,0,0,0,0);
-	set_gdt(1,0,0xfffff,0x9a,0x0c); //代码段
-	set_gdt(2,0,0xfffff,0x92,0x0c); //数据段
+	//set_gdt(1,0,0xfffff,0x9a,0x0c); //内核代码段
+	//set_gdt(2,0,0xfffff,0x92,0x0c); //内核数据段
+	set_gdt(1, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_CS, 0x0c); //内核代码段
+	set_gdt(2, 0, 0xfffff, P_SET&(~(DPL3 << 5))|S_NSS|TYPE_KERNEL_DS, 0x0c); //内核数据段
+	
 	set_gdt(3,0,0,0,0);//null
 	//set_gdt(4,0,0xfffff,0xfa,0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
 	//set_gdt(5,0,0xfffff,0xf2,0x0c); //用户数据段-------| 进程0的LDT0
-
-	/*
-	 * 后续的段描符初始化为0（与进程相关的代码）
-	 */
+	set_gdt(4, 0, 0xfffff, P_SET|(DPL3 << 5)|S_NSS|TYPE_USER_CS, 0x0c); //用户代码段-------| 进程0的TSS0（任务状态段）
+	set_gdt(5, 0, 0xfffff, P_SET|(DPL3 << 5)|S_NSS|TYPE_USER_DS, 0x0c); //用户数据段-------| 进程0的LDT0
+	/* 后续的段描符初始化为0（与进程相关的代码） */
 	for(i=6;i<256;i++){
 		set_gdt(i,0,0,0,0);
 	}
@@ -182,7 +251,7 @@ static void init_gdt()
  */
 static void init_idt()
 {
-	printk("New,load idt!!!\n");
+	printk("load idt!\n");
 	// 重新映射 IRQ 表
 	// 两片级联的 Intel 8259A 芯片
 	// 主片端口 0x20 0x21
@@ -242,6 +311,7 @@ static void init_idt()
 	set_trap_gate(17,(unsigned int)isr17);
 	set_trap_gate(18,(unsigned int)isr18);
 	set_trap_gate(19,(unsigned int)isr19);
+	/* Intel保留 */
 	set_trap_gate(20,(unsigned int)isr20);
 	set_trap_gate(21,(unsigned int)isr21);
 	set_trap_gate(22,(unsigned int)isr22);
@@ -254,7 +324,7 @@ static void init_idt()
 	set_trap_gate(29,(unsigned int)isr29);
 	set_trap_gate(30,(unsigned int)isr30);
 	set_trap_gate(31,(unsigned int)isr31);
-
+	/* 用户定义 */
 	set_trap_gate(32,(unsigned int)irq0);
 	set_trap_gate(33,(unsigned int)irq1);
 	set_trap_gate(34,(unsigned int)irq2);
@@ -272,12 +342,13 @@ static void init_idt()
 	set_trap_gate(46,(unsigned int)irq14);
 	set_trap_gate(47,(unsigned int)irq15);
 
-	// 用于实现系统调用
+	/* 用于实现系统调用 */
 	set_system_gate(255,(unsigned int)isr255);
-	// 加载idt表地址
+	/* 加载idt表地址 */
 	load_idtr((unsigned int)&IDTR);
 
 }
+
 
 
 

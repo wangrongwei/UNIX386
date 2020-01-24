@@ -8,8 +8,8 @@
 /* 开启调试功能 */
 #define _DEBUG 0
 
-void prink(const char *format,...);
-
+void printk(const char *format,...);
+volatile void panic(const char * s);
 
 
 #endif

@@ -20,7 +20,7 @@ KERNEL_ELF:=$(subst .asm,.elf,$(KERNEL))
 KERNEL_BIN:=$(subst .asm,.bin,$(KERNEL))
 
 # 寻找当前目录下.c文件
-C_SOURCES = $(shell find . -name "*.c")
+C_SOURCES = $(shell find . -path "./prj*" -prune -o -name "*.c" -print)
 C_OBJECTS = $(patsubst %.c,%.o,$(C_SOURCES))
 
 # 寻找init下的汇编文件（待优化）
@@ -33,22 +33,22 @@ ASM = nasm
 LD = ld
 OBJCOPY = objcopy
 
-C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin \
+C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -std=c99\
 -fno-stack-protector -I include
 
 LD_FLAGS  = -T scripts/kernel.ld -m elf_i386
-ASM_FLAGS = -felf -g -F stabs
+ASM_FLAGS = -f elf32 -g -F stabs
 
 IMG:=deeppink.img
 
-
+# 直接将内核代码写进deeppink
 deeppink.img : $(BOOT_BIN) $(KERNEL_BIN)
 	dd if=/dev/zero of=$(IMG) bs=512 count=2880
 	dd if=$(BOOT_BIN) of=$(IMG) conv=notrunc
 	dd if=$(KERNEL_BIN) of=$(IMG) seek=1 conv=notrunc
 
 $(BOOT_BIN) : $(BOOT)
-	nasm $< -o $@
+	$(ASM) $< -o $@
 
 $(KERNEL_BIN) : $(S_OBJECTS) $(C_OBJECTS)
 	@echo 链接生成kernel.bin文件
@@ -63,18 +63,31 @@ $(KERNEL_BIN) : $(S_OBJECTS) $(C_OBJECTS)
 
 # 如果在init下不止一个.asm文件，此处要更改（需要测试）
 $(S_OBJECTS):$(S_SOURCES)
+	@echo 将.c文件编译为.o文件
 	@echo $(S_SOURCES)
 	$(ASM) $(ASM_FLAGS) $< -o $@
 
 
-.PHONY: qemu clean bochs debug dis
+.PHONY: oldqemu qemu clean bochs debug dis
+oldqemu:
+	@echo '启动虚拟机...'
+	qemu-system-i386 -boot order=a -drive file=deeppink.img,format=raw
+
 qemu:
 	@echo '启动虚拟机...'
-	qemu-system-i386  -boot order=a -fda deeppink.img
+	qemu-system-i386	\
+	-accel tcg,thread=single		\
+	-cpu core2duo					\
+	-m 128							\
+	-boot order=a -fda deeppink.img	\
+	-serial stdio					\
+	-smp 1							\
+	-usb							\
+	-vga std
 
 clean :
 	rm -f $(BOOT_BIN) $(KERNEL_BIN) $(S_OBJECTS) $(C_OBJECTS)
-
+	rm ./boot/boot.txt ./init/kernel.txt
 
 debug:
 	qemu-system-i386 -s -S deeppink.img
@@ -82,7 +95,7 @@ debug:
 	#qemu-system-i386 -s -S -boot order=a -fda deeppink.img
 
 bochs:
-	bochs
+	bochs -f ./bochsrc
 
 dis:
 	ndisasm ./boot/boot.bin > ./boot/boot.txt
