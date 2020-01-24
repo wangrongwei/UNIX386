@@ -11,6 +11,17 @@
 
 //#undef _DEBUG
 
+
+void sti()
+{
+	__asm__ __volatile__("sti");
+}
+
+void cli()
+{
+	__asm__ __volatile__("cli");
+}
+
 /*
  * 中断服务程序
  * 函数说明：识别到底是发生了说明中断（通过regs->int_no），然后

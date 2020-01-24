@@ -8,6 +8,8 @@
 #include <schedule.h>
 #include <task_struct.h>
 
+long jiffies;
+
 /*
  * 时钟测试函数
  */
@@ -25,14 +27,15 @@ void timer_callback(pt_regs *regs)
 void timer_interrupt(pt_regs *regs)
 {
 	static long tick = 0;
+	cli();
 	tick++;
+	jiffies++;
 	save_context(regs);
-	if(tick <= 500){
-		printk("a");
+	if(tick <= 200){
 		//current = &(task_tables[0]->task);
 		//schedule();
 	}
-	else if(tick <= 1000){
+	else if(tick <= 500){
 		//current = &(task_tables[1]->task);
 		//schedule();	
 	}
@@ -40,7 +43,6 @@ void timer_interrupt(pt_regs *regs)
 		tick = 0;
 	}
 }
-
 
 
 /*

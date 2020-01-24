@@ -107,23 +107,44 @@ void init()
 }
 
 /*
- * 重新调度
+ * 重新调度（时间片用完或者current.state==0）
  */
 void reschedule(void)
 {
-
+	/* 重新设置current指针 */
+	current->state = TASK_INTERRUPTIBLE;
+	if(current->pid == 0){
+		current = &(task_tables[1]->task);
+	}
+	else{
+		current = &(task_tables[0]->task);
+		
+	}
+	current->state = TASK_RUNNING;
 	return;
 }
 
 /*
- * 调度
+ * 根据调度策略，选择合适的task_struct作为下一个current
  */
 void schedule(void)
 {
 	unsigned int eip,esp,ebp;
 	unsigned int base,limit;
+	struct task_struct *prev,*next;
+	int n,pid;
 	__asm__ __volatile__("mov %%esp, %0":"=r"(esp));
 	__asm__ __volatile__("mov %%ebp, %0":"=r"(ebp));
+	prev = current;
+	if(current->pid == 0){
+		current = &task_tables[1]->task;
+	}
+	else{
+		current = &task_tables[0]->task;
+	}
+	next = current;
+	current->state = TASK_RUNNING;
+	pid = current->pid;
 	if(current != NULL){
 		/* 在gdt表后边加上进程0的tss和ldt */
 		base = &(current->tss);
@@ -134,11 +155,11 @@ void schedule(void)
 		limit = &(current->ldt) + sizeof(current->ldt);
 		set_tssldt2_gdt(FIRST_TASKLDT_INDEX, base, limit, P_SET | (DPL3 << 5) | TYPE_LDT);
 		
-		eip = current->tss.eip;
-		current->tss.esp = esp;
-		current->tss.ebp = ebp;
+		//eip = current->tss.eip;
+		//current->tss.esp = esp;
+		//current->tss.ebp = ebp;
 		/* 实现跳转 */
-		printk("c");
+#if 0
 		__asm__ __volatile__("         \
 			cli;                 \
 			mov %0, %%ecx;       \
@@ -149,6 +170,8 @@ void schedule(void)
 			sti;                 \
 			jmp *%%ecx           "
 			:: "r"(eip), "r"(esp), "r"(ebp), "r"(current->tss.cr3));
+#endif
+		switch_to(prev,next,prev);
 	}
 }
 
@@ -175,6 +198,42 @@ void save_context(pt_regs *regs)
 	current->tss.ss = regs->ss;
 }
 
+
+ /*
+  * 切换到task_[n]，首先需要检测n不是当前current，否则不做任何事；
+  * 如果task_[n]用到math co-processor，需要清空TS-flag；
+  */
+struct task_struct fastcall * __switch_to(struct task_struct *prev, struct task_struct *next) 
+{
+	struct {long a,b;} __tmp;
+	unsigned int eip,esp,ebp;
+	esp = next->tss.esp0;
+	ebp = next->tss.ebp;
+	eip = next->tss.eip;		
+#if 0
+	__asm__ __volatile__("cmpl %%ecx,current\n\t" \
+		"je 1f\n\t" \
+		"movw %%dx,%1\n\t" \
+		"xchgl %%ecx,current\n\t" \
+		"ljmp *%0\n" \
+		"1:" \
+		::"m" (*&task_tables[nr_pid]->task.tss.eip),"m" (*&__tmp.b),\
+		"d" (_TSS(nr_tss)),"c" ((long) &task_tables[nr_pid]->task));
+#endif
+	__asm__ __volatile__("cli\n\t" \
+		"mov %0, %%ecx\n\t" \
+		"mov %1, %%esp\n\t" \
+		"mov %2, %%ebp\n\t" \
+		"mov %3, %%eax\n\t" \
+		"mov $0x12345, %%eax\n\t" \
+		"sti\n\t" \
+		"jmp *%%ecx\t" \
+		:: "r"(eip), "r"(esp), "r"(ebp), "r"(current->tss.cr3));
+	return prev;
+}
+
+
+
 /*
  * 准备init0
  */
@@ -183,7 +242,7 @@ void init0_ready(void)
 	/* 设置栈 */
 	struct task_struct *init0_point = &(task_tables[0]->task);
 	init0_point->tss.esp0 = (long)task_tables + PAGE_SIZE;
-	init0_point->tss.eip = (long)thread_init0;
+	init0_point->tss.eip = (long)thread_cpu_idle;
 	init0_point->tss.eflags = 0x3202; /* 设置IOPL=3 */
 }
 
@@ -202,24 +261,33 @@ void init_thread(void)
 	}
 	idle_point->task = task_tables[0]->task;
 	task_tables[1] = idle_point;
+	idle_point->task.pid = 1;
 	idle_point->task.tss.esp0 = &task_tables[1] + PAGE_SIZE;
-	idle_point->task.tss.eip = (long)thread_idle;
+	idle_point->task.tss.eip = (long)thread_init1;
 	idle_point->task.tss.eflags = 0x3202; /* 设置IOPL=3 */
 #endif
 }
 
 
 /* 初始化一个函数作为init进程程序体 */
-void thread_init0(void)
+void thread_init1(void)
 {
 	static int i=0,j=0;
 	while(1){
+		cli();
 		i++;
+		if((i % 3000) == 0){
+			printk("1 ");
+		}
 		if(i == 10000){
 			i = 0;
 			j++;
-			printk("%d ",j);
+			
+			current->state = TASK_INTERRUPTIBLE;
+			schedule();
+			
 		}
+		sti();
 	};
 }
 
@@ -227,12 +295,24 @@ void thread_init0(void)
 /* 
  * CPU空闲状态下运行的内核线程 
  */
-void thread_idle(void)
+void thread_cpu_idle(void)
 {
-	int i=0;
-	i++;
+	static int i=0,j=0;
 	while(1){
-		printk("B");
+		cli();
+		i++;
+		if((i % 3000) == 0){
+			printk("0 ");
+		}
+		if(i == 10000){
+			i = 0;
+			j++;
+			
+			current->state = TASK_INTERRUPTIBLE;
+			schedule();
+			
+		}
+		sti();
 	};
 }
 

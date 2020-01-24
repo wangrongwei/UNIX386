@@ -102,20 +102,13 @@ void kernel_start()
 	/* 其他设备初始化 */
 	init_thread();
 	init_buddy();
-	init();
+	//init();
 #endif
-	__asm__ __volatile__("sti");
-	/* 以下代码类似CPU进入idle */
-	while(1){
-		//schedule();
-		i++;
-		if(i == 5000){
-			printk("s");
-			i = 0;
-		}
-		__asm__ __volatile__("sti");
-	}
-
+	/* 
+	 * 以下代码类似CPU进入idle，即init0
+	 * init0检测是否有其他task需要执行
+	 */
+	thread_cpu_idle();
 }
 
 /*

@@ -346,7 +346,7 @@ system_call:
         jne	reschedule
         cmp	dword [eax+4],0
         je 	reschedule
-
+ret_from_system_call:
 	;add	esp, 4 * 4
 	;pop	esi
 	pop	gs

@@ -6,6 +6,8 @@
  * 	这些中断处理函数只是填充idt表中的offset项
  */
 
+void sti();
+void cli();
 
 /* 寄存器类型 */
 typedef struct pt_regs_t {

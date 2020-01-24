@@ -30,7 +30,7 @@
 // 将tss或者ldt相对于第一个tss或者第一个ldt进行编码
 
 // TR [---selector(16 bit, visible)---/---base(hidden)---/---limit(hidden)---]
-#define _TSS(n) ((((unsigned long)n) << 4) + (FIRST_TASKTSS_INDEX << 3) + RPL3)
+#define _TSS(n) ((((unsigned long)n) << 4) + (FIRST_TASKTSS_INDEX << 3))
 #define _LDT(n) ((((unsigned long)n) << 4) + (FIRST_TASKLDT_INDEX << 3)) 
 
 
@@ -85,7 +85,7 @@ struct tss_struct{
 /* task_struct：进程的描述符 */
 struct task_struct{
 	long state; /* 进程当前的状态 */
-	long counter;
+	long counter; /* 时间片 */
 	long priority; /* 优先级 */
 	long signal;
 
@@ -235,7 +235,7 @@ struct task_struct INIT_TASK={
 #define INIT_TASK \
 {\
 /* state */ TASK_RUNNING,\
-/* counter */ 0,\
+/* counter */ 1000,\
 /* priority */ 0,\
 /* signal */ 0,\
 \
