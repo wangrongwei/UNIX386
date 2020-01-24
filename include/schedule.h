@@ -42,25 +42,25 @@ extern struct task_struct *current;
 extern union task_union* task_tables[];
 
 
-/*
- * Saving eflags is important. It switches not only IOPL between tasks,
- * it also protects other tasks from NT leaking through sysenter etc.
- */
+ /*
+  * 切换进程
+  * 保存eflags
+  */
 #define switch_to(prev,next,last) do {					\
 	unsigned long esi,edi;						\
-	__asm__ __volatile__("pushfl\n\t"	/* Save flags */	\
+	__asm__ __volatile__("pushfl\n\t"	/* 保存eflags */		\
 		     "pushl %%ebp\n\t"					\
-		     "movl %%esp,%0\n\t"	/* save ESP */		\
-		     "movl %5,%%esp\n\t"	/* restore ESP */	\
-		     "movl $1f,%1\n\t"		/* save EIP */		\
-		     "pushl %6\n\t"		/* restore EIP */	\
+		     "movl %%esp,%0\n\t"	/* 保存ESP */		\
+		     "movl %5,%%esp\n\t"	/* 切换ESP */		\
+		     "movl $1f,%1\n\t"		/* 保存EIP */		\
+		     "pushl %6\n\t"		/* 切换EIP */		\
 		     "jmp __switch_to\n"				\
-		     "1:\t"						\
+		     "1:\t"			/* 下一次切换回到1 */		\
 		     "popl %%ebp\n\t"					\
 		     "popfl"						\
 		     :"=m" (prev->tss.esp0),"=m" (prev->tss.eip),	\
 		      "=a" (last),"=S" (esi),"=D" (edi)			\
-		     :"m" (next->tss.esp0),"m" (next->tss.eip),	\
+		     :"m" (next->tss.esp0),"m" (next->tss.eip),		\
 		      "2" (prev), "d" (next));				\
 } while (0)
 

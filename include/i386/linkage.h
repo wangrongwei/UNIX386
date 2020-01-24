@@ -2,6 +2,8 @@
 #ifndef __ASM_LINKAGE_H
 #define __ASM_LINKAGE_H
 
+/* 本文件参考linux-2.6.22.6 */
+
 #define asmlinkage CPP_ASMLINKAGE __attribute__((regparm(0)))
 #define FASTCALL(x)	x __attribute__((regparm(3)))
 /* 使用三个寄存器传递参数（EAX,EDX,ECX） */

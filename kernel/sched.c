@@ -158,19 +158,7 @@ void schedule(void)
 		//eip = current->tss.eip;
 		//current->tss.esp = esp;
 		//current->tss.ebp = ebp;
-		/* 实现跳转 */
-#if 0
-		__asm__ __volatile__("         \
-			cli;                 \
-			mov %0, %%ecx;       \
-			mov %1, %%esp;       \
-			mov %2, %%ebp;       \
-			mov %3, %%eax;       \
-			mov $0x12345, %%eax; \
-			sti;                 \
-			jmp *%%ecx           "
-			:: "r"(eip), "r"(esp), "r"(ebp), "r"(current->tss.cr3));
-#endif
+		/* 进程切换 */
 		switch_to(prev,next,prev);
 	}
 }
@@ -209,17 +197,7 @@ struct task_struct fastcall * __switch_to(struct task_struct *prev, struct task_
 	unsigned int eip,esp,ebp;
 	esp = next->tss.esp0;
 	ebp = next->tss.ebp;
-	eip = next->tss.eip;		
-#if 0
-	__asm__ __volatile__("cmpl %%ecx,current\n\t" \
-		"je 1f\n\t" \
-		"movw %%dx,%1\n\t" \
-		"xchgl %%ecx,current\n\t" \
-		"ljmp *%0\n" \
-		"1:" \
-		::"m" (*&task_tables[nr_pid]->task.tss.eip),"m" (*&__tmp.b),\
-		"d" (_TSS(nr_tss)),"c" ((long) &task_tables[nr_pid]->task));
-#endif
+	eip = next->tss.eip;
 	__asm__ __volatile__("cli\n\t" \
 		"mov %0, %%ecx\n\t" \
 		"mov %1, %%esp\n\t" \
