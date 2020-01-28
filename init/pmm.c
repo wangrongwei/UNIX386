@@ -75,6 +75,7 @@ void *kmalloc(uint32_t size,int flags)
 {
 	/* 先实现一个简单的分配粒度为粒度的字节的kmalloc */
 	/* 不考虑内存碎片 */
+	/* TODO 实现普通的kmalloc分配 */
 	return basic_allocator(size);
 }
 

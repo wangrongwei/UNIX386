@@ -168,22 +168,12 @@ void schedule(void)
  */
 void save_context(pt_regs *regs)
 {
-	current->tss.ds = regs->ds;	// 用于保存用户的数据段描述符
 	current->tss.edi = regs->edi;	// 从 edi 到 eax 由 pusha 指令压入
 	current->tss.esi = regs->esi;
 	current->tss.ebp = regs->ebp;
 	current->tss.esp = regs->esp;
 	current->tss.ebx = regs->ebx;
-	current->tss.edx = regs->edx;
-	current->tss.ecx = regs->ecx;
-	current->tss.eax = regs->eax;
-	//current->tss.int_no = regs->int_no;	// 中断号
-	//current->tss.err_code = regs->err_code;	// 错误代码(有中断错误代码的中断会由CPU压入)
-	current->tss.eip = regs->eip;	// 以下由处理器自动压入
-	current->tss.cs = regs->cs;
 	current->tss.eflags = regs->eflags;
-	//current->tss.useresp = regs->useresp;
-	current->tss.ss = regs->ss;
 }
 
 

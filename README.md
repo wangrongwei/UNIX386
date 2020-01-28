@@ -6,8 +6,8 @@ DeeppinkOS有两个分支：master和new，master分支可直接clone运行，ne
 
 ## 编译环境
 
-- 编译环境：ubuntu16.04 64位
-- 编译器：gcc-5.4.0
+- 编译环境：ubuntu or CentOS
+- 编译器：gcc
 - 汇编器：nasm
 - 链接器：ld
 - 仿真器：bochs
@@ -63,7 +63,7 @@ README.md-----------------帮助文档（遇到的相关bug和设计步骤）  <
 
 ## 运行说明
 
-该工程在ubuntu16.04上已测试通过，需要安装最新的bochs运行，可支持三种方式：
+该工程在ubuntu16.04和CentOS7上已测试通过，需要安装最新的bochs运行，可支持三种方式：
 
 - make bochs
 - make qemu
@@ -80,5 +80,4 @@ make debug表示以调试模式运行，详情可查看Makefile文档。
 82062（硬盘控制器）</br>
 8254（可编程定时/计数器）</br>
 
-实现系统调用（是实现多进程切换的前提），在<b>include/i386</b>文件下添加<b>sys.h</b>文件（包含系统库），初步打算再<b>kernel.asm</b>下实现系统调用。正在完善中...
-
+正在完善中...
