@@ -1,7 +1,6 @@
 
 /*
- *	实现fork
- *	author: Patrick Wang
+ * 实现fork
  */
 
 #include <i386/sys.h>
@@ -14,9 +13,6 @@
 inline _create_systemcall(int,fork)
 /* 实现pause */
 static inline _create_systemcall(int,pause)
-
-
-
 
 
 
