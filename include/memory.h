@@ -10,16 +10,15 @@
 struct memory_allocator_t {
 	char *name;
 
-}
+};
 
+/* 物理地址 */
+typedef uint32_t phys_addr_t;
 
-
-
-
-
+/* 虚拟地址 */
+typedef uint32_t virt_addr_t;
 
 
 
 #endif
-
 

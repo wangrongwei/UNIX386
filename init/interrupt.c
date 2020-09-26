@@ -102,7 +102,7 @@ void irq_handler(pt_regs *regs)
 /*
  * 函数说明：向中断数组函数加入具体的中断服务程序（相当于注册）
  */
-void register_interrupt_handler(unsigned char n,interrupt_handler_t h)
+void register_interrupt_handler(unsigned char n, interrupt_handler_t h)
 {
 	interrupt_handlers[n] = h;
 	//h->int_no = n;

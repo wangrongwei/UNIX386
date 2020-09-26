@@ -32,6 +32,11 @@ long kernel_stack_top = (long)kernel_stack + STACK_SIZE;
 /* 一个全局指针，指向当前正在执行的进程的task_struct */
 struct task_struct *current = &(init_task.task); 
 
+/* 所有可以选择的调度器 */
+struct scheduler scheduler_array[] {
+	{"primary_sched", schedule},
+	{NULL, NULL}
+};
 
 /*
  * 调度初始化，启动进程0
@@ -133,6 +138,7 @@ void schedule(void)
 	unsigned int base,limit;
 	struct task_struct *prev,*next;
 	int n,pid;
+
 	__asm__ __volatile__("mov %%esp, %0":"=r"(esp));
 	__asm__ __volatile__("mov %%ebp, %0":"=r"(ebp));
 	prev = current;

@@ -33,7 +33,7 @@ struct kmem_cache_t *kmem_cache_create(char *name, size_t size, int align,
 	void (*constructor)(void *, size_t),
 	void (*destructor)(void *, size_t))
 {
-
+	return NULL;
 }
 
 
@@ -42,7 +42,7 @@ struct kmem_cache_t *kmem_cache_create(char *name, size_t size, int align,
  */
 void kmem_cache_destroy(struct kmem_cache_t *cp)
 {
-
+	return;
 }
 
 /*
@@ -50,7 +50,7 @@ void kmem_cache_destroy(struct kmem_cache_t *cp)
  */
 void *kmem_cache_alloc(struct kmem_cache_t *cp, int flags)
 {
-
+	return NULL;
 }
 
 /*
@@ -58,6 +58,6 @@ void *kmem_cache_alloc(struct kmem_cache_t *cp, int flags)
  */
 void kmem_cache_free(struct kmem_cache_t *cp, void *buf)
 {
-
+	return;
 }
 
