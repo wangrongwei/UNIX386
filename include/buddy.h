@@ -3,6 +3,7 @@
 #define __BUDDY_H__
 
 #include <unistd.h>
+#include <memory.h>
 #include <list.h>
 
 struct buddy_element{
@@ -11,8 +12,10 @@ struct buddy_element{
 	struct list_head order_list_head;
 };
 
-uint32_t alloc_pages(int count, int flags);
+extern struct buddy_element *buddy_order[];
 
+uint32_t buddy_alloc_pages(int count, int flags);
+int buddy_alloc_scheme(int count);
 
 #endif
 

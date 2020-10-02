@@ -32,13 +32,18 @@ long kernel_stack_top = (long)kernel_stack + STACK_SIZE;
 /* 一个全局指针，指向当前正在执行的进程的task_struct */
 struct task_struct *current = &(init_task.task); 
 
+/* 所有可以选择的调度器 */
+struct scheduler scheduler_array[] = {
+	{"primary_sched", schedule},
+	{NULL, NULL}
+};
 
 /*
  * 调度初始化，启动进程0
  */
 void schedule_init(void)
 {
-	unsigned int base,limit;
+	unsigned int base, limit;
 	printk("scheduler init!\n");
 	/* 在gdt表后边加上进程0的tss和ldt */
 	//set_tssldt2_gdt(FIRST_TASKTSS_INDEX, &(init_task.task.tss), 0xe9);
@@ -59,7 +64,7 @@ void schedule_init(void)
 	init_timer(HZ);
 
 	/* 设置系统调度总入口 */
-	set_system_gate(0x80,&system_call);
+	set_system_gate(0x80, &system_call);
 	printk("scheduler initial end...\n");
 
 }
@@ -88,7 +93,8 @@ void move_to_user_mode(void)
 
 void init()
 {
-	long ss,sp,eflags,cs,ip;
+	long ss, sp, eflags, cs, ip;
+
 	ss = init_task.task.tss.ss;
 	sp = init_task.task.tss.esp0;
 	eflags = init_task.task.tss.eflags;
@@ -129,10 +135,11 @@ void reschedule(void)
  */
 void schedule(void)
 {
-	unsigned int eip,esp,ebp;
-	unsigned int base,limit;
-	struct task_struct *prev,*next;
-	int n,pid;
+	unsigned int eip, esp, ebp;
+	unsigned int base, limit;
+	struct task_struct *prev, *next;
+	int n, pid;
+
 	__asm__ __volatile__("mov %%esp, %0":"=r"(esp));
 	__asm__ __volatile__("mov %%ebp, %0":"=r"(ebp));
 	prev = current;
@@ -159,7 +166,7 @@ void schedule(void)
 		//current->tss.esp = esp;
 		//current->tss.ebp = ebp;
 		/* 进程切换 */
-		switch_to(prev,next,prev);
+		switch_to(prev, next, prev);
 	}
 }
 
@@ -168,22 +175,12 @@ void schedule(void)
  */
 void save_context(pt_regs *regs)
 {
-	current->tss.ds = regs->ds;	// 用于保存用户的数据段描述符
 	current->tss.edi = regs->edi;	// 从 edi 到 eax 由 pusha 指令压入
 	current->tss.esi = regs->esi;
 	current->tss.ebp = regs->ebp;
 	current->tss.esp = regs->esp;
 	current->tss.ebx = regs->ebx;
-	current->tss.edx = regs->edx;
-	current->tss.ecx = regs->ecx;
-	current->tss.eax = regs->eax;
-	//current->tss.int_no = regs->int_no;	// 中断号
-	//current->tss.err_code = regs->err_code;	// 错误代码(有中断错误代码的中断会由CPU压入)
-	current->tss.eip = regs->eip;	// 以下由处理器自动压入
-	current->tss.cs = regs->cs;
 	current->tss.eflags = regs->eflags;
-	//current->tss.useresp = regs->useresp;
-	current->tss.ss = regs->ss;
 }
 
 

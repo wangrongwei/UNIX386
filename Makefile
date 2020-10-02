@@ -5,7 +5,7 @@
 #
 # author : wangrongwei
 # time : 2018/08/12
-# usage : 	make 
+# usage : 	make
 #			make qemu
 #			make bochs
 #			make dis
@@ -13,6 +13,10 @@
 
 
 BOOT:=boot/boot.asm
+BOOT_O:=boot/boot.o
+E820_C:=boot/e820.c
+E820_S:=boot/e820.s
+E820_O:=boot/e820.o
 KERNEL:=init/kernel.asm
 BOOT_BIN:=$(subst .asm,.bin,$(BOOT))
 
@@ -20,7 +24,7 @@ KERNEL_ELF:=$(subst .asm,.elf,$(KERNEL))
 KERNEL_BIN:=$(subst .asm,.bin,$(KERNEL))
 
 # 寻找当前目录下.c文件
-C_SOURCES = $(shell find . -path "./prj*" -prune -o -name "*.c" -print)
+C_SOURCES = $(shell find . -path "./.sicode*" -prune -o -path "./boot/*" -prune -o -name "*.c" -print)
 C_OBJECTS = $(patsubst %.c,%.o,$(C_SOURCES))
 
 # 寻找init下的汇编文件（待优化）
@@ -29,12 +33,13 @@ S_OBJECTS = $(patsubst %.asm,%.o,$(S_SOURCES))
 
 
 CC = gcc
+AS = as
 ASM = nasm
 LD = ld
 OBJCOPY = objcopy
 
 C_FLAGS   = -c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -std=c99\
--fno-stack-protector -I include
+-fno-stack-protector -I include -I drivers
 
 LD_FLAGS  = -T scripts/kernel.ld -m elf_i386
 ASM_FLAGS = -f elf32 -g -F stabs
@@ -47,8 +52,15 @@ deeppink.img : $(BOOT_BIN) $(KERNEL_BIN)
 	dd if=$(BOOT_BIN) of=$(IMG) conv=notrunc
 	dd if=$(KERNEL_BIN) of=$(IMG) seek=1 conv=notrunc
 
-$(BOOT_BIN) : $(BOOT)
-	$(ASM) $< -o $@
+$(BOOT_BIN) : $(BOOT_O) $(E820_O)
+	$(LD) -Ttext 0x7c00 -m elf_i386 $^ -o $@
+
+$(BOOT_O) : $(BOOT)
+	$(ASM) -f elf $< -o $@
+$(E820_O) : $(E820_S)
+	$(AS) --32 -march=i386 $< -o $@
+$(E820_S) : $(E820_C)
+	$(CC) -m16 -masm=intel -I include $< -S -o $@
 
 $(KERNEL_BIN) : $(S_OBJECTS) $(C_OBJECTS)
 	@echo 链接生成kernel.bin文件
@@ -78,7 +90,7 @@ qemu:
 	qemu-system-i386	\
 	-accel tcg,thread=single		\
 	-cpu core2duo					\
-	-m 128							\
+	-m 64							\
 	-boot order=a -fda deeppink.img	\
 	-serial stdio					\
 	-smp 1							\

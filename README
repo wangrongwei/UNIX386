@@ -1,0 +1,159 @@
+UNIX386
+========
+
+一个i386架构的简单内核
+
+借鉴了《30天自制操作系统》、《一个orange操作系统的实现》和《linux内核设计的艺
+术》相关代码，对其中思路重新调整，多处初始化流程细节不在按照经典的启动流程来，
+采用简单和便于理解的方式对内核完善。
+
+当前两个分支
+------------
+	master：master分支可直接clone运行；
+	new分：支属于正在开发中的分支，存在较多的bug，不能运行；
+
+编译环境
+========
+
+    1. 编译环境：linux
+    2. 编译器：gcc
+    3. 汇编器：nasm
+    4. 链接器：ld
+    5. 仿真器：bochs
+    6. 其他工具：objcopy
+
+1. 如果只用汇编语言编写 16 位程序，请使用 .code16 指令，并保证
+只使用 16 位的指令和寄存器；如果要和 C 语言一起工作，请使用
+.code16gcc 指令，并且在函数框架中使用 pushl，calll，retl，leavel
+jmpl，使用 0x8(%ebp) 开始访问函数的参数；很显然，使用 C 语言和
+汇编语言混编的程序可以在实模式下运行，但是不能在 286 之前的真实
+CPU 上运行，因为 286 之前的 CPU 还没有 pushl、calll、retl、leavel
+jmpl 等指令。
+
+2. 使用 as 时，请指定 --32 选项，使用 gcc 时，请指定 -m32 选项，使
+用 ld 时，请指定 -m elf_i386 选项。如果是反汇编 16 位代码，在使
+用 objdump 时，请使用 -m i8086 选项。
+
+说明
+=====
+
+最开始，打算按照《30天自制操作系统》一书再次慢慢研究操作系统的设计知识，最后由
+于将开发环境换成ubuntu，使用gcc和nasm编译整个内核，开始此计划时，内核相关知识有
+但是还缺少实验，再加上对gcc和nasm编译一个x86文件感觉不太可能，参考了其他简单内
+核，最终确定可以修改原来的Makefile文件，使用gcc和nasm。
+
+推荐：使用bochs慢慢单步调试，这些问题都能发现。
+
+DeeppinkOS文件结构(按照创建先后列出)
+-------------------------------------
+
+.                            
+├── boot                     
+│   ├── boot.asm             
+│   └── e820.c               
+├── deeppink.img             
+├── doc                      
+│   ├── arch.pptx            
+│   └── help.md              
+├── drivers                  
+│   ├── block.c              
+│   ├── block.h              
+│   ├── floppy.c             
+│   ├── hd.c                 
+│   ├── keyboard.c           
+│   ├── task.c               
+│   └── timer.c              
+├── fs                       
+│   └── ext4.c               
+├── include                  
+│   ├── boot.h               
+│   ├── buddy.h              
+│   ├── console.h            
+│   ├── ctype.h              
+│   ├── ctypes.h             
+│   ├── debug.h              
+│   ├── descriptor.h         
+│   ├── error.h              
+│   ├── ext4.h               
+│   ├── font.h               
+│   ├── i386                 
+│   │   ├── fork.c           
+│   │   ├── fork.h           
+│   │   ├── linkage.h        
+│   │   ├── sys.c            
+│   │   ├── sys.h            
+│   │   └── system.h         
+│   ├── init.h               
+│   ├── interrupt.h          
+│   ├── keyboard.h           
+│   ├── keymap.h             
+│   ├── list.h               
+│   ├── memory.h             
+│   ├── page.h               
+│   ├── peripheral.h         
+│   ├── pmm.h                
+│   ├── protect.h            
+│   ├── README.md            
+│   ├── schedule.h           
+│   ├── slab.h               
+│   ├── string.h             
+│   ├── task.h               
+│   ├── task_struct.h        
+│   ├── timer.h              
+│   ├── tty.h                
+│   ├── unistd.h             
+│   ├── vargs.h              
+│   └── vmm.h                
+├── init                     
+│   ├── console.c            
+│   ├── interrupt.c          
+│   ├── kernel.asm           
+│   ├── memory.c             
+│   ├── palette.c            
+│   ├── pmm.c                
+│   ├── start.c              
+│   └── vmm.c                
+├── kernel                   
+│   ├── buddy.c              
+│   ├── panic.c              
+│   ├── prink.c              
+│   ├── sched.c              
+│   ├── sched.s              
+│   ├── slab.c               
+│   └── tty.c                
+├── Makefile                 
+├── qemu_run_os.sh           
+├── README                   
+├── RUN_i386.bat             
+└── scripts                  
+    └── kernel.ld            
+
+运行说明
+---------
+
+该工程在ubuntu16.04和CentOS7上已测试通过，需要安装最新的bochs运行，可支持三种方
+式：
+
+    1. make bochs
+    2. make qemu
+    3. make debug
+
+make debug表示以调试模式运行，详情可查看Makefile文档。
+
+TODO
+=====
+
+	1. asm切换为.S
+	2. 调度器
+	3. buddy系统
+	4. slab分配器
+	5. 82258（DMA控制器）
+	6. 8259A（中断控制器）
+	7. 8272（磁盘控制器）
+	8. 82385（Cache控制器）
+	9. 82062（硬盘控制器）
+	10. 8254（可编程定时/计数器）
+
+正在完善中...
+
+

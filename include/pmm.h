@@ -22,6 +22,8 @@ extern unsigned int pmm_stack_top;
 void init_pmm(void);
 void pmm_free_page(uint32_t p);
 uint32_t pmm_alloc_page(void);
+void pmm_free_pages(uint32_t p, int count);
+uint32_t pmm_alloc_pages(int count);
 
 void *kmalloc(uint32_t size, int flags);
 void kfree();

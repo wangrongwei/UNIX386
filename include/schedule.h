@@ -6,11 +6,13 @@
 #include <interrupt.h>
 #include <i386/linkage.h>
 
-/*
- * 定义与调度相关的变量
- *
- */
+/* 定义与调度相关的变量 */
 #define STACK_SIZE 8192
+
+enum schedr_index {
+	PRI_SCHEDR = 0,
+	MAX_SCHEDR
+};
 
 extern char kernel_stack[];
 extern long kernel_stack_top;
@@ -41,13 +43,20 @@ void init(void);
 extern struct task_struct *current;
 extern union task_union* task_tables[];
 
+/*
+ * 调度器
+ */
+struct scheduler {
+	char *name;
+	void (*fn)(void);	
+};
 
  /*
   * 切换进程
   * 保存eflags
   */
-#define switch_to(prev,next,last) do {					\
-	unsigned long esi,edi;						\
+#define switch_to(prev, next, last) do {					\
+	unsigned long esi, edi;						\
 	__asm__ __volatile__("pushfl\n\t"	/* 保存eflags */		\
 		     "pushl %%ebp\n\t"					\
 		     "movl %%esp,%0\n\t"	/* 保存ESP */		\
@@ -62,7 +71,7 @@ extern union task_union* task_tables[];
 		      "=a" (last),"=S" (esi),"=D" (edi)			\
 		     :"m" (next->tss.esp0),"m" (next->tss.eip),		\
 		      "2" (prev), "d" (next));				\
-} while (0)
+} while (0);
 
 #endif
 

@@ -1,7 +1,7 @@
 #ifndef __CONSOLE_H__
 #define __CONSOLE_H__
 
-enum color{
+enum color {
 	black = 0,
 	blue  = 1,
 	green = 2,
@@ -16,8 +16,8 @@ enum color{
  * 定义两个与屏幕有关的函数-清屏和显示一个字符串
  */
 void console_clear();
-void console_puts(unsigned char *string,unsigned char color_b,unsigned char color_z);
-void console_movecursor(int x,int y);
+void console_puts(unsigned char *string, unsigned char color_b, unsigned char color_z);
+void console_movecursor(int x, int y);
 unsigned short console_readcursor();
 
 

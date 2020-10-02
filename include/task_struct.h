@@ -7,6 +7,7 @@
 #ifndef __TASK_STRUCT_H__
 #define __TASK_STRUCT_H__
 
+#include <unistd.h>
 #include "schedule.h"
 
 #include "descriptor.h"
@@ -82,6 +83,17 @@ struct tss_struct{
 
 };
 
+
+/* 内核线程上下文 */
+struct context_t{
+	uint32_t esp;
+	uint32_t ebp;
+	uint32_t ebx;
+	uint32_t esi;
+	uint32_t edi;
+	uint32_t eflags;
+};
+
 /* task_struct：进程的描述符 */
 struct task_struct{
 	long state; /* 进程当前的状态 */
@@ -100,6 +112,7 @@ struct task_struct{
 	long utime,stime,cutime,cstime,start_time;
 
 	int nr_tty; /* 自设备号 */
+	struct context_t context;
 	struct task_struct *next; /* 一个进程 */
 	/* 接下来需要三个结构体代码该进程执行的对象 */
 	// 目前先不设置
