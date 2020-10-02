@@ -29,7 +29,7 @@ void *basic_allocator(uint32_t size)
 /*
  * TODO 构建kmem_cache
  */
-struct kmem_cache_t *kmem_cache_create(char *name, size_t size, int align, 
+kmem_cache_t *kmem_cache_create(char *name, size_t size, int align, 
 	void (*constructor)(void *, size_t),
 	void (*destructor)(void *, size_t))
 {
@@ -40,7 +40,7 @@ struct kmem_cache_t *kmem_cache_create(char *name, size_t size, int align,
 /*
  * TODO 释放kmem_cache
  */
-void kmem_cache_destroy(struct kmem_cache_t *cp)
+void kmem_cache_destroy(kmem_cache_t *cp)
 {
 	return;
 }
@@ -48,7 +48,7 @@ void kmem_cache_destroy(struct kmem_cache_t *cp)
 /*
  * TODO 从一个kmem_cache中分配一个object
  */
-void *kmem_cache_alloc(struct kmem_cache_t *cp, int flags)
+void *kmem_cache_alloc(kmem_cache_t *cp, int flags)
 {
 	return NULL;
 }
@@ -56,7 +56,7 @@ void *kmem_cache_alloc(struct kmem_cache_t *cp, int flags)
 /*
  * TODO 与kmem_cache_alloc动作相反
  */
-void kmem_cache_free(struct kmem_cache_t *cp, void *buf)
+void kmem_cache_free(kmem_cache_t *cp, void *buf)
 {
 	return;
 }
