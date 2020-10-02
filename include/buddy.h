@@ -12,7 +12,7 @@ struct buddy_element{
 	struct list_head order_list_head;
 };
 
-extern struct *buddy_element buddy_order[];
+extern struct buddy_element *buddy_order[];
 
 uint32_t buddy_alloc_pages(int count, int flags);
 int buddy_alloc_scheme(int count);

@@ -16,7 +16,7 @@ static uint32_t average = 20;
 static uint32_t nr_free_pages;
 static uint32_t nr_pages;
 
-struct *buddy_element buddy_order[MAX_ORDER];
+struct buddy_element *buddy_order[MAX_ORDER];
 static int nr_buddyfree_order[MAX_ORDER];
 
 /*
@@ -104,7 +104,7 @@ uint32_t buddy_alloc_pages(int count, int flags)
 	int pages = count;
 	uint32_t ret;
 	int index;
-	struct *buddy_element be;
+	struct buddy_element *be;
 
 	/* buddy_order[MAX_ORDER]; */
 	/*
@@ -114,7 +114,7 @@ uint32_t buddy_alloc_pages(int count, int flags)
 
 	/* There is a serious bug, NEED to FIX later. */
 	be = buddy_order[index];
-	buddy_order[index] = be->order_list_head->next;
+	buddy_order[index] = be->order_list_head.next;
 
 	return ret = (phys_addr_t)be->data;
 }
