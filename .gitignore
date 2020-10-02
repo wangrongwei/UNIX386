@@ -1,6 +1,7 @@
-/prj/
-/.autogit/
-/.sicode/
+prj/
+.autogit/
+.sicode/
+boot/e820.s
 *.o
 *.txt
 *.elf
