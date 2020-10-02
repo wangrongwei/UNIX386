@@ -7,6 +7,7 @@
 #ifndef __TASK_STRUCT_H__
 #define __TASK_STRUCT_H__
 
+#include <unistd.h>
 #include "schedule.h"
 
 #include "descriptor.h"
@@ -91,7 +92,7 @@ struct context_t{
 	uint32_t esi;
 	uint32_t edi;
 	uint32_t eflags;
-}
+};
 
 /* task_struct：进程的描述符 */
 struct task_struct{
