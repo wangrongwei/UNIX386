@@ -14,6 +14,12 @@ extern void outb(unsigned short port,unsigned short value);
 extern unsigned char inb(unsigned short port);
 extern unsigned short inw(unsigned short port);
 
+static void fdc_handler(pt_regs *r)
+{
+	ReceivedIRQ = true;
+}
+
+
 void reset_floppy(int device)
 {
 	int i;
@@ -32,6 +38,7 @@ void reset_floppy(int device)
 
 	while(!ReceivedIRQ); // Wait for the IRQ handler to run
 
+#if 0
 	// sense interrupt -- 4 of them typically required after a reset
 	for (i = 4 ; i > 0 ; --i); 
 	{
@@ -46,11 +53,7 @@ void reset_floppy(int device)
 	flpydsk_send_command(SPECIFY);
 	outb(DATA_FIFO, steprate_headunload);
 	outb(DATA_FIFO, headload_ndma);
-}
-
-void fdc_handler(pt_regs *r)
-{
-	ReceivedIRQ = true;
+#endif
 }
 
 /*
@@ -61,7 +64,8 @@ void floppy_init()
 	int device;
 
 	reset_floppy(device);
-	while(fdc_flag);
+	// fdc_flag
+	while(ReceivedIRQ);
 	return;
 }
 

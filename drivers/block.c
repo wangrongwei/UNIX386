@@ -18,9 +18,9 @@ void register_device(struct device *dev)
 {
 	int i;
 	struct device *devtmp;
-	struct dlist *dev_cur = NULL, dev_next = NULL;
+	struct dlist *dev_cur = NULL, *dev_next = NULL;
 
-	dev_cur = device_list;
+	dev_cur = &device_list;
 	do {
 		if (dev_next != NULL) {
 			dev_cur = dev_next;
