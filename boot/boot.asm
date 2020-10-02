@@ -19,6 +19,8 @@
 ;7->
 
 [bits 16]
+extern  detect_memory;
+
 CYLS		EQU	10	;读取10个柱面
 BOOT_ADDR	EQU	0x7C00
 KERNEL_ADDR	EQU	0xC0000000
@@ -29,7 +31,7 @@ SCREENX		EQU	0x0ff4  ;	x
 SCREENY		EQU	0x0ff6  ;	y
 LCDRAM		EQU	0x0ff8  ; 图像缓冲区的开始地址
 
-	ORG	BOOT_ADDR	;必须是这个地址
+
 ;初始化段SS=0 DS=0 ES=0 SP指向程序加载的地址
 ;因为程序加载的地址是0x7c00，所以我们的段地址必须是0，
 ;不然地址就不是0x7c00
@@ -153,6 +155,11 @@ print_loop:
 	INT	0x10
 
 	JMP	print_loop;
+
+;
+; read e820: memory layout
+;
+	call detect_memory
 ;
 ;The third stage
 ;	goto PM mode
@@ -226,7 +233,7 @@ move_end:
         MOV	EAX,CR0
 	AND	EAX,0x7fffffff
 	OR	AL,1
-	MOV	CR0,EAX                 ;打开段级保护，不开分页机制
+	MOV	CR0,EAX                 ;打开段保护机制，不开分页机制
 ;程序执行到这里结束，跳转到init/kernel.asm（即移动到0x0处的代码）执行
         JMP	dword 0x08:0x5000
 
@@ -314,6 +321,7 @@ msg_error:
 	DB	0x0a
 	DB	0
 
+stack:
 	times	510-($-$$) db 0
 	DW	0xaa55
 
