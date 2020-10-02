@@ -16,8 +16,12 @@
 #define _POSIX2_VERSION 200112L
 #define _XOPEN_VERSION 600
 
-#define NULL 0
+#define NULL ((void *)0)
+#define false 0
+#define true 1
 
+typedef int bool;
+typedef unsigned int size_t;
 typedef unsigned int uint32_t;
 typedef int int32_t;
 typedef unsigned short uint16_t;
