@@ -47,39 +47,86 @@ jmpl 等指令。
 DeeppinkOS文件结构(按照创建先后列出)
 -------------------------------------
 
-boot-------------------------------------------------------------   </br>
-&emsp;&emsp;&emsp;|-------boot.asm   </br>
-drivers----------------------------------------------------------  </br>
-&emsp;&emsp;&emsp;|-------timer.c  </br>
-&emsp;&emsp;&emsp;|-------keyboard.c  </br>
-include----------------------------------------------------------  </br>
-&emsp;&emsp;&emsp;|-------console.h  </br>
-&emsp;&emsp;&emsp;|-------string.h  </br>
-&emsp;&emsp;&emsp;|-------vargs.h  </br>
-&emsp;&emsp;&emsp;|-------debug.h  </br>
-&emsp;&emsp;&emsp;|-------descriptor.h  </br>
-&emsp;&emsp;&emsp;|-------interrupt.h  </br>
-&emsp;&emsp;&emsp;|-------timer.h  </br>
-&emsp;&emsp;&emsp;|-------pmm.h  </br>
-&emsp;&emsp;&emsp;|-------keyboard.h  </br>
-&emsp;&emsp;&emsp;|-------keymap.h  </br>
-init---------------------------------------------------------------  </br>
-&emsp;&emsp;&emsp;|-------kernel.asm  </br>
-&emsp;&emsp;&emsp;|-------start.c  </br>
-&emsp;&emsp;&emsp;|-------console.c  </br>
-&emsp;&emsp;&emsp;|-------interrupt.c  </br>
-&emsp;&emsp;&emsp;|-------pmm.c  </br>
-kernel-----------------------------------------------------------  </br>
-&emsp;&emsp;&emsp;|-------prink.c  </br>
-scripts----------------------------------------------------------  </br>
-&emsp;&emsp;&emsp;|-------kernel.ld  </br>
-doc----------------------------------------------------------  </br>
-&emsp;&emsp;&emsp;|-------help.md  </br>
-bochsout.txt--------------bochs调试输出（基本没用）  </br>
-bochsrc-------------------bochs调试配置文件(使用指令：make bochs即可)  </br>
-Makefile------------------make--->make qemu/make bochs  </br>
-deeppink.img--------------最终生成的镜像文件  </br>
-README.md-----------------帮助文档（遇到的相关bug和设计步骤）  </br>
+.                            
+├── boot                     
+│   ├── boot.asm             
+│   └── e820.c               
+├── deeppink.img             
+├── doc                      
+│   ├── arch.pptx            
+│   └── help.md              
+├── drivers                  
+│   ├── block.c              
+│   ├── block.h              
+│   ├── floppy.c             
+│   ├── hd.c                 
+│   ├── keyboard.c           
+│   ├── task.c               
+│   └── timer.c              
+├── fs                       
+│   └── ext4.c               
+├── include                  
+│   ├── boot.h               
+│   ├── buddy.h              
+│   ├── console.h            
+│   ├── ctype.h              
+│   ├── ctypes.h             
+│   ├── debug.h              
+│   ├── descriptor.h         
+│   ├── error.h              
+│   ├── ext4.h               
+│   ├── font.h               
+│   ├── i386                 
+│   │   ├── fork.c           
+│   │   ├── fork.h           
+│   │   ├── linkage.h        
+│   │   ├── sys.c            
+│   │   ├── sys.h            
+│   │   └── system.h         
+│   ├── init.h               
+│   ├── interrupt.h          
+│   ├── keyboard.h           
+│   ├── keymap.h             
+│   ├── list.h               
+│   ├── memory.h             
+│   ├── page.h               
+│   ├── peripheral.h         
+│   ├── pmm.h                
+│   ├── protect.h            
+│   ├── README.md            
+│   ├── schedule.h           
+│   ├── slab.h               
+│   ├── string.h             
+│   ├── task.h               
+│   ├── task_struct.h        
+│   ├── timer.h              
+│   ├── tty.h                
+│   ├── unistd.h             
+│   ├── vargs.h              
+│   └── vmm.h                
+├── init                     
+│   ├── console.c            
+│   ├── interrupt.c          
+│   ├── kernel.asm           
+│   ├── memory.c             
+│   ├── palette.c            
+│   ├── pmm.c                
+│   ├── start.c              
+│   └── vmm.c                
+├── kernel                   
+│   ├── buddy.c              
+│   ├── panic.c              
+│   ├── prink.c              
+│   ├── sched.c              
+│   ├── sched.s              
+│   ├── slab.c               
+│   └── tty.c                
+├── Makefile                 
+├── qemu_run_os.sh           
+├── README                   
+├── RUN_i386.bat             
+└── scripts                  
+    └── kernel.ld            
 
 运行说明
 ---------
